@@ -9,19 +9,21 @@ const App = () => {
   return (
     <Router>
       <Navigation />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
+      <div className="bg-deloitte-white text-deloitte-black min-h-screen">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </div>
     </Router>
   );
 };
 
 const Home = () => (
-  <div>
-    <h1>Welcome to the Project Management Tool</h1>
+  <div className="text-center p-8">
+    <h1 className="text-4xl font-bold text-deloitte-blue">Welcome to the Project Management Tool</h1>
   </div>
 );
 

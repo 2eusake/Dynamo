@@ -1,0 +1,45 @@
+/* src/styles/tailwind.css */
+
+@tailwind base;
+@tailwind components;
+
+@tailwind utilities;
+
+/* Deloitte Colors */
+/* Blue */
+.bg-deloitte-blue {
+  background-color: #002776;
+}
+
+.text-deloitte-blue {
+  color: #002776;
+}
+
+/* Green */
+.bg-deloitte-green {
+  background-color: #92d400;
+}
+
+.text-deloitte-green {
+  color: #92d400;
+}
+
+/* Cyan */
+.bg-deloitte-cyan {
+  background-color: #00a1de;
+}
+
+.text-deloitte-cyan {
+  color: #00a1de;
+}
+
+/* Black */
+.text-deloitte-black {
+  color: #000000;
+}
+
+/* White */
+.text-deloitte-white {
+  color: #ffffff;
+}
+
