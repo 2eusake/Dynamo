@@ -1,12 +1,12 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('your_database_name', 'your_username', 'your_password', {
+const sequelize = new Sequelize('dpms_serv', '2eusake', 'buttermilkjesus', {
   host: 'localhost',
   dialect: 'mysql'
 });
 
 sequelize.authenticate()
-  .then(() => console.log('Database connected...'))
+  .then(() => console.log('Database connected son...'))
   .catch(err => console.log('Error: ' + err));
 
 module.exports = sequelize;

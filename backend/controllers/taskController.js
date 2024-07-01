@@ -1,4 +1,4 @@
-const Task = require('../models/taskModel');
+const Task = require('../models/Task');
 
 const getTasks = async (req, res) => {
     const tasks = await Task.find({ consultantId: req.user.id });
