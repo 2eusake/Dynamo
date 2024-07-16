@@ -3,10 +3,13 @@ const sequelize = require('./config/database');
 const userRoutes = require('./routes/userRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+const cors = require('cors');
 
 const app = express();
 
 app.use(express.json());
+
+app.use(cors());
 
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
