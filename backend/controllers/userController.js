@@ -7,13 +7,16 @@ const registerUser = async (req, res) => {
   const { username, email, password, role } = req.body;
   
   try {
+    // Check if user already exists with the provided email
     const user = await User.findOne({ where: { email } });
     if (user) {
       return res.status(400).json({ error: 'User already exists with this email' });
     }
 
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create a new user
     await User.create({ username, email, password: hashedPassword, role });
 
     res.status(201).json({ message: 'User created successfully' });
@@ -28,12 +31,13 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-
+    // Check if user exists with the provided email
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
+    // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: 'Invalid credentials' });
@@ -48,6 +52,7 @@ const loginUser = async (req, res) => {
   }
 };
 
+// Get all users
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll();

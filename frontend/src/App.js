@@ -1,30 +1,30 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navigation from './components/Navigation';
-import Register from './components/Register';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+import Dashboard from './components/Dashboard/Dashboard';
+import ProjectDetail from './components/Project/ProjectDetail';
+import Navbar from './components/Common/Navbar';
+import Footer from './components/Common/Footer';
+import CreateProject from './components/Project/CreateProject';
 
 const App = () => {
   return (
     <Router>
-      <Navigation />
+      <Navbar />
       <div className="bg-deloitte-white text-deloitte-black min-h-screen">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Register />} /> {/* Set Register as the default route */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/projects/:id" element={<ProjectDetail />} />
+          <Route path="/create-project" element={<CreateProject />} />
         </Routes>
       </div>
+      <Footer />
     </Router>
   );
 };
-
-const Home = () => (
-  <div className="text-center p-8">
-    <h1 className="text-4xl font-bold text-deloitte-blue">Welcome to the Project Management Tool</h1>
-  </div>
-);
 
 export default App;
