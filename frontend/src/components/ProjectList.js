@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { ProjectContext } from '../../contexts/ProjectContext';
 
-const ProjectList = () => {
+const ProjectList = ({handleGridItemClick}) => {
   const { projects } = useContext(ProjectContext);
   
   return (
@@ -10,9 +10,7 @@ const ProjectList = () => {
     <div className="grid-container">
       {projects.map((project) => (
         <div key={project.id} className="grid-item">
-          <Link to={`/project/${project.id}`} className="grid-item-link">
-            {project.name}
-          </Link>
+          <Link to={`/project/${project.id}`} onClick={props.handleGridItemClick}>{project.name}</Link>
         </div>
       ))}
     </div>
