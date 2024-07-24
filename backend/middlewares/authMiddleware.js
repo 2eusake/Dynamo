@@ -1,19 +1,21 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // Adjust path as necessary
+const User = require('../models/User'); 
 
 const authMiddleware = async (req, res, next) => {
-    const token = req.header('Authorization').replace('Bearer ', '');
+    const authHeader = req.header('Authorization');
     
-    if (!token) {
-        return res.status(401).json({ message: 'No token, authorization denied' });
+    if (!authHeader) {
+        return res.status(401).json({ message: 'Authorization header is missing' });
     }
 
+    const token = authHeader.replace('Bearer ', '');
+    
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id);
+        const user = await User.findByPk(decoded.id); 
         
         if (!user) {
-            throw new Error();
+            return res.status(401).json({ message: 'User not found' });
         }
         
         req.user = user;

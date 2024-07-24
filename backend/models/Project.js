@@ -19,6 +19,14 @@ const Project = sequelize.define('Project', {
     type: DataTypes.ENUM('active', 'completed', 'onHold'),
     allowNull: false,
     defaultValue: 'active'
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users', // Assuming you have a 'users' table
+      key: 'id'
+    }
   }
 });
 
