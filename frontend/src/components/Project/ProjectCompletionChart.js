@@ -10,6 +10,23 @@ const ProjectCompletionChart = () => {
   const { projects } = useContext(ProjectContext);
   const chartRef = useRef(null);
 
+  
+  useEffect(() => {
+    const chartInstance = chartRef.current;
+
+    // Cleanup on unmount
+    return () => {
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+    };
+  }, []);
+
+  // Add a check to ensure projects is defined
+  if (!projects) {
+    return <div>Loading...</div>;
+  }
+
   const projectLabels = projects.map(project => `Project ${project.id}`);
   const projectProgress = projects.map(project => project.progress);
 
@@ -25,17 +42,6 @@ const ProjectCompletionChart = () => {
       },
     ],
   };
-
-  useEffect(() => {
-    const chartInstance = chartRef.current;
-
-    // Cleanup on unmount
-    return () => {
-      if (chartInstance) {
-        chartInstance.destroy();
-      }
-    };
-  }, []);
 
   return (
     <div>

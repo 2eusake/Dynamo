@@ -1,40 +1,73 @@
 const Project = require('../models/Project');
 
 const getProjects = async (req, res) => {
-    const projects = await Project.find({ consultantId: req.user.id });
-    res.json(projects);
+    try {
+        // Fetch projects associated with the logged-in user
+        const projects = await Project.findAll({ 
+            where: { userId: req.user.id }
+        });
+        res.json(projects);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching projects', error });
+    }
 };
 
 const createProject = async (req, res) => {
-    const { name, description } = req.body;
-    const project = new Project({ name, description, consultantId: req.user.id });
-    await project.save();
-    res.status(201).json(project);
+    try {
+        const { name, description } = req.body;
+        // Create a new project associated with the logged-in user
+        const project = await Project.create({ 
+            name, 
+            description, 
+            userId: req.user.id 
+        });
+        res.status(201).json(project);
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating project', error });
+    }
 };
 
 const getProjectById = async (req, res) => {
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ message: 'Project not found' });
-    res.json(project);
+    try {
+        const project = await Project.findOne({ 
+            where: { id: req.params.id, userId: req.user.id } 
+        });
+        if (!project) return res.status(404).json({ message: 'Project not found' });
+        res.json(project);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching project', error });
+    }
 };
 
 const updateProject = async (req, res) => {
-    const { name, description } = req.body;
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ message: 'Project not found' });
-    
-    project.name = name || project.name;
-    project.description = description || project.description;
-    await project.save();
-    res.json(project);
+    try {
+        const { name, description } = req.body;
+        const project = await Project.findOne({ 
+            where: { id: req.params.id, userId: req.user.id } 
+        });
+        if (!project) return res.status(404).json({ message: 'Project not found' });
+
+        project.name = name || project.name;
+        project.description = description || project.description;
+        await project.save();
+        res.json(project);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating project', error });
+    }
 };
 
 const deleteProject = async (req, res) => {
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ message: 'Project not found' });
-    
-    await project.remove();
-    res.json({ message: 'Project removed' });
+    try {
+        const project = await Project.findOne({ 
+            where: { id: req.params.id, userId: req.user.id } 
+        });
+        if (!project) return res.status(404).json({ message: 'Project not found' });
+
+        await project.destroy();
+        res.json({ message: 'Project removed' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting project', error });
+    }
 };
 
 module.exports = {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; 
 import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
 
@@ -12,7 +12,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/users/login', { email, password });
+      const response = await axios.post('http://localhost:5000/api/users/login', { email, password }); // Ensure the base URL matches your backend
       localStorage.setItem('token', response.data.token);
       navigate('/dashboard');
     } catch (error) {
@@ -40,6 +40,9 @@ const Login = () => {
         />
         <button type="submit">Login</button>
       </form>
+      <p>
+        Don't have an account? <Link to="/register">Register here</Link>
+      </p>
     </div>
   );
 };

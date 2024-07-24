@@ -21,7 +21,7 @@ const registerUser = async (req, res) => {
 
     res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
-    console.error(error.message);
+    console.error('Register error:', error.message);
     res.status(500).json({ error: 'An error occurred while registering user' });
   }
 };
@@ -47,7 +47,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ message: 'Login successful', token });
   } catch (error) {
-    console.error(error.message);
+    console.error('Login error:', error.message);
     res.status(500).json({ error: 'An error occurred while logging in' });
   }
 };
@@ -58,7 +58,7 @@ const getAllUsers = async (req, res) => {
     const users = await User.findAll();
     res.json(users);
   } catch (error) {
-    console.error(error.message);
+    console.error('Fetch users error:', error.message);
     res.status(500).json({ error: 'An error occurred while fetching users' });
   }
 };
