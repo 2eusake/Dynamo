@@ -14,11 +14,13 @@ const getProjects = async (req, res) => {
 
 const createProject = async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { name, description, startDate, endDate } = req.body;
         // Create a new project associated with the logged-in user
         const project = await Project.create({ 
             name, 
             description, 
+            startDate,
+            endDate,
             userId: req.user.id 
         });
         res.status(201).json(project);

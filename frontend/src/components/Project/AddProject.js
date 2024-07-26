@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const CreateProject = () => {
+const AddProject = () => {
   const [projectName, setProjectName] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -14,7 +14,7 @@ const CreateProject = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/projects', { name: projectName, description, startDate, endDate }, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}` // Assuming you're using a token stored in localStorage
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
       alert(`Project ${projectName} created successfully!`);
@@ -26,8 +26,8 @@ const CreateProject = () => {
   };
 
   return (
-    <div className="create-project p-4">
-      <h1 className="text-2xl mb-4">Create Project</h1>
+    <div className="add-project p-4">
+      <h1 className="text-2xl mb-4">Add Project</h1>
       <form onSubmit={handleSubmit} className="flex flex-col">
         <label className="mb-2">
           Project Name:
@@ -64,10 +64,10 @@ const CreateProject = () => {
             className="border p-1"
           />
         </label>
-        <button type="submit" className="bg-blue-500 text-white p-2 mt-2">Create</button>
+        <button type="submit" className="bg-blue-500 text-white p-2 mt-2">Add</button>
       </form>
     </div>
   );
 };
 
-export default CreateProject;
+export default AddProject;
