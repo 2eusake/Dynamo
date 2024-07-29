@@ -8,24 +8,27 @@ import ProjectList from './components/Project/ProjectList';
 import Navbar from './components/Common/Navbar';
 import Footer from './components/Common/Footer';
 import CreateProject from './components/Project/CreateProject';
+import ProjectProvider from './contexts/ProjectContext';
 
 const App = () => {
   return (
-    <Router>
-      <Navbar />
-      <div className="bg-deloitte-white text-deloitte-black min-h-screen">
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/projects" element={<ProjectList />} />
-          <Route path="/projects/:id" element={<ProjectDetail />} />
-          <Route path="/create-project" element={<CreateProject />} />
-        </Routes>
-      </div>
-      <Footer />
-    </Router>
+    <ProjectProvider>
+      <Router>
+        <Navbar />
+        <div className="bg-deloitte-white text-deloitte-black min-h-screen">
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/projects" element={<ProjectList />} />
+            <Route path="/projects/:id" element={<ProjectDetail />} />
+            <Route path="/create-project" element={<CreateProject />} />
+          </Routes>
+        </div>
+        <Footer />
+      </Router>
+    </ProjectProvider>
   );
 };
 
