@@ -10,6 +10,7 @@ const ProjectCompletionChart = () => {
   const { projects } = useContext(ProjectContext);
   const chartRef = useRef(null);
 
+  
   useEffect(() => {
     const chartInstance = chartRef.current;
 

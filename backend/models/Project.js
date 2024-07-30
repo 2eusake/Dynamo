@@ -15,14 +15,6 @@ const Project = sequelize.define('Project', {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  startDate: {
-    type: DataTypes.DATE,
-    allowNull: false
-  },
-  endDate: {
-    type: DataTypes.DATE,
-    allowNull: false
-  },
   status: {
     type: DataTypes.ENUM('active', 'completed', 'onHold'),
     allowNull: false,
@@ -32,7 +24,7 @@ const Project = sequelize.define('Project', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'users', 
+      model: 'users', // Assuming you have a 'users' table
       key: 'id'
     }
   }

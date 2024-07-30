@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
-import ProjectList from './Project/ProjectList';
+import ProjectList from './ProjectList';
 
 
 const Projects = () => {
