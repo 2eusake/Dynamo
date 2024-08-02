@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Added Link import
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -12,7 +12,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/users/register', { username, email, password, role }); // Specify the full URL
+      await axios.post('http://localhost:5000/api/users/register', { username, email, password, role });
       alert(`Registration successful! Welcome, ${username}`);
       navigate('/login');
     } catch (error) {
@@ -53,6 +53,9 @@ const Register = () => {
         </select>
         <button type="submit">Register</button>
       </form>
+      <p>
+        Have an account? <Link to="/login">Login here</Link>
+      </p>
     </div>
   );
 };

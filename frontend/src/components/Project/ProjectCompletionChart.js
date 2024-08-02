@@ -3,18 +3,14 @@ import { Line } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { ProjectContext } from '../../contexts/ProjectContext';
 
-// Register the necessary components with Chart.js
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const ProjectCompletionChart = () => {
   const { projects } = useContext(ProjectContext);
   const chartRef = useRef(null);
 
-  
   useEffect(() => {
     const chartInstance = chartRef.current;
-
-    // Cleanup on unmount
     return () => {
       if (chartInstance) {
         chartInstance.destroy();
@@ -22,7 +18,6 @@ const ProjectCompletionChart = () => {
     };
   }, []);
 
-  // Add a check to ensure projects is defined
   if (!projects) {
     return <div>Loading...</div>;
   }

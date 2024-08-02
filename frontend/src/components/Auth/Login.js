@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; 
-import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', { email, password }); // Ensure the base URL matches your backend
+      const response = await axios.post('http://localhost:5000/api/users/login', { email, password }); 
       localStorage.setItem('token', response.data.token);
       navigate('/dashboard');
     } catch (error) {

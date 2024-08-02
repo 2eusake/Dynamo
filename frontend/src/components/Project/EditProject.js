@@ -1,8 +1,12 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ProjectContext } from '../../contexts/ProjectContext';
 
-const CreateProject = () => {
-  const { addProject, consultants } = useContext(ProjectContext);
+const EditProject = () => {
+  const { id } = useParams(); // Get project ID from URL
+  const navigate = useNavigate();
+  const { projects, consultants, addProject } = useContext(ProjectContext);
+  const [project, setProject] = useState(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -10,6 +14,29 @@ const CreateProject = () => {
   const [budget, setBudget] = useState('');
   const [projectManager, setProjectManager] = useState('');
   const [tasks, setTasks] = useState([{ name: '', dueDate: '', assignedTo: '' }]);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/projects/${id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        const data = await response.json();
+        setProject(data);
+        setName(data.name);
+        setDescription(data.description);
+        setStartDate(data.startDate);
+        setEndDate(data.endDate);
+        setBudget(data.budget);
+        setProjectManager(data.projectManager);
+        setTasks(data.tasks);
+      } catch (error) {
+        console.error('Error fetching project details:', error);
+      }
+    };
+
+    fetchProject();
+  }, [id]);
 
   const handleTaskChange = (index, key, value) => {
     const newTasks = [...tasks];
@@ -23,19 +50,15 @@ const CreateProject = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    addProject({ name, description, startDate, endDate, budget, projectManager, tasks });
-    setName('');
-    setDescription('');
-    setStartDate('');
-    setEndDate('');
-    setBudget('');
-    setProjectManager('');
-    setTasks([{ name: '', dueDate: '', assignedTo: '' }]);
+    addProject({ id, name, description, startDate, endDate, budget, projectManager, tasks });
+    navigate('/projects');
   };
+
+  if (!project) return <div>Loading...</div>;
 
   return (
     <div>
-      <h2>Create Project</h2>
+      <h2>Edit Project</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -109,10 +132,10 @@ const CreateProject = () => {
           ))}
           <button type="button" onClick={addTask}>Add Task</button>
         </div>
-        <button type="submit">Create</button>
+        <button type="submit">Update</button>
       </form>
     </div>
   );
 };
 
-export default CreateProject;
+export default EditProject;

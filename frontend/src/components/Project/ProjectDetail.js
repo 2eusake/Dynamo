@@ -4,22 +4,22 @@ import { ProjectContext } from '../../contexts/ProjectContext';
 
 const ProjectDetail = () => {
   const { id } = useParams();
-  const { projects, predictProjectCompletion } = useContext(ProjectContext) || {}; 
+  const { projects, predictProjectCompletion } = useContext(ProjectContext);
   const [project, setProject] = useState(null);
   const [prediction, setPrediction] = useState(null);
 
   useEffect(() => {
-    if (!projects || !predictProjectCompletion) return; 
+    if (!projects) return;
 
     const projectId = parseInt(id, 10);
     const selectedProject = projects.find(p => p.id === projectId);
     setProject(selectedProject);
 
-    if (selectedProject) {
+    if (selectedProject && predictProjectCompletion) {
       const pred = predictProjectCompletion(selectedProject);
       setPrediction(pred);
     } else {
-      setPrediction(null); 
+      setPrediction(null);
     }
   }, [id, projects, predictProjectCompletion]);
 
@@ -35,6 +35,12 @@ const ProjectDetail = () => {
           ) : (
             <p>No prediction available</p>
           )}
+          <h3>Tasks</h3>
+          <ul>
+            {project.tasks.map((task) => (
+              <li key={task.id}>{task.name} - {task.progress}% complete</li>
+            ))}
+          </ul>
         </>
       ) : (
         <p>Loading project details...</p>

@@ -24,6 +24,8 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('consultant', 'projectManager', 'director'),
     allowNull: false
   }
+}, {
+  timestamps: true
 });
 
 module.exports = User;

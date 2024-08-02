@@ -16,9 +16,13 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const response = await axios.post('/api/users/login', { email, password });
-    localStorage.setItem('token', response.data.token);
-    setUser(response.data.user);
+    try {
+      const response = await axios.post('/api/users/login', { email, password });
+      localStorage.setItem('token', response.data.token);
+      setUser(response.data.user);
+    } catch (error) {
+      console.error('Login failed', error);
+    }
   };
 
   const logout = () => {
