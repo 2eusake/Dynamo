@@ -6,13 +6,18 @@ const {
     createTask, 
     getTaskById, 
     updateTask, 
-    deleteTask 
+    deleteTask,
+    getUserTasks 
 } = require('../controllers/taskController');
 
 // Task routes
 router.route('/')
     .get(authMiddleware, getTasks)
     .post(authMiddleware, createTask);
+
+router.route('/')
+    .get(authMiddleware, getUserTasks)
+
 
 router.route('/:id')
     .get(authMiddleware, getTaskById)

@@ -7,29 +7,48 @@ export const ProjectContext = createContext();
 const ProjectProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [consultants, setConsultants] = useState([]);
-  const [model, setModel] = useState(null);
+  const [model, setModel] = useState(null); 
+  const [latestProject, setLatestProject] = useState(null);
+
+  const fetchProjects = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const [projectsResponse, usersResponse] = await Promise.all([
+        axios.get('http://localhost:5000/api/projects', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get('http://localhost:5000/api/users', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      const projectsData = projectsResponse.data;
+      setProjects(projectsData);
+      setConsultants(usersResponse.data.filter(user => user.role === 'consultant'));
+
+      if (projectsData.length > 0) {
+        const latest = projectsData.reduce((prev, curr) => (prev.createdAt > curr.createdAt ? prev : curr));
+        setLatestProject(latest);
+      }
+    } catch (error) {
+      console.error('Error fetching projects or users:', error);
+    }
+  };
+
+  const fetchUserProjects = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/projects/user', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProjects(response.data);
+    } catch (error) {
+      console.error('Error fetching user projects:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchProjectsAndUsers = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const [projectsResponse, usersResponse] = await Promise.all([
-          axios.get('http://localhost:5000/api/projects', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get('http://localhost:5000/api/users', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
-
-        setProjects(projectsResponse.data);
-        setConsultants(usersResponse.data.filter(user => user.role === 'consultant'));
-      } catch (error) {
-        console.error('Error fetching projects or users:', error);
-      }
-    };
-
-    fetchProjectsAndUsers();
+    fetchProjects();
   }, []);
 
   const predictProjectCompletion = (project) => {
@@ -47,6 +66,9 @@ const ProjectProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProjects([...projects, response.data]);
+      if (projects.length === 0 || response.data.createdAt > latestProject.createdAt) {
+        setLatestProject(response.data);
+      }
     } catch (error) {
       console.error('Error adding project:', error);
     }
@@ -59,6 +81,9 @@ const ProjectProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProjects(projects.map(project => project.id === id ? response.data : project));
+      if (response.data.createdAt > latestProject.createdAt) {
+        setLatestProject(response.data);
+      }
     } catch (error) {
       console.error('Error updating project:', error);
     }
@@ -71,13 +96,27 @@ const ProjectProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProjects(projects.filter(project => project.id !== id));
+      if (latestProject.id === id && projects.length > 0) {
+        const newLatest = projects.reduce((prev, curr) => (prev.createdAt > curr.createdAt ? prev : curr));
+        setLatestProject(newLatest);
+      }
     } catch (error) {
       console.error('Error deleting project:', error);
     }
   };
 
   return (
-    <ProjectContext.Provider value={{ projects, consultants, addProject, updateProject, deleteProject, predictProjectCompletion }}>
+    <ProjectContext.Provider value={{ 
+      projects, 
+      consultants, 
+      latestProject,
+      fetchProjects,
+      fetchUserProjects, 
+      addProject, 
+      updateProject, 
+      deleteProject, 
+      predictProjectCompletion 
+    }}>
       {children}
     </ProjectContext.Provider>
   );

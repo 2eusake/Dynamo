@@ -1,4 +1,3 @@
-// server.js or app.js
 const express = require('express');
 const sequelize = require('./config/database'); 
 const userRoutes = require('./routes/userRoutes');
@@ -20,12 +19,12 @@ const User = require('./models/User');
 const Project = require('./models/Project');
 const Task = require('./models/Task');
 
-// Define relationships
+
 Project.hasMany(Task, { foreignKey: 'project_id', as: 'tasks' });
 Task.belongsTo(Project, { foreignKey: 'project_id' });
 
-User.hasMany(Task, { foreignKey: 'assigned_to', as: 'tasks' });
-Task.belongsTo(User, { foreignKey: 'assigned_to' });
+User.hasMany(Task, { foreignKey: 'assigned_to_user_id', as: 'tasks' });
+Task.belongsTo(User, { foreignKey: 'assigned_to_user_id' });
 
 User.hasMany(Project, { foreignKey: 'userId', as: 'projects' });
 Project.belongsTo(User, { foreignKey: 'userId' });

@@ -6,13 +6,18 @@ const {
     createProject, 
     getProjectById, 
     updateProject, 
-    deleteProject 
+    deleteProject,
+    getUserProjects 
 } = require('../controllers/projectController');
 
 // Project routes
 router.route('/')
     .get(authMiddleware, getProjects)
     .post(authMiddleware, createProject);
+
+router.route('/')
+    .get(authMiddleware, getUserProjects)
+
 
 router.route('/:id')
     .get(authMiddleware, getProjectById)

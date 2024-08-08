@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { ProjectContext } from '../../contexts/ProjectContext';
 
 const ProjectDetail = () => {
@@ -38,7 +38,9 @@ const ProjectDetail = () => {
           <h3>Tasks</h3>
           <ul>
             {project.tasks.map((task) => (
-              <li key={task.id}>{task.name} - {task.progress}% complete</li>
+              <li key={task.id}>
+                <Link to={`/tasks/${task.id}`}>{task.name} - {task.progress}% complete</Link>
+              </li>
             ))}
           </ul>
         </>
