@@ -15,6 +15,8 @@ import Footer from './components/Common/Footer';
 import Navbar from './components/Common/Navbar';
 import ProjectProvider from './contexts/ProjectContext';
 import TaskProvider from './contexts/TaskContext';
+import './tailwind.css';
+
 
 const App = () => {
   const { user } = useContext(AuthContext);

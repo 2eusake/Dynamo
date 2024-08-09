@@ -4,19 +4,19 @@ import { ProjectContext } from '../../contexts/ProjectContext';
 import './ProjectsList.css';
 
 const ProjectsPage = () => {
-  const { projects, fetchProjects } = useContext(ProjectContext);
+  const { projects, fetchUserProjects } = useContext(ProjectContext);
 
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    fetchUserProjects();
+  }, [fetchUserProjects]);
 
   return (
     <div className="projects-page">
-      <h1>Projects and Tasks</h1>
+      <h1 className="text-deloitte-blue">Projects and Tasks</h1>
       <div className="tiles-container">
         {projects.length > 0 ? (
           projects.map(project => (
-            <div key={project.id} className="tile">
+            <div key={project.id} className="tile bg-deloitte-cyan text-deloitte-black">
               <Link to={`/projects/${project.id}`}>
                 <h2>{project.name}</h2>
                 <p>{project.description || 'No description available'}</p>
@@ -24,7 +24,7 @@ const ProjectsPage = () => {
               </Link>
               <div className="tasks-container">
                 {project.tasks.map(task => (
-                  <div key={task.id} className="task-tile">
+                  <div key={task.id} className="task-tile bg-deloitte-white">
                     <Link to={`/tasks/${task.id}`}>
                       <h3>{task.name}</h3>
                       <p>Progress: {task.progress || 0}%</p>

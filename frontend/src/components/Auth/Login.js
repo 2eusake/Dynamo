@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../../contexts/AuthContext'; // Adjust import path
+import { AuthContext } from '../../contexts/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -21,41 +21,54 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <form id="Mrphs-xlogin" onSubmit={handleSubmit} className="with-errors">
-        <h1>Login Required</h1>
-        {error && <div className="alertMessage" role="alert">{error}</div>}
-        <fieldset>
-          <label htmlFor="eid">Email</label>
-          <input
-            name="eid"
-            id="eid"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="username"
-            size="15"
-            required
-          />
-          <label htmlFor="pw">Password</label>
-          <input
-            name="pw"
-            id="pw"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            size="15"
-            required
-          />
+    <div className="min-h-screen flex items-center justify-center bg-deloitte-white">
+      <div className="bg-deloitte-blue p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 className="text-deloitte-white text-2xl mb-6 text-center">Login Required</h1>
+        {error && (
+          <div className="alertMessage bg-red-500 text-deloitte-white p-2 rounded mb-4 text-center" role="alert">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="eid" className="text-deloitte-white block mb-2">Email</label>
+            <input
+              name="eid"
+              id="eid"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
+              className="w-full p-2 rounded border border-deloitte-cyan focus:outline-none focus:ring-2 focus:ring-deloitte-cyan"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="pw" className="text-deloitte-white block mb-2">Password</label>
+            <input
+              name="pw"
+              id="pw"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              className="w-full p-2 rounded border border-deloitte-cyan focus:outline-none focus:ring-2 focus:ring-deloitte-cyan"
+              required
+            />
+          </div>
           <p className="buttons">
-            <input type="submit" id="submit" value="Log in" />
+            <input
+              type="submit"
+              id="submit"
+              value="Log in"
+              className="w-full bg-deloitte-green text-deloitte-black py-2 rounded hover:bg-deloitte-cyan"
+            />
           </p>
-          <p>
-            Don't have an account? <Link to="/register">Register here</Link>
+          <p className="mt-4 text-deloitte-white text-center">
+            Don't have an account? <Link to="/register" className="text-deloitte-cyan hover:underline">Register here</Link>
           </p>
-        </fieldset>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
