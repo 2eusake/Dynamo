@@ -2,13 +2,13 @@ import React, { useContext, useState } from 'react';
 import { ProjectContext } from '../../contexts/ProjectContext';
 
 const CreateProject = () => {
-  const { addProject, consultants, updateTask } = useContext(ProjectContext);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [budget, setBudget] = useState('');
-  const [projectManager, setProjectManager] = useState('');
+  const { addProject, consultants = [], updateTask } = useContext(ProjectContext);
+  const [name, setName] = useState('Demo Project');
+  const [description, setDescription] = useState('This is a demo project description.');
+  const [startDate, setStartDate] = useState('2024-09-01');
+  const [endDate, setEndDate] = useState('2024-12-01');
+  const [budget, setBudget] = useState('10000');
+  const [projectManager, setProjectManager] = useState('John Doe');
   const [projectConsultants, setProjectConsultants] = useState([]);
   const [tasks, setTasks] = useState([{ id: Date.now(), name: '', dueDate: '', assignedTo: '' }]);
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -37,7 +37,8 @@ const CreateProject = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    addProject({
+    // Simulate adding a project (since it's a demo)
+    console.log({
       name,
       description,
       startDate,
@@ -48,18 +49,25 @@ const CreateProject = () => {
       consultantIds: projectConsultants.map(c => c.id)
     });
 
-    setName('');
-    setDescription('');
-    setStartDate('');
-    setEndDate('');
-    setBudget('');
-    setProjectManager('');
+    setName('Demo Project');
+    setDescription('This is a demo project description.');
+    setStartDate('2024-09-01');
+    setEndDate('2024-12-01');
+    setBudget('10000');
+    setProjectManager('John Doe');
     setTasks([{ id: Date.now(), name: '', dueDate: '', assignedTo: '' }]);
     setProjectConsultants([]);
     setEditingTaskId(null);
   };
 
-  const filteredConsultants = consultants.filter(c => c.role === 'consultant');
+  // Mocked consultants data for demo purposes
+  const demoConsultants = [
+    { id: 1, username: 'Alice Consultant', role: 'consultant' },
+    { id: 2, username: 'Bob Consultant', role: 'consultant' },
+    ...consultants,
+  ];
+
+  const filteredConsultants = demoConsultants.filter(c => c.role === 'consultant');
 
   return (
     <div className="p-6 bg-deloitte-cyan min-h-screen">
@@ -204,37 +212,29 @@ const CreateProject = () => {
                 <td className="p-2">
                   <button
                     type="button"
-                    onClick={() => editTask(task)}
-                    className="mr-2 p-2 bg-deloitte-cyan text-white rounded"
+                    onClick={() => deleteTask(task.id)}
+                    className="mr-2 p-2 bg-red-600 text-white rounded"
                   >
-                    Edit
+                    Delete
                   </button>
                   <button
                     type="button"
-                    onClick={() => deleteTask(task.id)}
-                    className="p-2 bg-red-600 text-white rounded"
+                    onClick={() => editTask(task)}
+                    className="p-2 bg-deloitte-cyan text-white rounded"
                   >
-                    Delete
+                    Edit
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="flex justify-end">
-          <button
-            type="button"
-            className="mr-2 p-2 bg-gray-300 text-black rounded"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="p-2 bg-deloitte-blue text-white rounded"
-          >
-            Save Project
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="p-2 bg-deloitte-blue text-white rounded w-full"
+        >
+          Save Project
+        </button>
       </form>
     </div>
   );

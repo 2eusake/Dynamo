@@ -6,8 +6,8 @@ import { TaskContext } from '../../contexts/TaskContext';
 import { AuthContext } from '../../contexts/AuthContext';
 
 const Dashboard = () => {
-  const { fetchUserProjects, projects } = useContext(ProjectContext);
-  const { fetchUserTasks, tasks } = useContext(TaskContext);
+  const { fetchUserProjects } = useContext(ProjectContext);
+  const { fetchUserTasks } = useContext(TaskContext);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
@@ -15,21 +15,26 @@ const Dashboard = () => {
     fetchUserTasks();
   }, [fetchUserProjects, fetchUserTasks]);
 
-  // Calculate projects that are exceeding their allocated time
-  const exceedingProjects = projects.filter(project => {
-    return project.progress < 100 && new Date(project.dueDate) < new Date();
-  });
+  // Static projects data for demo purposes
+  const projects = [
+    { id: 1, name: 'Project Alpha', progress: 85, dueDate: '2024-08-15' },
+    { id: 2, name: 'Project Beta', progress: 60, dueDate: '2024-08-20' },
+    { id: 3, name: 'Project Gamma', progress: 40, dueDate: '2024-08-30' },
+  ];
 
-  // Calculate current ongoing projects
-  const currentProjects = projects.filter(project => project.progress < 100);
+  // Static tasks data for demo purposes
+  const tasks = [
+    { id: 1, name: 'Task 1 for Alpha', completed: false, dueDate: '2024-08-10', projectId: 1 },
+    { id: 2, name: 'Task 2 for Beta', completed: false, dueDate: '2024-08-18', projectId: 2 },
+    { id: 3, name: 'Task 3 for Gamma', completed: false, dueDate: '2024-08-28', projectId: 3 },
+  ];
 
-  // Helper function to calculate the difference in days
-  const calculateDaysOverdue = (dueDate) => {
-    const now = new Date();
-    const due = new Date(dueDate);
-    const differenceInTime = now - due;
-    return Math.ceil(differenceInTime / (1000 * 60 * 60 * 24));
-  };
+  // Static notifications for demo purposes
+  const notifications = [
+    'Project Alpha is 2 days past due!',
+    'Task 2 for Beta is due in 5 days.',
+    'Project Gamma is nearing its deadline with only 40% progress.',
+  ];
 
   return (
     <div className="flex-1 flex flex-col">
@@ -44,15 +49,20 @@ const Dashboard = () => {
             Projects exceeding allocated time
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            {exceedingProjects.map(project => (
+            {projects.map(project => (
               <div key={project.id} className="border border-red-600 p-4 rounded-md shadow-md">
                 <h4 className="text-lg font-semibold text-deloitte-black">
                   Title: {project.name}
                 </h4>
                 <p className="text-red-600">
-                  Progress: {project.progress}% done, 
-                  {calculateDaysOverdue(project.dueDate)} days past due date
+                  Progress: {project.progress}% done, {project.dueDate} days past due date
                 </p>
+                <div className="progress-bar">
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: `${project.progress}%` }}
+                  ></div>
+                </div>
                 <p className="text-deloitte-black mt-2">Pending Tasks:</p>
                 <ul className="list-disc pl-5 text-deloitte-black">
                   {tasks.filter(task => task.projectId === project.id && !task.completed).map(task => (
@@ -70,12 +80,18 @@ const Dashboard = () => {
             Current Projects
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
-            {currentProjects.map(project => (
+            {projects.map(project => (
               <div key={project.id} className="border border-gray-300 p-4 rounded-md shadow-md">
                 <h4 className="text-lg font-semibold text-deloitte-black">
                   Title: {project.name}
                 </h4>
                 <p className="text-deloitte-black">Progress: {project.progress}%</p>
+                <div className="progress-bar">
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: `${project.progress}%` }}
+                  ></div>
+                </div>
               </div>
             ))}
           </div>
@@ -87,7 +103,17 @@ const Dashboard = () => {
             Notifications
           </h3>
           <div className="border border-gray-300 p-4 rounded-md shadow-md h-64 overflow-auto">
-            {/* Render notifications here */}
+            {notifications.length > 0 ? (
+              <ul className="list-disc pl-5">
+                {notifications.map((notification, index) => (
+                  <li key={index} className="mb-2 text-deloitte-black">
+                    {notification}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-deloitte-black">No notifications at this time.</p>
+            )}
           </div>
         </section>
 
