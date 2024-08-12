@@ -15,48 +15,36 @@ const Project = sequelize.define('Project', {
     type: DataTypes.TEXT,
     allowNull: true
   },
+  startDate: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  endDate: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
   status: {
     type: DataTypes.ENUM('active', 'completed', 'onHold'),
     allowNull: false,
     defaultValue: 'active'
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW
-  },
-  userId: {
+  projectManagerId: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    allowNull: false,
     references: {
-      model: 'users',
+      model: 'users', 
       key: 'id'
     }
   },
-  startDate: {
-    type: DataTypes.DATE,
-    allowNull: true
-  },
-  endDate: {
-    type: DataTypes.DATE,
-    allowNull: true
-  },
-  progress: {
+  
+  userId: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 0
-  },
-  dueDate: {
-    type: DataTypes.DATE,
-    allowNull: true
+    allowNull: false,
+    references: {
+      model: 'users', 
+      key: 'id'
+    }
   }
-}, {
-  timestamps: true
 });
 
 module.exports = Project;
