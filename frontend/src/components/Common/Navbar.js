@@ -6,7 +6,7 @@ const Navbar = () => {
   const { user, logout } = useAuth();
 
   return (
-    <nav className="bg-deloitte-blue text-deloitte-white p-2 flex justify-between items-center">
+    <nav className="bg-deloitte-blue text-deloitte-white p-2 flex justify-between items-center sticky-navbar">
       <ul className="flex space-x-4 text-sm">
         <li>
           <Link to="/projects" className="hover:text-deloitte-cyan">Projects</Link>

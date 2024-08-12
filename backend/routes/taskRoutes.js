@@ -12,12 +12,11 @@ const {
 
 // Task routes
 router.route('/')
-    .get(authMiddleware, getTasks)
-    .post(authMiddleware, createTask);
+    .get(authMiddleware, getTasks)    // Route to get all tasks (possibly admin use case)
+    .post(authMiddleware, createTask); // Route to create a new task
 
-router.route('/')
-    .get(authMiddleware, getUserTasks)
-
+router.route('/user') // Route to get tasks for the logged-in user
+    .get(authMiddleware, getUserTasks);
 
 router.route('/:id')
     .get(authMiddleware, getTaskById)

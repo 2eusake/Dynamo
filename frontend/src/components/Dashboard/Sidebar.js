@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   return (
-    <div className="sidebar bg-deloitte-blue text-deloitte-white w-48 p-2 flex flex-col">
+    <div className="sidebar bg-deloitte-blue text-deloitte-white min-h-full p-2 flex flex-col fixed">
       <ul className="space-y-2 text-sm">
         <li>
           <Link to="/dashboard" className="hover:text-deloitte-cyan">Dashboard</Link>

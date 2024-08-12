@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { ProjectContext } from '../../contexts/ProjectContext';
 
 const CreateProject = () => {
-  const { addProject, consultants } = useContext(ProjectContext);
+  const { addProject, consultants, updateTask } = useContext(ProjectContext);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -23,12 +23,16 @@ const CreateProject = () => {
     setTasks([...tasks, { id: Date.now(), name: '', dueDate: '', assignedTo: '' }]);
   };
 
-  const editTask = (id) => {
-    setEditingTaskId(id);
-  };
-
   const deleteTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id));
+  };
+
+  const editTask = (task) => {
+    setEditingTaskId(task.id);
+    const updatedTasks = tasks.map(t =>
+      t.id === task.id ? { ...t, name: task.name, dueDate: task.dueDate, assignedTo: task.assignedTo } : t
+    );
+    setTasks(updatedTasks);
   };
 
   const handleSubmit = (e) => {
@@ -43,6 +47,7 @@ const CreateProject = () => {
       tasks,
       consultantIds: projectConsultants.map(c => c.id)
     });
+
     setName('');
     setDescription('');
     setStartDate('');
@@ -51,12 +56,15 @@ const CreateProject = () => {
     setProjectManager('');
     setTasks([{ id: Date.now(), name: '', dueDate: '', assignedTo: '' }]);
     setProjectConsultants([]);
+    setEditingTaskId(null);
   };
 
+  const filteredConsultants = consultants.filter(c => c.role === 'consultant');
+
   return (
-    <div className="p-6 bg-deloitte-cyan min-h-screen"> {/* Background Color */}
-      <h2 className="text-2xl font-semibold text-deloitte-blue mb-6">Create Project</h2> {/* Title Styling */}
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6"> {/* Form Container */}
+    <div className="p-6 bg-deloitte-cyan min-h-screen">
+      <h2 className="text-2xl font-semibold text-deloitte-blue mb-6">Create Project</h2>
+      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6">
         <input
           type="text"
           value={name}
@@ -78,11 +86,11 @@ const CreateProject = () => {
           value={projectConsultants.map(c => c.id)}
           onChange={(e) => {
             const selectedIds = Array.from(e.target.selectedOptions, option => option.value);
-            setProjectConsultants(consultants.filter(c => selectedIds.includes(c.id.toString())));
+            setProjectConsultants(filteredConsultants.filter(c => selectedIds.includes(c.id.toString())));
           }}
           className="mb-4 p-2 border border-gray-300 rounded w-full"
         >
-          {consultants.map((consultant) => (
+          {filteredConsultants.map((consultant) => (
             <option key={consultant.id} value={consultant.id}>
               {consultant.username}
             </option>
@@ -106,10 +114,11 @@ const CreateProject = () => {
         />
         <input
           type="text"
-          value={(new Date(endDate) - new Date(startDate)) / (1000 * 3600 * 24)}
-          placeholder="Duration"
-          readOnly
-          className="mb-4 p-2 border border-gray-300 rounded w-full bg-gray-100"
+          value={budget}
+          onChange={(e) => setBudget(e.target.value)}
+          placeholder="Project Budget"
+          required
+          className="mb-4 p-2 border border-gray-300 rounded w-full"
         />
         <textarea
           value={description}
@@ -118,7 +127,7 @@ const CreateProject = () => {
           required
           className="mb-4 p-2 border border-gray-300 rounded w-full"
         />
-        <h3 className="text-xl font-semibold text-deloitte-blue mb-4">Tasks Allocation</h3> {/* Subheading */}
+        <h3 className="text-xl font-semibold text-deloitte-blue mb-4">Tasks Allocation</h3>
         {tasks.map((task, index) => (
           <div key={task.id} className="mb-4">
             <input
@@ -135,7 +144,7 @@ const CreateProject = () => {
               className="mb-2 p-2 border border-gray-300 rounded w-full"
             >
               <option value="">Assign to:</option>
-              {consultants.map((consultant) => (
+              {filteredConsultants.map((consultant) => (
                 <option key={consultant.id} value={consultant.id}>
                   {consultant.username}
                 </option>
@@ -154,18 +163,25 @@ const CreateProject = () => {
               onClick={addTask}
               className="mr-2 p-2 bg-deloitte-green text-white rounded"
             >
-              Add
+              Add Task
             </button>
             <button
               type="button"
               onClick={() => deleteTask(task.id)}
-              className="p-2 bg-red-600 text-white rounded"
+              className="mr-2 p-2 bg-red-600 text-white rounded"
             >
-              Delete
+              Delete Task
+            </button>
+            <button
+              type="button"
+              onClick={() => editTask(task)}
+              className="p-2 bg-deloitte-cyan text-white rounded"
+            >
+              Edit Task
             </button>
           </div>
         ))}
-        <h3 className="text-xl font-semibold text-deloitte-blue mb-4">Allocated Tasks</h3> {/* Subheading */}
+        <h3 className="text-xl font-semibold text-deloitte-blue mb-4">Allocated Tasks</h3>
         <table className="w-full mb-4">
           <thead>
             <tr className="bg-deloitte-blue text-white">
@@ -182,13 +198,13 @@ const CreateProject = () => {
                 <td className="p-2">{index + 1}</td>
                 <td className="p-2">{task.name}</td>
                 <td className="p-2">
-                  {consultants.find(c => c.id === task.assignedTo)?.username || 'Unassigned'}
+                  {filteredConsultants.find(c => c.id === task.assignedTo)?.username || 'Unassigned'}
                 </td>
                 <td className="p-2">{task.dueDate}</td>
                 <td className="p-2">
                   <button
                     type="button"
-                    onClick={() => editTask(task.id)}
+                    onClick={() => editTask(task)}
                     className="mr-2 p-2 bg-deloitte-cyan text-white rounded"
                   >
                     Edit
@@ -216,7 +232,7 @@ const CreateProject = () => {
             type="submit"
             className="p-2 bg-deloitte-blue text-white rounded"
           >
-            Save
+            Save Project
           </button>
         </div>
       </form>
