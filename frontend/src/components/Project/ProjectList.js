@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import './ProjectsList.css'; // Assuming you have a CSS file for styling
+import '../Project/ProjectsList.css'; // Assuming you have a CSS file for styling
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
