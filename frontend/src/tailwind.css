@@ -2,7 +2,6 @@
 
 @tailwind base;
 @tailwind components;
-
 @tailwind utilities;
 
 /* Deloitte Colors */
@@ -43,3 +42,31 @@
   color: #ffffff;
 }
 
+/* Navbar Sticky */
+.sticky-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 12rem;
+}
+
+.sidebar-collapsed {
+  width: 4rem;
+}
+
+.content-wrapper {
+  margin-left: 12rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 4rem;
+  }
+  .content-wrapper {
+    margin-left: 4rem;
+  }
+}

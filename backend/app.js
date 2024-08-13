@@ -9,18 +9,34 @@ require('dotenv').config();
 const app = express();
 
 app.use(express.json());
-
 app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 
+const User = require('./models/User');
+const Project = require('./models/Project');
+const Task = require('./models/Task');
+
+
+// Project.hasMany(Task, { foreignKey: 'project_id', as: 'tasks' });
+// Task.belongsTo(Project, { foreignKey: 'project_id' });
+
+// User.hasMany(Task, { foreignKey: 'assigned_to_user_id', as: 'tasks' });
+// Task.belongsTo(User, { foreignKey: 'assigned_to_user_id' });
+
+// User.hasMany(Project, { foreignKey: 'userId', as: 'projects' });
+// Project.belongsTo(User, { foreignKey: 'userId' });
+
+// User.hasMany(Project, { foreignKey: 'projectManagerId', as: 'managedProjects' });
+// Project.belongsTo(User, { foreignKey: 'projectManagerId', as: 'projectManager' });
+
 const PORT = process.env.PORT || 5000;
 
 sequelize.sync() 
   .then(() => {
-    console.log('Database synced');
+    console.log('Database synced son');
     app.listen(PORT, () => {
       console.log(`Server running on port 2eus_ ${PORT}`);
     });
