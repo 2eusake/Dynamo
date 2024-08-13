@@ -1,9 +1,7 @@
-// src/components/ProjectsPage/ProjectsPage.js
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import '../Project/ProjectsList.css'; // Assuming you have a CSS file for styling
+import './ProjectsList.css';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
@@ -29,30 +27,33 @@ const ProjectsPage = () => {
   }, []);
 
   return (
-    <div className="projects-page-container">
+    <div className="projects-page">
       <h1>Projects and Tasks</h1>
       {notification && <div className="notification">{notification}</div>}
-      <div className="projects-grid">
+      <div className="tiles-container">
         {projects.length > 0 ? (
           projects.map(project => (
-            <div key={project.id} className="project-card">
-              <h2>{project.name}</h2>
-              <p>{project.description || 'No description available'}</p>
-              <p>Progress: {project.progress || 0}%</p>
-              <p>Status: {project.status}</p>
-              <Link to={`/projects/${project.id}`} className="view-details-link">
-                View Details
+            <div key={project.id} className="tile">
+              <Link to={`/projects/${project.id}`}>
+                <h2>{project.name}</h2>
+                <p>{project.description || 'No description available'}</p>
+                
+                <div className="progress-bar">
+                  <div className="progress" style={{ width: `${project.progress || 0}%` }}>
+                    <span>{project.progress || 0}%</span>
+                  </div>
+                </div>
+                
+                <p>Status: {project.status}</p>
               </Link>
               {project.tasks && project.tasks.length > 0 && (
-                <div className="tasks-section">
-                  <h3>Tasks:</h3>
+                <div className="tasks-container">
                   {project.tasks.map(task => (
-                    <div key={task.id} className="task-card">
-                      <p>Task Name: {task.name}</p>
-                      <p>Assigned To: {task.assignedToUserId}</p>
-                      <p>Status: {task.status}</p>
-                      <Link to={`/tasks/${task.id}`} className="view-task-link">
-                        View Task
+                    <div key={task.id} className="task-tile">
+                      <Link to={`/tasks/${task.id}`}>
+                        <h3>{task.name}</h3>
+                        <p>Assigned To: {task.assignedToUser?.username || 'Unassigned'}</p>
+                        <p>Status: {task.status}</p>
                       </Link>
                     </div>
                   ))}

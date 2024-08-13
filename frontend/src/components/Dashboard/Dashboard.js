@@ -32,7 +32,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex flex-col lg:flex-row">
+      {/* Main Content Area */}
       <div className="flex-1 p-4 overflow-auto">
         <h2 className="text-2xl font-bold text-deloitte-blue">
           Welcome back, {user?.username}!
@@ -81,16 +82,6 @@ const Dashboard = () => {
           </div>
         </section>
 
-        {/* Section for Notifications */}
-        <section className="mt-6">
-          <h3 className="text-xl font-semibold text-deloitte-black">
-            Notifications
-          </h3>
-          <div className="border border-gray-300 p-4 rounded-md shadow-md h-64 overflow-auto">
-            {/* Render notifications here */}
-          </div>
-        </section>
-
         {/* Section for Charts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
           <section>
@@ -112,6 +103,16 @@ const Dashboard = () => {
           </section>
         </div>
       </div>
+
+      {/* Notification Bar */}
+      <aside className="w-full lg:w-1/4 p-4">
+        <h3 className="text-xl font-semibold text-deloitte-black">
+          Notifications
+        </h3>
+        <div className="border border-gray-300 p-4 rounded-md shadow-md h-64 overflow-auto">
+          {/* Render notifications here */}
+        </div>
+      </aside>
     </div>
   );
 };
