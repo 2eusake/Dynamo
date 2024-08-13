@@ -1,134 +1,175 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ProjectContext } from '../../contexts/ProjectContext';
+//import './CreateProject.css'; // Assuming you have a CSS file for styling
 
 const CreateProject = () => {
-  const { addProject } = useContext(ProjectContext);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [projectManager, setProjectManager] = useState('');
-  const [tasks, setTasks] = useState([{ name: '', dueDate: '', assignedTo: '' }]);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    startDate: '',
+    endDate: '',
+    projectManagerId: '',
+    tasks: [{ name: '', dueDate: '', assignedToId: '' }],
+  });
+
   const [consultants, setConsultants] = useState([]);
   const [projectManagers, setProjectManagers] = useState([]);
+  const [notification, setNotification] = useState('');
 
   useEffect(() => {
+    // Fetch consultants and project managers
     const fetchUsers = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/users', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}` // Assuming you're using a token stored in localStorage
-          }
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
         });
         const users = response.data;
         setConsultants(users.filter(user => user.role === 'consultant'));
         setProjectManagers(users.filter(user => user.role === 'projectManager'));
       } catch (error) {
-        console.error('Error fetching users', error);
+        console.error('Error fetching users:', error);
       }
     };
 
     fetchUsers();
   }, []);
 
-  const handleTaskChange = (index, key, value) => {
-    const newTasks = [...tasks];
-    newTasks[index][key] = value;
-    setTasks(newTasks);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleTaskChange = (index, field, value) => {
+    const newTasks = [...formData.tasks];
+    newTasks[index][field] = value;
+    setFormData({ ...formData, tasks: newTasks });
   };
 
   const addTask = () => {
-    setTasks([...tasks, { name: '', dueDate: '', assignedTo: '' }]);
+    setFormData({
+      ...formData,
+      tasks: [...formData.tasks, { name: '', dueDate: '', assignedToId: '' }],
+    });
   };
 
-  const handleSubmit = (e) => {
+  const removeTask = (index) => {
+    const newTasks = formData.tasks.filter((_, idx) => idx !== index);
+    setFormData({ ...formData, tasks: newTasks });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    addProject({ name, description, startDate, endDate, projectManager, tasks });
-    setName('');
-    setDescription('');
-    setStartDate('');
-    setEndDate('');
-    setProjectManager('');
-    setTasks([{ name: '', dueDate: '', assignedTo: '' }]);
+    try {
+      // Send POST request to create a new project
+      await axios.post('http://localhost:5000/api/projects', formData, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setNotification('Project created successfully!');
+      // Reset form
+      setFormData({
+        name: '',
+        description: '',
+        startDate: '',
+        endDate: '',
+        projectManagerId: '',
+        tasks: [{ name: '', dueDate: '', assignedToId: '' }],
+      });
+    } catch (error) {
+      console.error('Error creating project:', error);
+      setNotification('Failed to create project.');
+    }
   };
 
   return (
-    <div>
-      <h2>Create Project</h2>
+    <div className="create-project-container">
+      <h2>Create New Project</h2>
+      {notification && <div className="notification">{notification}</div>}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
           placeholder="Project Name"
           required
         />
         <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
           placeholder="Project Description"
           required
         />
         <input
           type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          placeholder="Start Date"
+          name="startDate"
+          value={formData.startDate}
+          onChange={handleInputChange}
           required
         />
         <input
           type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          placeholder="End Date"
+          name="endDate"
+          value={formData.endDate}
+          onChange={handleInputChange}
           required
         />
         <select
-          value={projectManager}
-          onChange={(e) => setProjectManager(e.target.value)}
-          placeholder="Select Project Manager"
+          name="projectManagerId"
+          value={formData.projectManagerId}
+          onChange={handleInputChange}
           required
         >
           <option value="">Select Project Manager</option>
           {projectManagers.map(pm => (
-            <option key={pm.id} value={pm.id}>{pm.username}</option>
+            <option key={pm.id} value={pm.id}>
+              {pm.username}
+            </option>
           ))}
         </select>
-        <div>
-          <h3>Tasks</h3>
-          {tasks.map((task, index) => (
-            <div key={index}>
-              <input
-                type="text"
-                value={task.name}
-                onChange={(e) => handleTaskChange(index, 'name', e.target.value)}
-                placeholder="Task Name"
-                required
-              />
-              <input
-                type="date"
-                value={task.dueDate}
-                onChange={(e) => handleTaskChange(index, 'dueDate', e.target.value)}
-                placeholder="Due Date"
-                required
-              />
-              <select
-                value={task.assignedTo}
-                onChange={(e) => handleTaskChange(index, 'assignedTo', e.target.value)}
-                placeholder="Assign to"
-                required
-              >
-                <option value="">Assign to</option>
-                {consultants.map(consultant => (
-                  <option key={consultant.id} value={consultant.id}>{consultant.username}</option>
-                ))}
-              </select>
-            </div>
-          ))}
-          <button type="button" onClick={addTask}>Add Task</button>
-        </div>
-        <button type="submit">Create</button>
+        <h3>Tasks</h3>
+        {formData.tasks.map((task, index) => (
+          <div key={index} className="task-container">
+            <input
+              type="text"
+              value={task.name}
+              onChange={(e) => handleTaskChange(index, 'name', e.target.value)}
+              placeholder="Task Name"
+              required
+            />
+            <input
+              type="date"
+              value={task.dueDate}
+              onChange={(e) => handleTaskChange(index, 'dueDate', e.target.value)}
+              required
+            />
+            <select
+              value={task.assignedToId}
+              onChange={(e) => handleTaskChange(index, 'assignedToId', e.target.value)}
+              required
+            >
+              <option value="">Assign to Consultant</option>
+              {consultants.map(consultant => (
+                <option key={consultant.id} value={consultant.id}>
+                  {consultant.username}
+                </option>
+              ))}
+            </select>
+            {index > 0 && (
+              <button type="button" onClick={() => removeTask(index)}>
+                Remove Task
+              </button>
+            )}
+          </div>
+        ))}
+        <button type="button" onClick={addTask}>
+          Add Another Task
+        </button>
+        <button type="submit">Create Project</button>
       </form>
     </div>
   );

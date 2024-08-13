@@ -35,7 +35,7 @@ const Dashboard = () => {
     <div className="flex-1 flex flex-col">
       <div className="flex-1 p-4 overflow-auto">
         <h2 className="text-2xl font-bold text-deloitte-blue">
-          Welcome back, {user?.name}!
+          Welcome back, {user?.username}!
         </h2>
 
         {/* Section for Projects Exceeding Allocated Time */}

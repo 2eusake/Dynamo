@@ -1,4 +1,6 @@
-const { Project, Task, sequelize } = require('../models/Project');
+const { Project, Task } = require('../models');
+const sequelize = require('../config/database')
+
 
 const getProjects = async (req, res) => {
     try {

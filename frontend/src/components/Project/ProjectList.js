@@ -1,41 +1,67 @@
-import React, { useContext, useEffect } from 'react';
+// src/components/ProjectsPage/ProjectsPage.js
+
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ProjectContext } from '../../contexts/ProjectContext';
-import './ProjectsList.css';
+import axios from 'axios';
+import './ProjectsList.css'; // Assuming you have a CSS file for styling
 
 const ProjectsPage = () => {
-  const { projects, fetchUserProjects } = useContext(ProjectContext);
+  const [projects, setProjects] = useState([]);
+  const [notification, setNotification] = useState('');
 
   useEffect(() => {
-    fetchUserProjects();
-  }, [fetchUserProjects]);
+    // Fetch projects from the backend
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/projects', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        setProjects(response.data);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        setNotification('Failed to fetch projects.');
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   return (
-    <div className="projects-page">
-      <h1 className="text-deloitte-blue">Projects and Tasks</h1>
-      <div className="tiles-container">
+    <div className="projects-page-container">
+      <h1>Projects and Tasks</h1>
+      {notification && <div className="notification">{notification}</div>}
+      <div className="projects-grid">
         {projects.length > 0 ? (
           projects.map(project => (
-            <div key={project.id} className="tile bg-deloitte-cyan text-deloitte-black">
-              <Link to={`/projects/${project.id}`}>
-                <h2>{project.name}</h2>
-                <p>{project.description || 'No description available'}</p>
-                <p>Progress: {project.progress || 0}%</p>
+            <div key={project.id} className="project-card">
+              <h2>{project.name}</h2>
+              <p>{project.description || 'No description available'}</p>
+              <p>Progress: {project.progress || 0}%</p>
+              <p>Status: {project.status}</p>
+              <Link to={`/projects/${project.id}`} className="view-details-link">
+                View Details
               </Link>
-              <div className="tasks-container">
-                {project.tasks.map(task => (
-                  <div key={task.id} className="task-tile bg-deloitte-white">
-                    <Link to={`/tasks/${task.id}`}>
-                      <h3>{task.name}</h3>
-                      <p>Progress: {task.progress || 0}%</p>
-                    </Link>
-                  </div>
-                ))}
-              </div>
+              {project.tasks && project.tasks.length > 0 && (
+                <div className="tasks-section">
+                  <h3>Tasks:</h3>
+                  {project.tasks.map(task => (
+                    <div key={task.id} className="task-card">
+                      <p>Task Name: {task.name}</p>
+                      <p>Assigned To: {task.assignedToUserId}</p>
+                      <p>Status: {task.status}</p>
+                      <Link to={`/tasks/${task.id}`} className="view-task-link">
+                        View Task
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ))
         ) : (
-          <p>No projects available</p>
+          <p>No projects available.</p>
         )}
       </div>
     </div>
