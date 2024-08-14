@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CreateProject = () => {
   const [formData, setFormData] = useState({
@@ -30,6 +32,7 @@ const CreateProject = () => {
         setProjectManagers(users.filter(user => user.role === 'projectManager'));
       } catch (error) {
         console.error('Error fetching users:', error);
+        toast.error('Failed to fetch users.');
       }
     };
 
@@ -89,6 +92,7 @@ const CreateProject = () => {
         },
       });
       setNotification('Project created successfully!');
+      toast.success('Project created successfully!')
       // Reset form
       setFormData({
         name: '',
@@ -102,6 +106,7 @@ const CreateProject = () => {
     } catch (error) {
       console.error('Error creating project:', error);
       setNotification('Failed to create project.');
+      toast.error('Failed to create project.');
     }
   };
 

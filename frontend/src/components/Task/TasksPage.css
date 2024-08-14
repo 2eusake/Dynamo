@@ -1,0 +1,59 @@
+/* src/components/TasksPage/TasksPage.css */
+
+.tasks-page {
+    padding: 20px;
+    font-family: 'Deloitte', sans-serif;
+  }
+  
+  .projects-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .project-tasks {
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .project-tasks h2 {
+    font-size: 1.5rem;
+    color: #002776;
+  }
+  
+  .tasks-container {
+    margin-top: 10px;
+  }
+  
+  .task-tile {
+    background-color: #ffffff;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 5px;
+    transition: transform 0.3s;
+  }
+  
+  .task-tile:hover {
+    transform: translateY(-5px);
+  }
+  
+  .task-tile h3 {
+    font-size: 1.2rem;
+    color: #007a33;
+  }
+  
+  .task-tile p {
+    font-size: 0.9rem;
+    color: #333;
+  }
+  
+  .notification {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+  

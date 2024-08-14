@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -13,9 +15,11 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(email, password);
+      toast.success('Login successful! Redirecting to dashboard...');
       navigate('/dashboard');
     } catch (error) {
       setError('Unable to process that login, please try again.');
+      toast.error('Login failed. Please check your credentials.');
       console.error('Login failed', error);
     }
   };
