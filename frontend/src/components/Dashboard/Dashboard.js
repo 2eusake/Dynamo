@@ -15,15 +15,12 @@ const Dashboard = () => {
     fetchUserTasks();
   }, [fetchUserProjects, fetchUserTasks]);
 
-  // Calculate projects that are exceeding their allocated time
   const exceedingProjects = projects.filter(project => {
     return project.progress < 100 && new Date(project.dueDate) < new Date();
   });
 
-  // Calculate current ongoing projects
   const currentProjects = projects.filter(project => project.progress < 100);
 
-  // Helper function to calculate the difference in days
   const calculateDaysOverdue = (dueDate) => {
     const now = new Date();
     const due = new Date(dueDate);
@@ -32,30 +29,29 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row">
+    <div className="flex flex-col lg:flex-row h-screen">
       {/* Main Content Area */}
-      <div className="flex-1 p-4 overflow-auto">
-        <h2 className="text-2xl font-bold text-deloitte-blue">
+      <div className="flex-1 p-6 overflow-auto bg-gray-50">
+        <h2 className="text-3xl font-bold text-deloitte-blue mb-4">
           Welcome back, {user?.username}!
         </h2>
 
         {/* Section for Projects Exceeding Allocated Time */}
         <section className="mt-6">
-          <h3 className="text-xl font-semibold text-deloitte-black">
-            Projects exceeding allocated time
+          <h3 className="text-2xl font-semibold text-deloitte-black mb-4">
+            Projects Exceeding Allocated Time
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {exceedingProjects.map(project => (
-              <div key={project.id} className="border border-red-600 p-4 rounded-md shadow-md">
-                <h4 className="text-lg font-semibold text-deloitte-black">
-                  Title: {project.name}
+              <div key={project.id} className="border border-red-600 p-6 rounded-lg bg-red-50 shadow-md">
+                <h4 className="text-lg font-semibold text-red-800 mb-2">
+                  {project.name}
                 </h4>
-                <p className="text-red-600">
-                  Progress: {project.progress}% done, 
-                  {calculateDaysOverdue(project.dueDate)} days past due date
+                <p className="text-red-600 mb-4">
+                  {project.progress}% done, {calculateDaysOverdue(project.dueDate)} days past due date
                 </p>
-                <p className="text-deloitte-black mt-2">Pending Tasks:</p>
-                <ul className="list-disc pl-5 text-deloitte-black">
+                <p className="font-semibold text-deloitte-black mb-2">Pending Tasks:</p>
+                <ul className="list-disc pl-5 text-deloitte-black space-y-1">
                   {tasks.filter(task => task.projectId === project.id && !task.completed).map(task => (
                     <li key={task.id}>{task.name}</li>
                   ))}
@@ -67,14 +63,14 @@ const Dashboard = () => {
 
         {/* Section for Current Projects */}
         <section className="mt-6">
-          <h3 className="text-xl font-semibold text-deloitte-black">
+          <h3 className="text-2xl font-semibold text-deloitte-black mb-4">
             Current Projects
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {currentProjects.map(project => (
-              <div key={project.id} className="border border-gray-300 p-4 rounded-md shadow-md">
-                <h4 className="text-lg font-semibold text-deloitte-black">
-                  Title: {project.name}
+              <div key={project.id} className="border border-gray-300 p-6 rounded-lg bg-white shadow-md">
+                <h4 className="text-lg font-semibold text-deloitte-black mb-2">
+                  {project.name}
                 </h4>
                 <p className="text-deloitte-black">Progress: {project.progress}%</p>
               </div>
@@ -83,21 +79,21 @@ const Dashboard = () => {
         </section>
 
         {/* Section for Charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
           <section>
-            <h3 className="text-xl font-semibold text-deloitte-black">
-              Allocated time VS actual time
+            <h3 className="text-2xl font-semibold text-deloitte-black mb-4">
+              Allocated Time vs Actual Time
             </h3>
-            <div className="border border-gray-300 p-4 rounded-md shadow-md">
+            <div className="border border-gray-300 p-6 rounded-lg bg-white shadow-md">
               <ProjectCompletionChart />
             </div>
           </section>
 
           <section>
-            <h3 className="text-xl font-semibold text-deloitte-black">
-              Weekly performance
+            <h3 className="text-2xl font-semibold text-deloitte-black mb-4">
+              Weekly Performance
             </h3>
-            <div className="border border-gray-300 p-4 rounded-md shadow-md">
+            <div className="border border-gray-300 p-6 rounded-lg bg-white shadow-md">
               <WeeklyPerformanceChart />
             </div>
           </section>
@@ -105,11 +101,11 @@ const Dashboard = () => {
       </div>
 
       {/* Notification Bar */}
-      <aside className="w-full lg:w-1/4 p-4">
-        <h3 className="text-xl font-semibold text-deloitte-black">
+      <aside className="w-full lg:w-1/4 p-6 bg-white border-l border-gray-200 shadow-lg">
+        <h3 className="text-2xl font-semibold text-deloitte-black mb-4">
           Notifications
         </h3>
-        <div className="border border-gray-300 p-4 rounded-md shadow-md h-64 overflow-auto">
+        <div className="border border-gray-300 p-4 rounded-lg shadow-md h-64 overflow-y-auto bg-gray-50">
           {/* Render notifications here */}
         </div>
       </aside>

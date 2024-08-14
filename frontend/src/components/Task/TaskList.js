@@ -1,17 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ProjectContext } from '../../contexts/ProjectContext';
 
 const TaskList = () => {
-  // Dummy data for tasks
-  const tasks = [
-    { id: 1, name: 'Task 1', status: 'Pending' },
-    { id: 2, name: 'Task 2', status: 'Completed' },
-  ];
+  const { projects } = useContext(ProjectContext);
+  const tasks = projects.flatMap(project => project.tasks);
 
   return (
     <div>
       <h3>Tasks</h3>
       <ul>
-        {tasks.map((task) => (
+        {tasks.map(task => (
           <li key={task.id}>
             {task.name} - {task.status}
           </li>
