@@ -18,6 +18,9 @@ Task.belongsTo(User, { foreignKey: 'assigned_to_user_id' });
 User.hasMany(Project, { foreignKey: 'projectManagerId', as: 'managedProjects' });
 Project.belongsTo(User, { foreignKey: 'projectManagerId', as: 'projectManager' });
 
+Task.belongsTo(Project, { as: 'project', foreignKey: 'project_id' });
+Task.belongsTo(User, { as: 'assignedToUser', foreignKey: 'assigned_to_user_id' });
+
 module.exports = {
   Project,
   Task,

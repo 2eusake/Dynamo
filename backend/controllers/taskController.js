@@ -16,11 +16,12 @@ const getTasks = async (req, res) => {
 // Create a new task
 const createTask = async (req, res) => {
     try {
-        const { name, description, project_id, due_date } = req.body;
+        const { name, description, project_id, start_date, due_date } = req.body;
         const task = await Task.create({
             name,
             description,
             project_id,
+            start_date,
             due_date,
             assigned_to_user_id: req.user.id,
             status: 'notStarted' // Default status
@@ -47,9 +48,9 @@ const getTaskById = async (req, res) => {
 // Update a task
 const updateTask = async (req, res) => {
     try {
-        const { name, description, status, due_date } = req.body;
+        const { name, description, status, start_date, due_date } = req.body;
         const [updated] = await Task.update(
-            { name, description, status, due_date },
+            { name, description, status, start_date, due_date },
             { where: { id: req.params.id } }
         );
         if (!updated) return res.status(404).json({ message: 'Task not found' });
