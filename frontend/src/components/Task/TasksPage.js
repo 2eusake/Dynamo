@@ -7,7 +7,7 @@ import './TasksPage.css';
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
-  const [notification, setNotification] = useState('');
+  //const [notification, setNotification] = useState('');
 
   useEffect(() => {
     // Fetch tasks for the logged-in user

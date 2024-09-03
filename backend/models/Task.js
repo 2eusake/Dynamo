@@ -1,11 +1,18 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const User = require('./User');
+const Project = require('./Project');
 
 const Task = sequelize.define('Task', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
+  },
+  taskId: {  
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true, 
   },
   name: {
     type: DataTypes.STRING,
@@ -64,6 +71,8 @@ const Task = sequelize.define('Task', {
     defaultValue: DataTypes.NOW,
     onUpdate: DataTypes.NOW
   }
+}, {
+  timestamps: true
 });
 
 module.exports = Task;
