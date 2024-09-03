@@ -18,13 +18,12 @@ const createProject = async (req, res) => {
     const { name, description, startDate, endDate, status, projectManagerId, tasks } = req.body;
     const transaction = await sequelize.transaction();
     try {
-        // Create a new project associated with the logged-in user
         const project = await Project.create({ 
             name, 
             description, 
             startDate,
             endDate,
-            status: status || 'active', // Default to 'active' if not provided
+            status: status || 'active', 
             projectManagerId,
             userId: req.user.id 
         }, { transaction });
@@ -32,6 +31,7 @@ const createProject = async (req, res) => {
         if (tasks && tasks.length) {
             const taskPromises = tasks.map(task => 
                 Task.create({ 
+                    taskId: task.taskId, // Ensure taskId is being used
                     name: task.name, 
                     description: task.description,
                     due_date: task.due_date, 

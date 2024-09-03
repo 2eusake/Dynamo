@@ -16,15 +16,16 @@ const getTasks = async (req, res) => {
 // Create a new task
 const createTask = async (req, res) => {
     try {
-        const { name, description, project_id, start_date, due_date } = req.body;
+        const { taskId, name, description, project_id, start_date, due_date } = req.body; // Include taskId
         const task = await Task.create({
+            taskId,  // Ensure taskId is being used
             name,
             description,
             project_id,
             start_date,
             due_date,
             assigned_to_user_id: req.user.id,
-            status: 'notStarted' // Default status
+            status: 'notStarted' 
         });
         res.status(201).json(task);
     } catch (error) {
