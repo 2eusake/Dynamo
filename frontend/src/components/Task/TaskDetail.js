@@ -1,20 +1,25 @@
+<<<<<<< HEAD
 import React, { useContext, useEffect, useState } from 'react';
+=======
+import React, { useState, useEffect } from 'react';
+>>>>>>> 6ff4711fd14c1449a2ad5b76ecb523b6786a0b62
 import { useParams } from 'react-router-dom';
-import { ProjectContext } from '../../contexts/ProjectContext';
 
 const TaskDetail = () => {
   const { id } = useParams();
-  const { projects } = useContext(ProjectContext);
   const [task, setTask] = useState(null);
 
-  useEffect(() => {
-    if (!projects) return;
+  const tasks = [
+    { id: 3, name: 'Task 1 for Alpha', description: 'Description for Task 1', progress: 20 },
+    { id: 4, name: 'Task 2 for Alpha', description: 'Description for Task 2', progress: 50 },
+    { id: 5, name: 'Task 1 for Beta', description: 'Description for Task 1', progress: 60 },
+    { id: 6, name: 'Task 2 for Beta', description: 'Description for Task 2', progress: 80 },
+  ];
 
-    projects.forEach(project => {
-      const foundTask = project.tasks.find(task => task.id === parseInt(id, 10));
-      if (foundTask) setTask(foundTask);
-    });
-  }, [id, projects]);
+  useEffect(() => {
+    const foundTask = tasks.find(task => task.id === parseInt(id, 10));
+    if (foundTask) setTask(foundTask);
+  }, [id]);
 
   return (
     <div className="container mx-auto p-6 bg-white rounded-lg shadow-md">

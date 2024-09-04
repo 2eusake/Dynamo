@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CreateProject = () => {
+<<<<<<< HEAD
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -12,6 +13,18 @@ const CreateProject = () => {
     projectManagerId: '',
     tasks: [{ name: '', dueDate: '', assignedToId: '', durationHours: 0 }],
   });
+=======
+  const { addProject, consultants = [], updateTask } = useContext(ProjectContext);
+  const [name, setName] = useState('Demo Project');
+  const [description, setDescription] = useState('This is a demo project description.');
+  const [startDate, setStartDate] = useState('2024-09-01');
+  const [endDate, setEndDate] = useState('2024-12-01');
+  const [budget, setBudget] = useState('10000');
+  const [projectManager, setProjectManager] = useState('John Doe');
+  const [projectConsultants, setProjectConsultants] = useState([]);
+  const [tasks, setTasks] = useState([{ id: Date.now(), name: '', dueDate: '', assignedTo: '' }]);
+  const [editingTaskId, setEditingTaskId] = useState(null);
+>>>>>>> 6ff4711fd14c1449a2ad5b76ecb523b6786a0b62
 
   const [consultants, setConsultants] = useState([]);
   const [projectManagers, setProjectManagers] = useState([]);
@@ -71,6 +84,7 @@ const CreateProject = () => {
   };
 
   const addTask = () => {
+<<<<<<< HEAD
     setFormData({
       ...formData,
       tasks: [...formData.tasks, { name: '', dueDate: '', assignedToId: '', durationHours: 0 }],
@@ -109,6 +123,56 @@ const CreateProject = () => {
       toast.error('Failed to create project.');
     }
   };
+=======
+    setTasks([...tasks, { id: Date.now(), name: '', dueDate: '', assignedTo: '' }]);
+  };
+
+  const deleteTask = (id) => {
+    setTasks(tasks.filter(task => task.id !== id));
+  };
+
+  const editTask = (task) => {
+    setEditingTaskId(task.id);
+    const updatedTasks = tasks.map(t =>
+      t.id === task.id ? { ...t, name: task.name, dueDate: task.dueDate, assignedTo: task.assignedTo } : t
+    );
+    setTasks(updatedTasks);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Simulate adding a project (since it's a demo)
+    console.log({
+      name,
+      description,
+      startDate,
+      endDate,
+      budget,
+      projectManager,
+      tasks,
+      consultantIds: projectConsultants.map(c => c.id)
+    });
+
+    setName('Demo Project');
+    setDescription('This is a demo project description.');
+    setStartDate('2024-09-01');
+    setEndDate('2024-12-01');
+    setBudget('10000');
+    setProjectManager('John Doe');
+    setTasks([{ id: Date.now(), name: '', dueDate: '', assignedTo: '' }]);
+    setProjectConsultants([]);
+    setEditingTaskId(null);
+  };
+
+  // Mocked consultants data for demo purposes
+  const demoConsultants = [
+    { id: 1, username: 'Alice Consultant', role: 'consultant' },
+    { id: 2, username: 'Bob Consultant', role: 'consultant' },
+    ...consultants,
+  ];
+
+  const filteredConsultants = demoConsultants.filter(c => c.role === 'consultant');
+>>>>>>> 6ff4711fd14c1449a2ad5b76ecb523b6786a0b62
 
   return (
     <div className="create-project-container p-6 bg-white rounded-lg shadow-md">
@@ -234,6 +298,7 @@ const CreateProject = () => {
             )}
           </div>
         ))}
+<<<<<<< HEAD
         <button
           type="button"
           onClick={addTask}
@@ -246,6 +311,53 @@ const CreateProject = () => {
           className="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600"
         >
           Create Project
+=======
+        <h3 className="text-xl font-semibold text-deloitte-blue mb-4">Allocated Tasks</h3>
+        <table className="w-full mb-4">
+          <thead>
+            <tr className="bg-deloitte-blue text-white">
+              <th className="p-2">Task</th>
+              <th className="p-2">Task Description</th>
+              <th className="p-2">Assigned to</th>
+              <th className="p-2">Due Date</th>
+              <th className="p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasks.map((task, index) => (
+              <tr key={task.id} className="border-b">
+                <td className="p-2">{index + 1}</td>
+                <td className="p-2">{task.name}</td>
+                <td className="p-2">
+                  {filteredConsultants.find(c => c.id === task.assignedTo)?.username || 'Unassigned'}
+                </td>
+                <td className="p-2">{task.dueDate}</td>
+                <td className="p-2">
+                  <button
+                    type="button"
+                    onClick={() => deleteTask(task.id)}
+                    className="mr-2 p-2 bg-red-600 text-white rounded"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => editTask(task)}
+                    className="p-2 bg-deloitte-cyan text-white rounded"
+                  >
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button
+          type="submit"
+          className="p-2 bg-deloitte-blue text-white rounded w-full"
+        >
+          Save Project
+>>>>>>> 6ff4711fd14c1449a2ad5b76ecb523b6786a0b62
         </button>
       </form>
     </div>
