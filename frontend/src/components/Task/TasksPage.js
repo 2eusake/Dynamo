@@ -7,10 +7,8 @@ import './TasksPage.css';
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
-  const [notification, setNotification] = useState('');
 
   useEffect(() => {
-    // Fetch tasks for the logged-in user
     const fetchTasks = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/tasks/user', {
@@ -18,9 +16,6 @@ const TasksPage = () => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         });
-
-        // Log the response to check the data
-        console.log('Fetched tasks:', response.data);
 
         setTasks(response.data);
         toast.success('Tasks fetched successfully!');
@@ -33,15 +28,12 @@ const TasksPage = () => {
     fetchTasks();
   }, []);
 
-  // Check the format of tasks data
-  console.log('Tasks state:', tasks);
-
-  // Group tasks by project
   const groupedTasks = tasks.reduce((acc, task) => {
-    if (!acc[task.project_id]) {
-      acc[task.project_id] = { project_id: task.project_id, tasks: [] };
+    const projectId = task.project_id || 'Unassigned';
+    if (!acc[projectId]) {
+      acc[projectId] = { project_id: projectId, tasks: [] };
     }
-    acc[task.project_id].tasks.push(task);
+    acc[projectId].tasks.push(task);
     return acc;
   }, {});
 

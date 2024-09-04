@@ -1,13 +1,13 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../../contexts/AuthContext';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState, useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
+//import Picture3 from "../../assets/Picture3.png";
+import "./Login.css"; // Import the external CSS file
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -15,27 +15,36 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(email, password);
-      toast.success('Login successful! Redirecting to dashboard...');
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (error) {
-      setError('Unable to process that login, please try again.');
-      toast.error('Login failed. Please check your credentials.');
-      console.error('Login failed', error);
+      setError("Unable to process that login, please try again.");
+      console.error("Login failed", error);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-deloitte-white">
-      <div className="bg-deloitte-blue p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-deloitte-white text-2xl mb-6 text-center">Login Required</h1>
+    <div className="login-container">
+      <div className="login-box">
+        <div className="logo-container">
+          <img
+            src="https://s3.amazonaws.com/company-photo.theladders.com/17064/fec5ed0f-31ae-46f8-b7e1-6b09b01c6714.png"
+            alt="Deloitte Logo"
+            className="deloitte-logo"
+          />
+          {/* <img src={Picture3} alt="App Name" className="app-name" /> */}
+        </div>
+
+        <h2 className="login-title">Login</h2>
         {error && (
-          <div className="alertMessage bg-red-500 text-deloitte-white p-2 rounded mb-4 text-center" role="alert">
+          <div className="error-message" role="alert">
             {error}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="eid" className="text-deloitte-white block mb-2">Email</label>
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="input-group">
+            <label htmlFor="eid" className="input-label">
+              Email ID
+            </label>
             <input
               name="eid"
               id="eid"
@@ -43,12 +52,14 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="username"
-              className="w-full p-2 rounded border border-deloitte-cyan focus:outline-none focus:ring-2 focus:ring-deloitte-cyan"
+              className="input-field"
               required
             />
           </div>
-          <div>
-            <label htmlFor="pw" className="text-deloitte-white block mb-2">Password</label>
+          <div className="input-group">
+            <label htmlFor="pw" className="input-label">
+              Password
+            </label>
             <input
               name="pw"
               id="pw"
@@ -56,21 +67,23 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
-              className="w-full p-2 rounded border border-deloitte-cyan focus:outline-none focus:ring-2 focus:ring-deloitte-cyan"
+              className="input-field"
               required
             />
           </div>
-          <p className="buttons">
-            <input
-              type="submit"
-              id="submit"
-              value="Log in"
-              className="w-full bg-deloitte-green text-deloitte-black py-2 rounded hover:bg-deloitte-cyan"
-            />
-          </p>
-          <p className="mt-4 text-deloitte-white text-center">
-            Don't have an account? <Link to="/register" className="text-deloitte-cyan hover:underline">Register here</Link>
-          </p>
+          <div className="button-group">
+            <button type="submit" className="login-button">
+              Login
+            </button>
+          </div>
+          <div className="link-group">
+            <Link to="/forgot-password" className="link">
+              Forgot password?
+            </Link>
+            <Link to="/register" className="link">
+              Create new account
+            </Link>
+          </div>
         </form>
       </div>
     </div>

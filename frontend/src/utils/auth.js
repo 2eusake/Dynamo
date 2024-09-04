@@ -4,6 +4,9 @@ export const refreshToken = async () => {
   const token = localStorage.getItem('token');
   const refreshToken = localStorage.getItem('refreshToken');
 
+  console.log('Token:', token); 
+  console.log('RefreshToken:', refreshToken);
+
   if (!token || !refreshToken) {
     // Handle the case where tokens are missing
     console.error('Tokens missing');

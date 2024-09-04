@@ -23,7 +23,7 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem('token', response.data.token);
       setUser(response.data.user); // Make sure the response contains user data
     } catch (error) {
-      console.error('Login failed', error);
+      console.error('Failed to log in', error);
     }
   };
 
@@ -39,4 +39,4 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-export { AuthProvider, AuthContext };
+export { AuthContext, AuthProvider };
