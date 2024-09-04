@@ -14,6 +14,16 @@ const getProjects = async (req, res) => {
     }
 };
 
+const getProjectsByUser = async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const projects = await Project.findAll({ where: { userId } });
+      res.json(projects);
+    } catch (error) {
+      res.status(500).json({ error: 'Server Error' });
+    }
+  };
+
 const createProject = async (req, res) => {
     const { name, description, startDate, endDate, status, projectManagerId, tasks } = req.body;
     const transaction = await sequelize.transaction();
@@ -125,4 +135,5 @@ module.exports = {
     getProjectById,
     updateProject,
     deleteProject,
+    getProjectsByUser,
 };

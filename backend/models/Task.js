@@ -13,6 +13,7 @@ const Task = sequelize.define('Task', {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true, 
+    field: 'task_id'
   },
   name: {
     type: DataTypes.STRING,

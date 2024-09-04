@@ -6,7 +6,8 @@ const {
     createProject, 
     getProjectById, 
     updateProject, 
-    deleteProject 
+    deleteProject,
+    getProjectsByUser 
 } = require('../controllers/projectController');
 
 // Project routes
@@ -19,4 +20,7 @@ router.route('/:id')
     .put(authMiddleware, updateProject) // Update project by ID
     .delete(authMiddleware, deleteProject); // Delete project by ID
 
+router.route('/user/:userId')
+    .get(authMiddleware, getProjectsByUser);
+    
 module.exports = router;

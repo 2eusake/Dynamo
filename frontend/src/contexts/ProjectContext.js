@@ -41,6 +41,7 @@ const ProjectProvider = ({ children }) => {
     try {
       await refreshToken(); // Refresh the token if needed
       const token = localStorage.getItem('token');
+      console.log('Fetching user projects with token:', token);
       const response = await axios.get('http://localhost:5000/api/projects/user', {
         headers: { Authorization: `Bearer ${token}` },
       });

@@ -13,6 +13,16 @@ const getTasks = async (req, res) => {
     }
 };
 
+const getTasksByProject = async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      const tasks = await Task.findAll({ where: { projectId } });
+      res.json(tasks);
+    } catch (error) {
+      res.status(500).json({ error: 'Server Error' });
+    }
+  };
+
 // Create a new task
 const createTask = async (req, res) => {
     try {
@@ -98,5 +108,6 @@ module.exports = {
     getTaskById,
     updateTask,
     deleteTask,
-    getUserTasks
+    getUserTasks,
+    getTasksByProject
 };

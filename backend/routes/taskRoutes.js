@@ -7,7 +7,8 @@ const {
     getTaskById, 
     updateTask, 
     deleteTask,
-    getUserTasks 
+    getUserTasks,
+    getTasksByProject 
 } = require('../controllers/taskController');
 
 // Task routes
@@ -22,5 +23,8 @@ router.route('/:id')
     .get(authMiddleware, getTaskById)
     .put(authMiddleware, updateTask)
     .delete(authMiddleware, deleteTask);
+
+router.route('/project/:projectId')
+    .get(authMiddleware, getTasksByProject);
 
 module.exports = router;
