@@ -6,26 +6,28 @@ import { FaBell } from "react-icons/fa"; // Import the notification icon
 const Navbar = () => {
   const { user, logout } = useAuth();
   const logoUrl =
-    "https://png.pngitem.com/pimgs/s/214-2145556_deloitte-logo-png-white-transparent-png.png"; // Deloitte logo URL
+    "https://s3.amazonaws.com/company-photo.theladders.com/17064/fec5ed0f-31ae-46f8-b7e1-6b09b01c6714.png"; // Deloitte logo URL
 
   return (
-    <nav className="bg-deloitte-blue text-deloitte-white p-2 flex justify-between items-center sticky-navbar">
+    <nav className="bg-white text-deloitte-dark-green p-2 flex justify-between items-center shadow-md sticky-navbar">
       <div className="flex items-center">
         <img src={logoUrl} alt="Deloitte Logo" className="h-8 mr-4" />{" "}
         {/* Deloitte Logo */}
-        <span className="text-lg font-bold">Project Management Tool</span>{" "}
-        {/* Project Management Tool text */}
+        <div className="Dynamo">
+          <span className="text-lg font-bold">Dynamo</span>{" "}
+          {/* Project Management Tool text */}
+        </div>
       </div>
       <ul className="flex space-x-4 text-sm"></ul>
       <div className="text-sm flex items-center">
         {user ? (
           <>
-            <FaBell className="text-deloitte-white hover:text-deloitte-cyan mr-4 cursor-pointer" />{" "}
+            <FaBell className="text-deloitte-dark-green hover:text-deloitte-cyan mr-4 cursor-pointer" />{" "}
             {/* Notification icon */}
             <span className="mr-2">{user.username}</span>
             <button
               onClick={logout}
-              className="bg-deloitte-green hover:bg-deloitte-cyan text-deloitte-black px-2 py-1 rounded"
+              className="bg-deloitte-dark-green hover:bg-deloitte-cyan text-white px-2 py-1 rounded"
             >
               Logout
             </button>

@@ -1,65 +1,99 @@
-.projects-page {
-    padding: 20px;
-    font-family: 'Deloitte', sans-serif;
-  }
-  
-  .tiles-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  
-  .tile {
-    background-color: #f4f4f4;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
-    width: 300px;
-  }
-  
-  .tile:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  .tile h2 {
-    font-size: 1.5rem;
-    color: #002776;
-  }
-  
-  .tile p {
-    font-size: 1rem;
-    color: #666;
-  }
-  
-  .tasks-container {
-    margin-top: 10px;
-    background-color: #e6e6e6;
-    border-radius: 4px;
-    padding: 10px;
-  }
-  
-  .task-tile {
-    background-color: #ffffff;
-    border-radius: 4px;
-    padding: 8px;
-    margin-bottom: 5px;
-    transition: transform 0.3s;
-  }
-  
-  .task-tile:hover {
-    transform: translateY(-5px);
-  }
-  
-  .task-tile h3 {
-    font-size: 1.2rem;
-    color: #007a33;
-  }
-  
-  .task-tile p {
-    font-size: 0.9rem;
-    color: #333;
-  }
-  
+.projects-page-container {
+  padding: 20px;
+  background-color: #f5f5f5; /* Light gray background */
+}
+
+.page-title {
+  font-size: 2rem;
+  color: #007a33; /* Deloitte green */
+  margin-bottom: 20px;
+}
+
+.notification {
+  color: #d9534f; /* Red for error messages */
+  margin-bottom: 20px;
+}
+
+.projects-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.project-card {
+  background-color: #ffffff; /* White background for cards */
+  border: 1px solid #e0e0e0; /* Light gray border */
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-header h2 {
+  margin: 0;
+}
+
+.status {
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.status.active {
+  background-color: #007a33; /* Deloitte green */
+}
+
+.status.completed {
+  background-color: #5bc0de; /* Light blue for completed */
+}
+
+.status.pending {
+  background-color: #f0ad4e; /* Orange for pending */
+}
+
+.view-details-button {
+  display: block;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #007a33; /* Deloitte green */
+  color: #ffffff;
+  text-align: center;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.view-details-button:hover {
+  background-color: #005a1d; /* Darker green on hover */
+}
+
+.tasks-section {
+  margin-top: 20px;
+}
+
+.task-card {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.view-task-link {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px;
+  color: #007a33; /* Deloitte green */
+  text-decoration: none;
+}
+
+.view-task-link:hover {
+  text-decoration: underline;
+}
