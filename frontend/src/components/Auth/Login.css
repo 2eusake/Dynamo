@@ -1,0 +1,160 @@
+/* Login.css */
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("https://t3.ftcdn.net/jpg/06/25/04/76/240_F_625047601_ReYKPGWinavuApgcPK2AIlJFgpSvHx46.jpghttps://t3.ftcdn.net/jpg/01/55/02/52/240_F_155025278_kKh2aVZjRVBNmMt6NM500kPumCfUZYRA.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.deloitte-logo {
+  height: 50px; /* Adjust the height to your preference */
+  margin-right: 0.5rem;
+}
+.app-name {
+  color: #000000; /* Deloitte black */
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.login-box {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-title {
+  color: #000000;
+  font-size: 20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.error-message {
+  background-color: #ff0000;
+  color: #ffffff;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-label {
+  color: #000000;
+  margin-bottom: 8px;
+}
+
+.input-field {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #e1e1e1; /* Deloitte gray */
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-field:focus {
+  border-color: #00cfff; /* Deloitte cyan */
+}
+
+.button-group {
+  margin-top: 16px;
+}
+
+.login-button {
+  width: 100%;
+  background-color: #006747; /* Deloitte cyan */ /* Deloitte blue */
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-button:hover {
+  background-color: #004b8d; /* Deloitte dark blue */
+}
+
+.link-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.link {
+  color: #007bff; /* Deloitte cyan */
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24px 0;
+}
+
+.line {
+  flex: 1;
+  border: none;
+  height: 1px;
+  background-color: #e1e1e1; /* Deloitte gray */
+}
+
+.separator-text {
+  margin: 0 12px;
+  color: #000000; /* Deloitte black */
+}
+
+.google-login {
+  display: flex;
+  justify-content: center;
+}
+
+.google-button {
+  background-color: #ffffff;
+  border: 1px solid #e1e1e1; /* Deloitte gray */
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.google-button:hover {
+  background-color: #e1e1e1;
+}
+
+.google-logo {
+  margin-right: 8px;
+}
