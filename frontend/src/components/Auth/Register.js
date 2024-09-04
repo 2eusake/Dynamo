@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -13,11 +15,11 @@ const Register = () => {
     e.preventDefault();
     try {
       await axios.post('http://localhost:5000/api/users/register', { username, email, password, role });
-      alert(`Registration successful! Welcome, ${username}`);
+      toast.success(`Registration successful! Welcome, ${username}`);
       navigate('/login');
     } catch (error) {
       console.error('Registration failed', error);
-      alert('Registration failed');
+      toast.error('Registration failed. Please try again.');
     }
   };
 

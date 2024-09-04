@@ -1,9 +1,10 @@
 const Task = require('../models/Task');
 
+// Get all tasks assigned to the user
 const getTasks = async (req, res) => {
     try {
         const tasks = await Task.findAll({
-            where: { assigned_to: req.user.id }
+            where: { assigned_to_user_id: req.user.id }
         });
         res.json(tasks);
     } catch (error) {
@@ -12,14 +13,18 @@ const getTasks = async (req, res) => {
     }
 };
 
+// Create a new task
 const createTask = async (req, res) => {
     try {
-        const { name, description, project_id } = req.body;
+        const { name, description, project_id, start_date, due_date } = req.body;
         const task = await Task.create({
             name,
             description,
             project_id,
-            assigned_to: req.user.id
+            start_date,
+            due_date,
+            assigned_to_user_id: req.user.id,
+            status: 'notStarted' // Default status
         });
         res.status(201).json(task);
     } catch (error) {
@@ -28,6 +33,7 @@ const createTask = async (req, res) => {
     }
 };
 
+// Get a task by ID
 const getTaskById = async (req, res) => {
     try {
         const task = await Task.findByPk(req.params.id);
@@ -39,11 +45,12 @@ const getTaskById = async (req, res) => {
     }
 };
 
+// Update a task
 const updateTask = async (req, res) => {
     try {
-        const { name, description, status, due_date } = req.body;
+        const { name, description, status, start_date, due_date } = req.body;
         const [updated] = await Task.update(
-            { name, description, status, due_date },
+            { name, description, status, start_date, due_date },
             { where: { id: req.params.id } }
         );
         if (!updated) return res.status(404).json({ message: 'Task not found' });
@@ -56,6 +63,7 @@ const updateTask = async (req, res) => {
     }
 };
 
+// Delete a task
 const deleteTask = async (req, res) => {
     try {
         const deleted = await Task.destroy({
@@ -70,6 +78,7 @@ const deleteTask = async (req, res) => {
     }
 };
 
+// Get all tasks for the user (This route is redundant with `getTasks`)
 const getUserTasks = async (req, res) => {
     try {
         const tasks = await Task.findAll({
@@ -82,13 +91,11 @@ const getUserTasks = async (req, res) => {
     }
 };
 
-
-
 module.exports = {
     getTasks,
     createTask,
     getTaskById,
     updateTask,
     deleteTask,
-    getUserTasks,
+    getUserTasks
 };

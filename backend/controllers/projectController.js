@@ -1,6 +1,7 @@
-const { Project, Task, sequelize } = require('../models/Project');
+const { Project, Task } = require('../models');
+const sequelize = require('../config/database')
 
-// Controller to get all projects for the logged-in user
+
 const getProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({ 
@@ -13,33 +14,35 @@ const getProjects = async (req, res) => {
     }
 };
 
-// Controller to create a new project
 const createProject = async (req, res) => {
-    const { name, description, startDate, endDate, budget, projectManager, tasks } = req.body;
+    const { name, description, startDate, endDate, status, projectManagerId, tasks } = req.body;
     const transaction = await sequelize.transaction();
     try {
+        // Create a new project associated with the logged-in user
         const project = await Project.create({ 
             name, 
             description, 
-            startDate, 
-            endDate, 
-            budget, 
-            projectManager, 
+            startDate,
+            endDate,
+            status: status || 'active', // Default to 'active' if not provided
+            projectManagerId,
             userId: req.user.id 
         }, { transaction });
 
-        const taskPromises = tasks.map(task => 
-            Task.create({ 
-                name: task.name, 
-                dueDate: task.dueDate, 
-                assignedTo: task.assignedTo, 
-                projectId: project.id 
-            }, { transaction })
-        );
+        if (tasks && tasks.length) {
+            const taskPromises = tasks.map(task => 
+                Task.create({ 
+                    name: task.name, 
+                    description: task.description,
+                    due_date: task.due_date, 
+                    assigned_to_user_id: task.assigned_to_user_id, 
+                    project_id: project.id 
+                }, { transaction })
+            );
+            await Promise.all(taskPromises);
+        }
 
-        await Promise.all(taskPromises);
         await transaction.commit();
-
         res.status(201).json(project);
     } catch (error) {
         await transaction.rollback();
@@ -47,7 +50,6 @@ const createProject = async (req, res) => {
     }
 };
 
-// Controller to get a specific project by ID
 const getProjectById = async (req, res) => {
     try {
         const project = await Project.findOne({ 
@@ -61,9 +63,8 @@ const getProjectById = async (req, res) => {
     }
 };
 
-// Controller to update an existing project
 const updateProject = async (req, res) => {
-    const { name, description, startDate, endDate, budget, projectManager, tasks } = req.body;
+    const { name, description, startDate, endDate, status, projectManagerId, tasks } = req.body;
     const transaction = await sequelize.transaction();
     try {
         const project = await Project.findOne({ 
@@ -75,24 +76,28 @@ const updateProject = async (req, res) => {
         project.description = description || project.description;
         project.startDate = startDate || project.startDate;
         project.endDate = endDate || project.endDate;
-        project.budget = budget || project.budget;
-        project.projectManager = projectManager || project.projectManager;
+        project.status = status || project.status;
+        project.projectManagerId = projectManagerId || project.projectManagerId;
         await project.save({ transaction });
 
-        await Task.destroy({ where: { projectId: project.id }, transaction });
+        // Delete existing tasks and recreate them if provided
+        if (tasks && tasks.length) {
+            await Task.destroy({ where: { project_id: project.id }, transaction });
 
-        const taskPromises = tasks.map(task => 
-            Task.create({ 
-                name: task.name, 
-                dueDate: task.dueDate, 
-                assignedTo: task.assignedTo, 
-                projectId: project.id 
-            }, { transaction })
-        );
+            const taskPromises = tasks.map(task => 
+                Task.create({ 
+                    name: task.name, 
+                    description: task.description,
+                    due_date: task.due_date, 
+                    assigned_to_user_id: task.assigned_to_user_id, 
+                    project_id: project.id 
+                }, { transaction })
+            );
 
-        await Promise.all(taskPromises);
+            await Promise.all(taskPromises);
+        }
+
         await transaction.commit();
-
         res.json(project);
     } catch (error) {
         await transaction.rollback();
@@ -100,7 +105,6 @@ const updateProject = async (req, res) => {
     }
 };
 
-// Controller to delete a project
 const deleteProject = async (req, res) => {
     try {
         const project = await Project.findOne({ 
@@ -115,24 +119,10 @@ const deleteProject = async (req, res) => {
     }
 };
 
-// Controller to get projects based on the logged-in user
-const getUserProjects = async (req, res) => {
-    try {
-        const projects = await Project.findAll({
-            where: { userId: req.user.id },
-            include: [{ model: Task, as: 'tasks' }]
-        });
-        res.json(projects);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching user projects', error: error.message });
-    }
-};
-
 module.exports = {
     getProjects,
     createProject,
     getProjectById,
     updateProject,
     deleteProject,
-    getUserProjects,
 };

@@ -15,9 +15,22 @@ const Task = sequelize.define('Task', {
     type: DataTypes.TEXT,
     allowNull: true
   },
+  start_date: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
   due_date: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  durationHours: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      const start = new Date(this.start_date);
+      const due = new Date(this.due_date);
+      const duration = Math.round((due - start) / (60 * 60 * 1000));
+      return duration;
+    }
   },
   assigned_to_user_id: {
     type: DataTypes.INTEGER,
