@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
-import Picture3 from "../../assets/Picture3.png";
+//import Picture3 from "../../assets/Picture3.png";
 import "./Login.css"; // Import the external CSS file
 
 const Login = () => {
@@ -31,7 +31,7 @@ const Login = () => {
             alt="Deloitte Logo"
             className="deloitte-logo"
           />
-          <img src={Picture3} alt="App Name" className="app-name" />
+          {/* <img src={Picture3} alt="App Name" className="app-name" /> */}
         </div>
 
         <h2 className="login-title">Login</h2>
