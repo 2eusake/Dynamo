@@ -1,0 +1,59 @@
+// src/components/Settings/SettingsPage.js
+import React, { useContext, useState } from 'react';
+import { SettingsContext } from '../../contexts/SettingsContext';
+import './SettingsPage.css';
+
+const SettingsPage = () => {
+  const { settings, createSetting, updateSetting, deleteSetting } = useContext(SettingsContext);
+  const [newSetting, setNewSetting] = useState({ name: '', value: false });
+
+  const handleCreate = () => {
+    if (newSetting.name) {
+      createSetting(newSetting);
+      setNewSetting({ name: '', value: false });
+    }
+  };
+
+  const handleUpdate = (id, name, value) => {
+    updateSetting({ id, name, value });
+  };
+
+  return (
+    <div className="settings-page">
+      <h2>Settings</h2>
+      <div className="settings-list">
+        {settings.map((setting) => (
+          <div key={setting.id} className="settings-item">
+            <input
+              type="text"
+              value={setting.name}
+              onChange={(e) => handleUpdate(setting.id, e.target.value, setting.value)}
+            />
+            <input
+              type="checkbox"
+              checked={setting.value}
+              onChange={() => handleUpdate(setting.id, setting.name, !setting.value)}
+            />
+            <button onClick={() => deleteSetting(setting.id)}>Delete</button>
+          </div>
+        ))}
+      </div>
+      <div className="new-setting">
+        <input
+          type="text"
+          placeholder="New Setting Name"
+          value={newSetting.name}
+          onChange={(e) => setNewSetting({ ...newSetting, name: e.target.value })}
+        />
+        <input
+          type="checkbox"
+          checked={newSetting.value}
+          onChange={() => setNewSetting({ ...newSetting, value: !newSetting.value })}
+        />
+        <button onClick={handleCreate}>Add Setting</button>
+      </div>
+    </div>
+  );
+};
+
+export default SettingsPage;
