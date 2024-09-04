@@ -1,0 +1,145 @@
+/* Register.css */
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.bg-deloitte-white {
+  background-color: #ffffff;
+}
+
+.bg-white {
+  background-color: #ffffff;
+}
+
+.p-8 {
+  padding: 2rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.max-w-md {
+  max-width: 28rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.h-12 {
+  height: 3rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-black {
+  color: #000000;
+}
+
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.border {
+  border-width: 1px;
+}
+
+.border-deloitte-dark-green {
+  border-color: #006747;
+}
+
+.focus\:outline-none:focus {
+  outline: 0;
+}
+
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 2px rgba(0, 103, 71, 0.4);
+}
+
+.focus\:ring-deloitte-dark-green:focus {
+  box-shadow: 0 0 0 2px #006747;
+}
+
+.bg-deloitte-dark-green {
+  background-color: #006747;
+}
+
+.text-white {
+  color: #ffffff;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.hover\:bg-deloitte-cyan:hover {
+  background-color: #00a6d6;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.text-deloitte-dark-green {
+  color: #006747;
+}
+
+.hover\:underline:hover {
+  text-decoration: underline;
+}
+
+.bg-register-bg {
+  background-image: url("https://t3.ftcdn.net/jpg/06/25/04/76/240_F_625047601_ReYKPGWinavuApgcPK2AIlJFgpSvHx46.jpghttps://t3.ftcdn.net/jpg/01/55/02/52/240_F_155025278_kKh2aVZjRVBNmMt6NM500kPumCfUZYRA.jpg"); /* Replace with your background image URL */
+  background-size: cover;
+  background-position: center;
+}
