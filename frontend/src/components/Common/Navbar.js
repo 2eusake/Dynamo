@@ -1,39 +1,41 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
+import React from "react";
+import { Link } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import { FaBell } from "react-icons/fa"; // Import the notification icon
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const logoUrl =
+    "https://s3.amazonaws.com/company-photo.theladders.com/17064/fec5ed0f-31ae-46f8-b7e1-6b09b01c6714.png"; // Deloitte logo URL
 
   return (
-    <nav className="bg-deloitte-blue text-deloitte-white p-2 flex justify-between items-center sticky-navbar">
-      <ul className="flex space-x-4 text-sm">
-        <li>
-          <Link to="/projects" className="hover:text-deloitte-cyan">Projects</Link>
-        </li>
-        <li>
-          <Link to="/tasks" className="hover:text-deloitte-cyan">Tasks</Link>
-        </li>
-        <li>
-          <Link to="/reports" className="hover:text-deloitte-cyan">Reports</Link>
-        </li>
-        <li>
-          <Link to="/team-management" className="hover:text-deloitte-cyan">Team Management</Link>
-        </li>
-        <li>
-          <Link to="/settings" className="hover:text-deloitte-cyan">Settings</Link>
-        </li>
-      </ul>
-      <div className="text-sm">
+    <nav className="bg-white text-deloitte-dark-green p-2 flex justify-between items-center shadow-md sticky-navbar">
+      <div className="flex items-center">
+        <img src={logoUrl} alt="Deloitte Logo" className="h-8 mr-4" />{" "}
+        {/* Deloitte Logo */}
+        <div className="Dynamo">
+          <span className="text-lg font-bold">Dynamo</span>{" "}
+          {/* Project Management Tool text */}
+        </div>
+      </div>
+      <ul className="flex space-x-4 text-sm"></ul>
+      <div className="text-sm flex items-center">
         {user ? (
           <>
+            <FaBell className="text-deloitte-dark-green hover:text-deloitte-cyan mr-4 cursor-pointer" />{" "}
+            {/* Notification icon */}
             <span className="mr-2">{user.username}</span>
-            <button onClick={logout} className="bg-deloitte-green hover:bg-deloitte-cyan text-deloitte-black px-2 py-1 rounded">
+            <button
+              onClick={logout}
+              className="bg-deloitte-dark-green hover:bg-deloitte-cyan text-white px-2 py-1 rounded"
+            >
               Logout
             </button>
           </>
         ) : (
-          <Link to="/login" className="hover:text-deloitte-cyan">Login</Link>
+          <Link to="/login" className="hover:text-deloitte-cyan">
+            Login
+          </Link>
         )}
       </div>
     </nav>
