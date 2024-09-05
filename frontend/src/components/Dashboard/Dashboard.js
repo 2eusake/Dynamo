@@ -5,10 +5,12 @@ import { ProjectContext } from "../../contexts/ProjectContext";
 import { TaskContext } from "../../contexts/TaskContext";
 import { AuthContext } from "../../contexts/AuthContext";
 
+
 const Dashboard = () => {
   const { fetchUserProjects, projects } = useContext(ProjectContext);
   const { fetchUserTasks, tasks } = useContext(TaskContext);
   const { user } = useContext(AuthContext);
+ 
 
   useEffect(() => {
     fetchUserProjects();
@@ -21,7 +23,9 @@ const Dashboard = () => {
   });
 
   // Calculate current ongoing projects
-  const currentProjects = projects.filter((project) => project.progress < 100);
+const currentProjects = projects.filter((project) => project.progress < 100);
+
+
 
   // Helper function to calculate the difference in days
   const calculateDaysOverdue = (dueDate) => {
@@ -34,7 +38,7 @@ const Dashboard = () => {
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex-1 p-4 overflow-auto">
-        <h2 className="text-2xl font-bold text-deloitte-blue">
+        <h2 className="text-2xl font-bold text-deloitte-dark-green">
           Welcome back, {user?.username}!
         </h2>
 

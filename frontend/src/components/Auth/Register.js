@@ -37,7 +37,7 @@ const Register = () => {
             alt="Deloitte Logo"
             className="h-12 mr-2"
           />
-          <h1 className="text-3xl text-deloitte-dark-green font-bold">
+          <h1 className="text-3xl text-deloitte-black font-bold">
             Dynamo
           </h1>
         </div>
