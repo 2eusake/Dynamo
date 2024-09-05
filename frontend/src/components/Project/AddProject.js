@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddProject = () => {
-  const [projectName, setProjectName] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [projectName, setProjectName] = useState("");
+  const [description, setDescription] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/projects', { name: projectName, description, startDate, endDate }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+      const response = await axios.post(
+        "http://localhost:5000/api/projects",
+        { name: projectName, description, startDate, endDate },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      });
+      );
       alert(`Project ${projectName} created successfully!`);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (error) {
-      console.error('Error creating project', error);
-      alert('Error creating project');
+      console.error("Error creating project", error);
+      alert("Error creating project");
     }
   };
 
@@ -64,7 +68,9 @@ const AddProject = () => {
             className="border p-1"
           />
         </label>
-        <button type="submit" className="bg-blue-500 text-white p-2 mt-2">Add</button>
+        <button type="submit" className="bg-blue-500 text-white p-2 mt-2">
+          Add
+        </button>
       </form>
     </div>
   );

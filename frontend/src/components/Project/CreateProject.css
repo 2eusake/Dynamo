@@ -1,0 +1,124 @@
+/* CreateProject.css */
+
+/* CreateProject.css */
+
+/* Container for the form */
+.create-project-container {
+  padding: 1.5rem;
+  max-width: 60rem; /* Adjusted for better alignment */
+  margin: auto;
+  background-color: #ffffff;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+}
+
+/* Heading styles */
+.create-project-container h2,
+.create-project-container h3 {
+  color: #2d3748; /* Gray 800 */
+}
+
+.create-project-container h2 {
+  font-size: 1.75rem; /* Adjusted font size */
+  font-weight: 700;
+}
+
+.create-project-container h3 {
+  font-size: 1.5rem; /* Adjusted font size */
+  font-weight: 600;
+}
+
+/* Input and select styles */
+.create-project-container input[type="text"],
+.create-project-container input[type="date"],
+.create-project-container textarea,
+.create-project-container select {
+  border: 1px solid #e2e8f0; /* Gray 300 */
+  border-radius: 0.375rem;
+  width: 100%;
+  padding: 0.75rem; /* Added padding for better spacing */
+  margin-bottom: 1rem;
+  box-sizing: border-box; /* Ensures padding is included in width */
+}
+
+/* Remove spinners from number inputs */
+.create-project-container input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+  -webkit-appearance: none; /* Chrome, Safari */
+  appearance: none; /* Other modern browsers */
+}
+
+/* Button styles */
+.create-project-container button {
+  padding: 0.75rem 1.5rem; /* Adjusted padding for better size */
+  border-radius: 0.375rem;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 600;
+  border: none; /* Remove default border */
+  font-size: 1rem; /* Adjusted font size */
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+}
+
+/* Specific button styles */
+.create-project-container .bg-green-500 {
+  background-color: #48bb78; /* Green 500 */
+}
+
+.create-project-container .bg-green-500:hover {
+  background-color: #38a169; /* Darker green for hover */
+}
+
+.create-project-container .bg-blue-500 {
+  background-color: #3182ce; /* Blue 500 */
+}
+
+.create-project-container .bg-blue-500:hover {
+  background-color: #2b6cb0; /* Darker blue for hover */
+}
+
+.create-project-container .bg-red-500 {
+  background-color: #f56565; /* Red 500 */
+}
+
+.create-project-container .bg-red-500:hover {
+  background-color: #e53e3e; /* Darker red for hover */
+}
+
+.create-project-container .text-white {
+  color: #ffffff;
+}
+
+/* Notification styles */
+.notification {
+  color: #f56565; /* Red 500 */
+  margin-bottom: 1rem;
+  font-size: 1rem; /* Ensure readability */
+}
+
+/* Task table styles */
+.create-project-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem; /* Added margin-top for spacing */
+}
+
+.create-project-container th,
+.create-project-container td {
+  padding: 0.75rem; /* Adjusted padding for better spacing */
+  border: 1px solid #e2e8f0; /* Gray 300 */
+  text-align: left;
+}
+
+.create-project-container th {
+  background-color: #f7fafc; /* Gray 100 */
+  font-weight: 600;
+}
+
+.create-project-container tbody tr:nth-child(even) {
+  background-color: #f7fafc; /* Gray 100 */
+}
+
+.create-project-container tbody tr:hover {
+  background-color: #edf2f7; /* Slightly different color for hover effect */
+}
