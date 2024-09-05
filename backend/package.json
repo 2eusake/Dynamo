@@ -18,8 +18,9 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.4",
-    "mysql2": "^3.10.2",
-    "sequelize": "^6.37.3"
+    "mysql2": "^3.11.0",
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2"
   },
   "description": ""
 }

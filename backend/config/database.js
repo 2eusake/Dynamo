@@ -1,8 +1,18 @@
 const { Sequelize } = require('sequelize');
+const fs = require('fs');
 
-const sequelize = new Sequelize('dpms_serv', '2eusake', 'buttermilkjesus', {
-  host: 'localhost',
-  dialect: 'mysql'
+
+//KPiu7qTJnGs51CGDX7ab
+
+const sequelize = new Sequelize('dpms_serv', 'zeusake', 'KPiu7qTJnGs51CGDX7ab', {
+  host: 'dynamo.c324ec2065m6.eu-north-1.rds.amazonaws.com',
+  dialect: 'mysql',
+  port: 5000,
+  dialectOptions: {
+    ssl: {
+      ca: fs.readFileSync('C:/Users/Zusakhe/OneDrive - University of Cape Town/Desktop/DPMS-P/backend/config/eu-north-1-bundle.pem') 
+    }
+  }
 });
 
 sequelize.authenticate()

@@ -20,7 +20,7 @@ router.route('/:id')
     .put(authMiddleware, updateProject) // Update project by ID
     .delete(authMiddleware, deleteProject); // Delete project by ID
 
-router.route('/user/:userId')
+router.route('/user')
     .get(authMiddleware, getProjectsByUser);
     
 module.exports = router;
