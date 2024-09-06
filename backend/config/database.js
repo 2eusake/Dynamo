@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize('dynamo_database', 'root', 'Lutho2001', {
+const sequelize = new Sequelize('IV', 'root', 'Yandisa5!142914', {
   host: 'localhost',
   dialect: 'mysql'
 });
