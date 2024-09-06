@@ -16,6 +16,7 @@ import Navbar from './components/Common/Navbar';
 import Sidebar from './components/Dashboard/Sidebar';
 import ProjectProvider from './contexts/ProjectContext';
 import TaskProvider from './contexts/TaskContext';
+import Settings from './components/Settings/SettingsPage';
 import { ToastContainer } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css'; 
 import './tailwind.css';
@@ -42,6 +43,7 @@ const App = () => {
                 <Route path="/create-project" element={<ProtectedRoute element={<CreateProject />} />} />
                 <Route path="/tasks" element={<ProtectedRoute element={<TasksPage />} />} />
                 <Route path="/tasks/:id" element={<ProtectedRoute element={<TaskDetail />} />} />
+                <Route path="/settings" element={<ProtectedRoute element={<Settings/>}/>} />
               </Routes>
             </TaskProvider>
           </ProjectProvider>
