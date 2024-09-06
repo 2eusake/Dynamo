@@ -1,17 +1,33 @@
-import React from 'react';
+// src/components/Task/TaskDetail.js
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { ProjectContext } from '../../contexts/ProjectContext';
 
 const TaskDetail = () => {
   const { id } = useParams();
-  // Dummy data for task details
-  const task = { id, name: 'Task 1', description: 'Task details...', status: 'Pending' };
+  const { projects } = useContext(ProjectContext);
+  const [task, setTask] = useState(null);
+
+  useEffect(() => {
+    if (!projects) return;
+
+    projects.forEach(project => {
+      const foundTask = project.tasks.find(task => task.id === parseInt(id, 10));
+      if (foundTask) setTask(foundTask);
+    });
+  }, [id, projects]);
 
   return (
     <div>
-      <h2>Task Detail - {id}</h2>
-      <p>Name: {task.name}</p>
-      <p>Description: {task.description}</p>
-      <p>Status: {task.status}</p>
+      {task ? (
+        <>
+          <h2>Task Detail - {task.name}</h2>
+          <p>Description: {task.description || 'No description available'}</p>
+          <p>Progress: {task.progress || 0}%</p>
+        </>
+      ) : (
+        <p>Loading task details...</p>
+      )}
     </div>
   );
 };

@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 const Footer = () => {
   return (
-    <footer>
+    <footer className="bg-deloitte-dark-green text-deloitte-white py-4 text-center">
       <p>&copy; 2024 Deloitte ITSA Project Management System</p>
     </footer>
   );

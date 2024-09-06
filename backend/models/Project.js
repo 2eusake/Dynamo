@@ -17,10 +17,12 @@ const Project = sequelize.define('Project', {
   },
   startDate: {
     type: DataTypes.DATE,
+    field: 'start_date',
     allowNull: false
   },
   endDate: {
     type: DataTypes.DATE,
+    field: 'end_date',
     allowNull: false
   },
   status: {
@@ -28,6 +30,16 @@ const Project = sequelize.define('Project', {
     allowNull: false,
     defaultValue: 'active'
   },
+  projectManagerId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    field: 'projectManagerId',
+    references: {
+      model: 'users', 
+      key: 'id'
+    }
+  },
+  
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -37,5 +49,7 @@ const Project = sequelize.define('Project', {
     }
   }
 });
+
+//Project.hasMany(Task, { as: 'tasks', foreignKey: 'project_id' });
 
 module.exports = Project;

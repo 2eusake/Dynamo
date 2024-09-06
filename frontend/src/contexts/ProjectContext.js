@@ -1,53 +1,196 @@
-import React, { useContext, useRef, useEffect } from 'react';
-import { Line } from 'react-chartjs-2';
-import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import { ProjectContext } from '../../contexts/ProjectContext'; // Correct path
+import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
+import { refreshToken } from "../utils/auth";
+import * as tf from "@tensorflow/tfjs";
 
-// Register the necessary components with Chart.js
-Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+export const ProjectContext = createContext();
 
-const ProjectCompletionChart = () => {
-  const { projects } = useContext(ProjectContext);
-  const chartRef = useRef(null);
+const ProjectProvider = ({ children }) => {
+  const [projects, setProjects] = useState([]);
+  const [consultants, setConsultants] = useState([]);
+  const [model, setModel] = useState(null);
+  const [latestProject, setLatestProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Load TensorFlow model
+  const loadModel = async () => {
+    try {
+      const loadedModel = await tf.loadLayersModel("path/to/your/model.json"); // Update with your model path
+      setModel(loadedModel);
+    } catch (error) {
+      console.error("Error loading TensorFlow model:", error);
+      setError("Failed to load prediction model");
+    }
+  };
 
   useEffect(() => {
-    const chartInstance = chartRef.current;
-
-    // Cleanup on unmount
-    return () => {
-      if (chartInstance) {
-        chartInstance.destroy();
-      }
-    };
+    loadModel();
   }, []);
 
-  // Add a check to ensure projects is defined
-  if (!projects) {
-    return <div>Loading...</div>;
-  }
+  // Fetch all projects and consultants
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      await refreshToken(); // Refresh the token if needed
+      const token = localStorage.getItem("token");
 
-  const projectLabels = projects.map(project => `Project ${project.id}`);
-  const projectProgress = projects.map(project => project.progress);
+      const [projectsResponse, usersResponse] = await Promise.all([
+        axios.get("http://localhost:5000/api/projects", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get("http://localhost:5000/api/users", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
 
-  const data = {
-    labels: projectLabels,
-    datasets: [
-      {
-        label: 'Project Completion Progress',
-        data: projectProgress,
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1,
-      },
-    ],
+      const projectsData = projectsResponse.data;
+      setProjects(projectsData);
+      setConsultants(
+        usersResponse.data.filter((user) => user.role === "consultant")
+      );
+
+      if (projectsData.length > 0) {
+        const latest = projectsData.reduce((prev, curr) =>
+          new Date(prev.createdAt) > new Date(curr.createdAt) ? prev : curr
+        );
+        setLatestProject(latest);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching projects or users:", error);
+      setError("Failed to load projects");
+      setLoading(false);
+    }
+  };
+
+  // Fetch projects assigned to the logged-in user
+  const fetchUserProjects = async () => {
+    try {
+      setLoading(true);
+      await refreshToken(); // Refresh the token if needed
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(
+        "http://localhost:5000/api/projects/user",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setProjects(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching user projects:", error);
+      setError("Failed to load user projects");
+      setLoading(false);
+    }
+  };
+
+  // Predict project completion time
+  const predictProjectCompletion = (project) => {
+    if (!model) return null;
+    const inputTensor = tf.tensor2d([project.features]);
+    const prediction = model.predict(inputTensor);
+    return prediction.dataSync();
+  };
+
+  // Add a new project
+  const addProject = async (project) => {
+    try {
+      await refreshToken(); // Refresh the token if needed
+      const token = localStorage.getItem("token");
+
+      const response = await axios.post(
+        "http://localhost:5000/api/projects",
+        project,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setProjects([...projects, response.data]);
+      if (
+        projects.length === 0 ||
+        new Date(response.data.createdAt) > new Date(latestProject.createdAt)
+      ) {
+        setLatestProject(response.data);
+      }
+    } catch (error) {
+      console.error("Error adding project:", error);
+      setError("Failed to add project");
+    }
+  };
+
+  // Update an existing project
+  const updateProject = async (id, updatedProject) => {
+    try {
+      await refreshToken(); // Refresh the token if needed
+      const token = localStorage.getItem("token");
+
+      const response = await axios.put(
+        `http://localhost:5000/api/projects/${id}`,
+        updatedProject,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setProjects(
+        projects.map((project) => (project.id === id ? response.data : project))
+      );
+      if (
+        new Date(response.data.createdAt) > new Date(latestProject.createdAt)
+      ) {
+        setLatestProject(response.data);
+      }
+    } catch (error) {
+      console.error("Error updating project:", error);
+      setError("Failed to update project");
+    }
+  };
+
+  // Delete a project
+  const deleteProject = async (id) => {
+    try {
+      await refreshToken(); // Refresh the token if needed
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`http://localhost:5000/api/projects/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setProjects(projects.filter((project) => project.id !== id));
+      if (latestProject && latestProject.id === id && projects.length > 0) {
+        const newLatest = projects.reduce((prev, curr) =>
+          new Date(prev.createdAt) > new Date(curr.createdAt) ? prev : curr
+        );
+        setLatestProject(newLatest);
+      }
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      setError("Failed to delete project");
+    }
   };
 
   return (
-    <div>
-      <h2>Project Completion Progress</h2>
-      <Line ref={chartRef} data={data} />
-    </div>
+    <ProjectContext.Provider
+      value={{
+        projects,
+        consultants,
+        latestProject,
+        loading,
+        error,
+        fetchProjects,
+        fetchUserProjects,
+        addProject,
+        updateProject,
+        deleteProject,
+        predictProjectCompletion,
+      }}
+    >
+      {children}
+    </ProjectContext.Provider>
   );
 };
 
-export default ProjectCompletionChart;
+export default ProjectProvider;

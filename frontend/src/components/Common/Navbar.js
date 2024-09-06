@@ -1,34 +1,41 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import  useAuth  from '../../hooks/useAuth';
+import React from "react";
+import { Link } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import { FaBell } from "react-icons/fa"; // Import the notification icon
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const logoUrl =
+    "https://s3.amazonaws.com/company-photo.theladders.com/17064/fec5ed0f-31ae-46f8-b7e1-6b09b01c6714.png"; // Deloitte logo URL
 
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/dashboard">Dashboard</Link>
-        </li>
-        <li>
-          <Link to="/projects">Projects</Link>
-        </li>
-        <li>
-          <Link to="/tasks">Tasks</Link>
-        </li>
-        <li>
-          <Link to="/create-project">Create Project</Link>
-        </li>
-      </ul>
-      <div>
+    <nav className="bg-white text-deloitte-dark-green p-2 flex justify-between items-center shadow-md sticky-navbar">
+      <div className="flex items-center">
+        <img src={logoUrl} alt="Deloitte Logo" className="h-8 mr-4" />{" "}
+        {/* Deloitte Logo */}
+        <div className="Dynamo">
+          <span className="text-lg font-bold">Dynamo</span>{" "}
+          {/* Project Management Tool text */}
+        </div>
+      </div>
+      <ul className="flex space-x-4 text-sm"></ul>
+      <div className="text-sm flex items-center">
         {user ? (
           <>
-            <span>{user.username}</span>
-            <button onClick={logout}>Logout</button>
+            <FaBell className="text-deloitte-dark-green hover:text-deloitte-cyan mr-4 cursor-pointer" />{" "}
+            {/* Notification icon */}
+            <span className="mr-2">{user.username}</span>
+            <button
+              onClick={logout}
+              className="bg-deloitte-dark-green hover:bg-deloitte-cyan text-white px-2 py-1 rounded"
+            >
+              Logout
+            </button>
           </>
         ) : (
-          <Link to="/login">Login</Link>
+          <Link to="/login" className="hover:text-deloitte-cyan">
+            Login
+          </Link>
         )}
       </div>
     </nav>

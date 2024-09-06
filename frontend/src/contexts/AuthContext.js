@@ -8,17 +8,23 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      axios.get('/api/users/profile', { headers: { Authorization: `Bearer ${token}` } })
-        .then(response => setUser(response.data))
-        .catch(error => console.error('Failed to fetch user', error));
+    if (token && !user) {
+      axios.get('http://localhost:5000/api/users/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => setUser(response.data))
+      .catch(error => console.error('Failed to fetch user', error));
     }
-  }, []);
+  }, [user]);
 
   const login = async (email, password) => {
-    const response = await axios.post('/api/users/login', { email, password });
-    localStorage.setItem('token', response.data.token);
-    setUser(response.data.user);
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/login', { email, password });
+      localStorage.setItem('token', response.data.token);
+      setUser(response.data.user); // Make sure the response contains user data
+    } catch (error) {
+      console.error('Login failed', error);
+    }
   };
 
   const logout = () => {
