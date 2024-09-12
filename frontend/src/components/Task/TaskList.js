@@ -1,9 +1,27 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
 import { ProjectContext } from '../../contexts/ProjectContext';
 
 const TaskList = () => {
   const { projects } = useContext(ProjectContext);
-  const tasks = projects.flatMap(project => project.tasks);
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/tasks', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
 
   return (
     <div>
@@ -11,7 +29,7 @@ const TaskList = () => {
       <ul>
         {tasks.map(task => (
           <li key={task.id}>
-            {task.name} - {task.status}
+            {task.task_name} - {task.status} - {task.hours_allocated} hours
           </li>
         ))}
       </ul>

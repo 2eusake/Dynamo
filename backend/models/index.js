@@ -1,25 +1,46 @@
-// models/index.js
-
 const sequelize = require('../config/database');
 const Project = require('./Project');
 const Task = require('./Task');
 const User = require('./User');
 
-// Set up associations here
-Project.hasMany(Task, { as: 'tasks', foreignKey: 'project_id' });
-Task.belongsTo(Project, { foreignKey: 'project_id' });
 
-User.hasMany(Project, { foreignKey: 'userId' });
-Project.belongsTo(User, { foreignKey: 'userId' });
 
-User.hasMany(Task, { foreignKey: 'assigned_to_user_id' });
-Task.belongsTo(User, { foreignKey: 'assigned_to_user_id' });
 
-User.hasMany(Project, { foreignKey: 'projectManagerId', as: 'managedProjects' });
-Project.belongsTo(User, { foreignKey: 'projectManagerId', as: 'projectManager' });
+Project.hasMany(Task, { 
+  as: 'tasks',  
+  foreignKey: 'project_id', 
+  onDelete: 'CASCADE',  
+  constraints: false    
+});
+Task.belongsTo(Project, { 
+  foreignKey: 'project_id', 
+  as: 'project',  
+  constraints: false  
+});
 
-Task.belongsTo(Project, { as: 'project', foreignKey: 'project_id' });
-Task.belongsTo(User, { as: 'assignedToUser', foreignKey: 'assigned_to_user_id' });
+
+User.hasMany(Task, { 
+  foreignKey: 'assigned_to_user_id', 
+  as: 'assignedTasks',  
+  constraints: false 
+});
+Task.belongsTo(User, { 
+  foreignKey: 'assigned_to_user_id', 
+  as: 'assignedToUser',  
+  constraints: false  
+});
+
+
+User.hasMany(Project, { 
+  foreignKey: 'projectManagerId', 
+  as: 'managedProjects',  
+  constraints: false  
+});
+Project.belongsTo(User, { 
+  foreignKey: 'projectManagerId', 
+  as: 'projectManager',  
+  constraints: false 
+});
 
 module.exports = {
   Project,
