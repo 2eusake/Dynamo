@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./User');  // Import the User model for validation
+const User = require('./User');
 
 const Task = sequelize.define('Task', {
   id: {
@@ -8,66 +8,72 @@ const Task = sequelize.define('Task', {
     primaryKey: true,
     autoIncrement: true,
   },
-  task_name: {
+  taskName: {
     type: DataTypes.STRING,
     allowNull: false,
+    field: 'task_name',
   },
   description: {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  due_date: {
+  dueDate: {
     type: DataTypes.DATE,
     allowNull: true,
+    field: 'due_date',
   },
-  hours_allocated: {
+  hoursAllocated: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
+    field: 'hours_allocated',
   },
   status: {
     type: DataTypes.ENUM('pending', 'in progress', 'completed'),
     allowNull: false,
     defaultValue: 'pending',
   },
-  assigned_to_user_id: {
+  assignedToUserId: {
     type: DataTypes.INTEGER,
     allowNull: true,
+    field: 'assigned_to_user_id',
     references: {
-      model: 'users',  // Foreign key to the users table for task assignment
+      model: 'Users',  // Foreign key to the Users table for task assignment
       key: 'id',
     },
-    onDelete: 'SET NULL',  // If the assigned user is deleted, set this field to null
+    onDelete: 'SET NULL',
   },
-  project_id: {
+  projectId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'project_id',
     references: {
-      model: 'projects',  // Foreign key to the projects table
+      model: 'Projects',  // Foreign key to the Projects table
       key: 'id',
     },
-    onDelete: 'CASCADE',  // If the project is deleted, delete related tasks
+    onDelete: 'CASCADE',
   },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
+    field: 'created_at',
   },
   updatedAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
     onUpdate: DataTypes.NOW,
+    field: 'updated_at',
   },
 }, {
   timestamps: true,
   hooks: {
-    // Ensure that only consultants can be assigned to tasks
     beforeCreate: async (task) => {
-      const assignedUser = await User.findByPk(task.assigned_to_user_id);
+      const assignedUser = await User.findByPk(task.assignedToUserId);
       if (assignedUser && assignedUser.role !== 'consultant') {
         throw new Error('Only consultants can be assigned to tasks.');
       }
     },
     beforeUpdate: async (task) => {
-      const assignedUser = await User.findByPk(task.assigned_to_user_id);
+      const assignedUser = await User.findByPk(task.assignedToUserId);
       if (assignedUser && assignedUser.role !== 'consultant') {
         throw new Error('Only consultants can be assigned to tasks.');
       }

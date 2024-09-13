@@ -11,10 +11,11 @@ const Project = sequelize.define('Project', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  wbs_element: {
+  wbsElement: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,  // Unique WBS Element
+    field: 'wbs_element',
   },
   startDate: {
     type: DataTypes.DATE,
@@ -34,26 +35,40 @@ const Project = sequelize.define('Project', {
   projectManagerId: {
     type: DataTypes.INTEGER,
     allowNull: true,
-    field: 'project_manager_id',  // Match the column name in the database
+    field: 'project_manager_id',
     references: {
-      model: 'users',  // Foreign key to the users table for project manager
+      model: 'Users',  // Foreign key to the Users table for project manager
       key: 'id',
     },
-    onDelete: 'SET NULL',  // Same as in your SQL schema
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  },
+  directorId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    field: 'director_id',
+    references: {
+      model: 'Users',  // Foreign key to the Users table for director
+      key: 'id',
+    },
+    onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
   },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
+    field: 'created_at',
   },
   updatedAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
     onUpdate: DataTypes.NOW,
+    field: 'updated_at',
   },
 }, {
   timestamps: true,
-  underscored: true,  // Ensure that Sequelize converts camelCase to snake_case
+  underscored: true,
+  tableName: 'Projects',
 });
 
 module.exports = Project;

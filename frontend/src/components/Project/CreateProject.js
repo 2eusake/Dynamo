@@ -10,7 +10,7 @@ const CreateProject = () => {
     start_date: '',
     end_date: '',
     projectManagerId: '',
-    wbs_element: '', // New field for WBS Element
+    wbs_code: '', // Updated to match the database field
     tasks: [{ taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
   });
 
@@ -101,7 +101,7 @@ const CreateProject = () => {
         start_date: '',
         end_date: '',
         projectManagerId: '',
-        wbs_element: '', // Reset new field
+        wbs_code: '', // Reset new field
         tasks: [{ taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
       });
       setProjectDurationWeeks(0);
@@ -109,6 +109,27 @@ const CreateProject = () => {
       console.error('Error creating project:', error);
       setNotification('Failed to create project.');
       toast.error('Failed to create project.');
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      await axios.post('http://localhost:5000/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      toast.success('File uploaded and processed successfully!');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast.error('Failed to upload file.');
     }
   };
 
@@ -137,10 +158,10 @@ const CreateProject = () => {
         <input
           className="w-full p-2 mb-4 border border-gray-300 rounded"
           type="text"
-          name="wbs_element"
-          value={formData.wbs_element}
+          name="wbs_code"
+          value={formData.wbs_code}
           onChange={handleInputChange}
-          placeholder="WBS Element"
+          placeholder="WBS Code"
           required
         />
         <div className="flex space-x-4 mb-4">
@@ -227,25 +248,23 @@ const CreateProject = () => {
               onChange={(e) => handleTaskChange(index, 'assigned_to_user_id', e.target.value)}
               required
             >
-              <option value="">Assign to Consultant</option>
+              <option value="">Select Consultant</option>
               {consultants.map(consultant => (
                 <option key={consultant.id} value={consultant.id}>
                   {consultant.username}
                 </option>
               ))}
             </select>
-            <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-1">Task Duration (Hours):</label>
-              <input
-                className="w-full p-2 border border-gray-300 rounded bg-gray-100"
-                type="number"
-                value={task.durationHours}
-                readOnly
-              />
-            </div>
+            <input
+              className="w-full p-2 mb-2 border border-gray-300 rounded"
+              type="number"
+              value={task.durationHours}
+              readOnly
+              placeholder="Duration Hours"
+            />
             <button
               type="button"
-              className="px-4 py-2 bg-red-500 text-white rounded"
+              className="bg-red-500 text-white p-2 rounded"
               onClick={() => removeTask(index)}
             >
               Remove Task
@@ -254,18 +273,25 @@ const CreateProject = () => {
         ))}
         <button
           type="button"
-          className="px-4 py-2 bg-blue-500 text-white rounded mb-4"
+          className="bg-blue-500 text-white p-2 rounded mb-4"
           onClick={addTask}
         >
           Add Task
         </button>
         <button
           type="submit"
-          className="px-4 py-2 bg-green-500 text-white rounded"
+          className="bg-green-500 text-white p-2 rounded"
         >
           Create Project
         </button>
       </form>
+      <div className="upload-file-container mt-6">
+        <input
+          type="file"
+          accept=".xlsx"
+          onChange={handleFileUpload}
+        />
+      </div>
     </div>
   );
 };
