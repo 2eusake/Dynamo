@@ -1,75 +1,82 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-const User = require('./User');  
-const Task = require('./Task');  
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
+
 const Project = sequelize.define('Project', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: true
+  wbsElement: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: true,  // Unique WBS Element
+    field: 'wbs_element',
   },
   startDate: {
     type: DataTypes.DATE,
     field: 'start_date',
-    allowNull: false
+    allowNull: true,
   },
   endDate: {
     type: DataTypes.DATE,
     field: 'end_date',
-    allowNull: false
+    allowNull: true,
   },
-  durationWeeks: {
-    type: DataTypes.VIRTUAL,
-    get() {
-      if (this.startDate && this.endDate) {
-        const start = new Date(this.startDate);
-        const end = new Date(this.endDate);
-        const duration = Math.round((end - start) / (7 * 24 * 60 * 60 * 1000));
-        return duration > 0 ? duration : 0;
-      }
-      return null;
-    }
+  duration: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  progress: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
   status: {
-    type: DataTypes.ENUM('active', 'completed', 'onHold'),
+    type: DataTypes.ENUM('not started', 'in progress', 'completed'),
     allowNull: false,
-    defaultValue: 'active'
+    defaultValue: 'not started',
   },
   projectManagerId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
+    field: 'project_manager_id',
     references: {
-      model: 'Users',
-      key: 'id'
-    }
+      model: 'Users',  // Foreign key to the Users table for project manager
+      key: 'id',
+    },
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
   },
-  userId: {
+  directorId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
+    field: 'director_id',
     references: {
-      model: 'Users',
-      key: 'id'
-    }
+      model: 'Users',  // Foreign key to the Users table for director
+      key: 'id',
+    },
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
   },
   createdAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
+    field: 'created_at',
   },
   updatedAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
-    onUpdate: DataTypes.NOW
-  }
+    onUpdate: DataTypes.NOW,
+    field: 'updated_at',
+  },
 }, {
-  timestamps: true
+  timestamps: true,
+  underscored: true,
+  tableName: 'Projects',
 });
 
 module.exports = Project;

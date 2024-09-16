@@ -9,9 +9,16 @@ const TaskProvider = ({ children }) => {
 
   const fetchTasks = async () => {
     try {
-      await refreshToken(); // Refresh the token if needed
+      await refreshToken();
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/tasks', {
+      const role = localStorage.getItem('role');
+
+      let tasksUrl = 'http://localhost:5000/api/tasks';
+      if (role === 'consultant') {
+        tasksUrl = 'http://localhost:5000/api/tasks/user';
+      }
+
+      const response = await axios.get(tasksUrl, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(response.data);

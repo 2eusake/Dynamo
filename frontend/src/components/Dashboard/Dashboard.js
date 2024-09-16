@@ -1,35 +1,65 @@
-import React, { useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import ProjectCompletionChart from "../Project/ProjectCompletionChart";
 import WeeklyPerformanceChart from "../Project/WeeklyPerformanceChart";
-import { ProjectContext } from "../../contexts/ProjectContext";
-import { TaskContext } from "../../contexts/TaskContext";
-import { AuthContext } from "../../contexts/AuthContext";
 
 const Dashboard = () => {
-  const { fetchUserProjects, projects } = useContext(ProjectContext);
-  const { fetchUserTasks, tasks } = useContext(TaskContext);
-  const { user } = useContext(AuthContext);
+  const [projects, setProjects] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchUserProjects();
-    fetchUserTasks();
-  }, [fetchUserProjects, fetchUserTasks]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        
+        const [projectsResponse, tasksResponse, userResponse] = await Promise.all([
+          axios.get('http://localhost:5000/api/projects', {
+            headers: { 'Authorization': `Bearer ${token}` },
+          }),
+          axios.get('http://localhost:5000/api/tasks', {
+            headers: { 'Authorization': `Bearer ${token}` },
+          }),
+          axios.get('http://localhost:5000/api/users/profile', {
+            headers: { 'Authorization': `Bearer ${token}` },
+          })
+        ]);
+
+        setProjects(projectsResponse.data);
+        setTasks(tasksResponse.data);
+        setUser(userResponse.data);
+      } catch (err) {
+        setError('Failed to fetch data. Please try again later.');
+        console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Calculate projects that are exceeding their allocated time
   const exceedingProjects = projects.filter((project) => {
-    return project.progress < 100 && new Date(project.dueDate) < new Date();
+    return project.progress < 100 && new Date(project.endDate) < new Date();
   });
 
   // Calculate current ongoing projects
   const currentProjects = projects.filter((project) => project.progress < 100);
 
   // Helper function to calculate the difference in days
-  const calculateDaysOverdue = (dueDate) => {
+  const calculateDaysOverdue = (endDate) => {
     const now = new Date();
-    const due = new Date(dueDate);
-    const differenceInTime = now - due;
+    const end = new Date(endDate);
+    const differenceInTime = now - end;
     return Math.ceil(differenceInTime / (1000 * 60 * 60 * 24));
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="flex-1 flex flex-col">
@@ -54,13 +84,13 @@ const Dashboard = () => {
                 </h4>
                 <p className="text-red-600">
                   Progress: {project.progress}% done,
-                  {calculateDaysOverdue(project.dueDate)} days past due date
+                  {calculateDaysOverdue(project.endDate)} days past due date
                 </p>
                 <p className="text-deloitte-black mt-2">Pending Tasks:</p>
                 <ul className="list-disc pl-5 text-deloitte-black">
                   {tasks
                     .filter(
-                      (task) => task.projectId === project.id && !task.completed
+                      (task) => task.project_id === project.id && task.status !== 'completed'
                     )
                     .map((task) => (
                       <li key={task.id}>{task.name}</li>
@@ -110,7 +140,7 @@ const Dashboard = () => {
               Allocated time VS actual time
             </h3>
             <div className="border border-gray-300 p-4 rounded-md shadow-md">
-              <ProjectCompletionChart />
+              <ProjectCompletionChart projects={projects} />
             </div>
           </section>
 
@@ -119,7 +149,7 @@ const Dashboard = () => {
               Weekly performance
             </h3>
             <div className="border border-gray-300 p-4 rounded-md shadow-md">
-              <WeeklyPerformanceChart />
+              <WeeklyPerformanceChart tasks={tasks} />
             </div>
           </section>
         </div>
