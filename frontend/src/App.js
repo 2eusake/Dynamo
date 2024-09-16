@@ -64,6 +64,11 @@ const App = () => {
                   path="/tasks/:id"
                   element={<ProtectedRoute element={<TaskDetail />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
                 />
+                <Route
+                path="/reports"
+                element={<ProtectedRoute element={<ReportsPage />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
+                />
+
               </Routes>
             </TaskProvider>
           </ProjectProvider>
