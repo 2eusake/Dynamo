@@ -62,10 +62,7 @@ const ProjectsPage = () => {
       <h1>Projects and Tasks</h1>
       {notification && <div className="notification">{notification}</div>}
       
-      <form onSubmit={handleFileUpload}>
-        <input type="file" onChange={handleFileChange} />
-        <button type="submit">Upload File</button>
-      </form>
+     
 
       <div className="tiles-container">
         {projects.length > 0 ? (
@@ -73,7 +70,8 @@ const ProjectsPage = () => {
             <div key={project.id} className="tile">
               <Link to={`/projects/${project.id}`}>
                 <h2>{project.name}</h2>
-                <p>{project.description || 'No description available'}</p>
+                <h3>{project.wbsElement}</h3>
+                {/* <p>{project.description || 'No description available'}</p> */}
                 <div className="progress-bar">
                   <div className="progress" style={{ width: `${project.progress || 0}%` }}>
                     <span>{project.progress || 0}%</span>
@@ -86,7 +84,7 @@ const ProjectsPage = () => {
                   {project.tasks.map(task => (
                     <div key={task.id} className="task-tile">
                       <Link to={`/tasks/${task.id}`}>
-                        <h3>{task.name}</h3>
+                        <h3>{task.taskName}</h3>
                         <p>Assigned To: {task.assignedToUser?.username || 'Unassigned'}</p>
                         <p>Status: {task.status}</p>
                       </Link>

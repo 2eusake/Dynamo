@@ -14,7 +14,7 @@ const sequelize = new Sequelize(
     dialectOptions: {
       ssl: {
         ca: fs.readFileSync(
-          'C:/Users/mbtlut003/Documents/Code week 2/DPMS-P/backend/config/eu-north-1-bundle.pem'
+          "C:/Users/kwnvhu001/Desktop/DPMS-P/backend/config/eu-north-1-bundle.pem"
         ),
       },
     },

@@ -29,28 +29,30 @@ const getProjectsByUser = async (req, res) => {
 
 const createProject = async (req, res) => {
   const {
-    wbs_code,
+    wbsElement,
     name,
-    description,
+    //description,
     startDate,
     endDate,
     duration,
     status,
     projectManagerId,
+    directorId,
     tasks,
   } = req.body;
   const transaction = await sequelize.transaction();
   try {
     const project = await Project.create(
       {
-        wbs_code,
+        wbsElement,
         name,
-        description,
+        //description,
         startDate,
         endDate,
         duration,
         status: status || "not started",
         projectManagerId,
+        directorId,
         userId: req.user.id,
       },
       { transaction }
@@ -61,10 +63,11 @@ const createProject = async (req, res) => {
         Task.create(
           {
             taskId: task.taskId, 
-            name: task.name,
+            name: task.taskName,
             description: task.description,
             start_date: task.start_date,
             due_date: task.due_date,
+            hours:task.hours,
             assigned_to_user_id: task.assigned_to_user_id,
             project_id: project.id,
           },
@@ -101,7 +104,7 @@ const getProjectById = async (req, res) => {
 
 const updateProject = async (req, res) => {
   const {
-    wbs_code,
+    wbsElement,
     name,
     description,
     startDate,
@@ -118,7 +121,7 @@ const updateProject = async (req, res) => {
     });
     if (!project) return res.status(404).json({ message: "Project not found" });
 
-    project.wbs_code = wbs_code || project.wbs_code;
+    project.wbsElement = wbsElement || project.wbsElement;
     project.name = name || project.name;
     project.description = description || project.description;
     project.startDate = startDate || project.startDate;
@@ -134,11 +137,11 @@ const updateProject = async (req, res) => {
         Task.create(
           {
             taskId: task.taskId,
-            name: task.name,
+            name: task.taskName,
             description: task.description,
             start_date: task.start_date,
             due_date: task.due_date,
-            duration: task.duration,
+            hours: task.hours,
             assigned_to_user_id: task.assigned_to_user_id,
             project_id: project.id,
           },
