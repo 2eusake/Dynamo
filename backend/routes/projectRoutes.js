@@ -14,15 +14,15 @@ const {
 
 // Project routes
 router.route('/')
-    .get(authMiddleware, roleMiddleware(['project_manager', 'director']), getProjects) // Only PMs and Directors can view all projects
-    .post(authMiddleware, roleMiddleware(['project_manager']), createProject); // Only PMs can create a project
+    .get(authMiddleware, roleMiddleware(['Project Manager', 'Director']), getProjects) // Only PMs and Directors can view all projects
+    .post(authMiddleware, roleMiddleware(['Project Manager']), createProject); // Only PMs can create a project
 
 router.route('/:id')
     .get(authMiddleware, getProjectById) // All users can view project details
-    .put(authMiddleware, roleMiddleware(['project_manager', 'director']), updateProject)  // Only PMs and Directors can update projects
-    .delete(authMiddleware, roleMiddleware(['director']), deleteProject); // Only Directors can delete projects
+    .put(authMiddleware, roleMiddleware(['Project Manager', 'Director']), updateProject)  // Only PMs and Directors can update projects
+    .delete(authMiddleware, roleMiddleware(['Director']), deleteProject); // Only Directors can delete projects
 
 router.route('/user/:userId')
-    .get(authMiddleware, roleMiddleware(['consultant', 'project_manager', 'director']), getProjectsByUser); // All roles can view projects they're assigned to
+    .get(authMiddleware, roleMiddleware(['Consultant', 'Project Manager', 'Director']), getProjectsByUser); // All roles can view projects they're assigned to
 
 module.exports = router;

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 let refreshTokens = []; // Dummy refresh token storage
 
-// Register a new user (open to admins or directors)
+// Register a new user (open to all users, but handle roles carefully)
 const registerUser = async (req, res) => {
   // if (req.user.role !== 'director') {
   //   return res.status(403).json({ message: 'Access denied' });
@@ -70,7 +70,7 @@ const logoutUser = (req, res) => {
 
 // Get all users (restricted to directors)
 const getAllUsers = async (req, res) => {
-  if (req.user.role !== 'director') {
+  if (req.user.role !== 'Director') {
     return res.status(403).json({ message: 'Access denied' });
   }
 

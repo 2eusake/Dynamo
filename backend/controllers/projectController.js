@@ -4,7 +4,9 @@ const sequelize = require("../config/database");
 
 const getProjects = async (req, res) => {
   try {
-    const condition = req.user.role === 'director' ? {} : { userId: req.user.id };
+    const condition = req.user.role === 'Director' 
+  ? {} 
+  : { [sequelize.Op.or]: [{ userId: req.user.id }, { projectManagerId: req.user.id }] };
     const projects = await Project.findAll({
       where: condition,
       include: [{ model: Task, as: "tasks" }],
@@ -47,7 +49,7 @@ const createProject = async (req, res) => {
         startDate,
         endDate,
         duration,
-        status: status || "Not Started",
+        status: status || "not started",
         projectManagerId,
         userId: req.user.id,
       },

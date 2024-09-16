@@ -3,7 +3,7 @@ const Task = require('../models/Task');
 // Get all tasks assigned to the user (or all tasks if director)
 const getTasks = async (req, res) => {
   try {
-    const condition = req.user.role === 'director' ? {} : { assigned_to_user_id: req.user.id };
+    const condition = req.user.role === 'Director' ? {} : { assigned_to_user_id: req.user.id };
     const tasks = await Task.findAll({ where: condition });
     res.json(tasks);
   } catch (error) {
@@ -16,7 +16,7 @@ const getTasksByProject = async (req, res) => {
   try {
     const { projectId } = req.params;
     const tasks = await Task.findAll({ where: { project_id: projectId } });
-    if (req.user.role !== 'director') {
+    if (req.user.role !== 'Director') {
       tasks = tasks.filter(task => task.assigned_to_user_id === req.user.id);
     }
     res.json(tasks);
@@ -27,7 +27,7 @@ const getTasksByProject = async (req, res) => {
 
 // Create a new task (only accessible to project managers and directors)
 const createTask = async (req, res) => {
-  if (req.user.role !== 'projectManager' && req.user.role !== 'director') {
+  if (req.user.role !== 'Project Manager' && req.user.role !== 'Director') {
     return res.status(403).json({ message: 'Access denied' });
   }
 
@@ -53,7 +53,7 @@ const createTask = async (req, res) => {
 const getTaskById = async (req, res) => {
   try {
     const task = await Task.findByPk(req.params.id);
-    if (!task || (req.user.role !== 'director' && task.assigned_to_user_id !== req.user.id)) {
+    if (!task || (req.user.role !== 'Director' && task.assigned_to_user_id !== req.user.id)) {
       return res.status(404).json({ message: 'Task not found or access denied' });
     }
     res.json(task);
@@ -66,7 +66,7 @@ const getTaskById = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const task = await Task.findByPk(req.params.id);
-    if (!task || (req.user.role !== 'director' && task.assigned_to_user_id !== req.user.id)) {
+    if (!task || (req.user.role !== 'Director' && task.assigned_to_user_id !== req.user.id)) {
       return res.status(404).json({ message: 'Task not found or access denied' });
     }
 
@@ -80,7 +80,7 @@ const updateTask = async (req, res) => {
 
 // Delete a task (restricted to project manager or director)
 const deleteTask = async (req, res) => {
-  if (req.user.role !== 'projectManager' && req.user.role !== 'director') {
+  if (req.user.role !== 'Project Manager' && req.user.role !== 'Director') {
     return res.status(403).json({ message: 'Access denied' });
   }
 
