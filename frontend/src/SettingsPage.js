@@ -1,77 +1,6 @@
 
-/*
-// src/components/Settings.js
-import React, { useState, useEffect } from 'react';
 
-import './DarkMode.css';
-
-const Settings = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    const savedUsername = localStorage.getItem('username');
-    const savedEmail = localStorage.getItem('email');
-    const savedTheme = localStorage.getItem('theme');
-    if (savedUsername) setUsername(savedUsername);
-    if (savedEmail) setEmail(savedEmail);
-    if (savedTheme) setDarkMode(savedTheme === 'dark');
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
-  }, [darkMode]);
-
-  const handleSave = (e) => {
-    e.preventDefault(); // Prevent form submission
-    localStorage.setItem('username', username);
-    localStorage.setItem('email', email);
-    console.log('Settings saved:', { username, email, darkMode });
-  };
-
-  return (
-    <div>
-      <h2 className="text-2xl font-bold text-deloitte-dark-green">Settings</h2>
-      <form onSubmit={handleSave}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Dark Mode:</label>
-          <input
-            type="checkbox"
-            checked={darkMode}
-            onChange={(e) => setDarkMode(e.target.checked)}
-          />
-        </div>
-        <button type="submit"
-          className=" p-2 bg-green-500 text-white rounded hover:bg-green-600">
-          Save
-        </button>
-      </form>
-      
-    </div>
-  );
-};
-
-export default Settings;*/
-
-import React, { useState, useEffect } from 'react';
+/*import React, { useState, useEffect } from 'react';
 
 // Helper functions for local storage
 const getSettings = () => ({
@@ -106,7 +35,7 @@ const Settings= () => {
     <div className="settings-page container mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Settings</h2>
       
-      {/* Dark Mode Toggle */}
+      {// Dark Mode Toggle //}
       <div className="setting-item mb-4">
         <label className="flex items-center cursor-pointer">
           <span className="text-xl font-semibold text-gray-700 dark:text-gray-300 mr-4">Dark Mode</span>
@@ -120,7 +49,7 @@ const Settings= () => {
         </label>
       </div>
 
-      {/* Email Notifications Toggle */}
+      {// Email Notifications Toggle //}
       <div className="setting-item mb-4">
         <label className="flex items-center cursor-pointer">
           <span className="text-xl font-semibold text-gray-700 dark:text-gray-300 mr-4">Email Notifications</span>
@@ -134,7 +63,7 @@ const Settings= () => {
         </label>
       </div>
 
-      {/* Notification Sounds Toggle */}
+      {// Notification Sounds Toggle //}
       <div className="setting-item mb-4">
         <label className="flex items-center cursor-pointer">
           <span className="text-xl font-semibold text-gray-700 dark:text-gray-300 mr-4">Notification Sounds</span>
@@ -148,13 +77,70 @@ const Settings= () => {
         </label>
       </div>
 
-      {/* Add more settings sections as needed */}
+      {// Add more settings sections as needed //}
     </div>
   );
 };
 
-export default Settings;
+export default Settings;*/
 
+import React, { useState, useEffect } from 'react';
+import './SettingPage.css';
+
+const SettingsPage = () => {
+  const [darkMode, setDarkMode] = useState(false);
+  const [notifications, setNotifications] = useState(true);
+  const [sound, setSound] = useState(true);
+
+  useEffect(() => {
+    // Apply dark mode
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  const ToggleSwitch = ({ checked, onChange, label }) => (
+    <div className="setting-item">
+      <span className="setting-label">{label}</span>
+      <label className="toggle-switch">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={onChange}
+        />
+        <span className="slider"></span>
+      </label>
+    </div>
+  );
+
+  return (
+    <div className="settings-container">
+      <h1>Settings</h1>
+      
+      <ToggleSwitch
+        checked={darkMode}
+        onChange={() => setDarkMode(!darkMode)}
+        label="Dark Mode"
+      />
+
+      <ToggleSwitch
+        checked={notifications}
+        onChange={() => setNotifications(!notifications)}
+        label="Notifications"
+      />
+
+      <ToggleSwitch
+        checked={sound}
+        onChange={() => setSound(!sound)}
+        label="Sound"
+      />
+    </div>
+  );
+};
+
+export default SettingsPage;
 
 
 
