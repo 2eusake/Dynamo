@@ -1,6 +1,5 @@
-const { Sequelize } = require('sequelize');
-const fs = require('fs');
-
+const { Sequelize } = require("sequelize");
+const fs = require("fs");
 
 //KPiu7qTJnGs51CGDX7ab
 
@@ -15,8 +14,9 @@ const sequelize = new Sequelize('dpms_serv', 'zeusake', 'KPiu7qTJnGs51CGDX7ab', 
   }
 });
 
-sequelize.authenticate()
-  .then(() => console.log('Database connected son...'))
-  .catch(err => console.log('Error: ' + err));
+sequelize
+  .authenticate()
+  .then(() => console.log("Database connected son..."))
+  .catch((err) => console.log("Error: " + err));
 
 module.exports = sequelize;
