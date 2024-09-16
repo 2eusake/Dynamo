@@ -47,7 +47,7 @@ const Project = sequelize.define('Project', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'users',
+      model: 'Users',
       key: 'id'
     }
   },
@@ -55,7 +55,7 @@ const Project = sequelize.define('Project', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'users',
+      model: 'Users',
       key: 'id'
     }
   },

@@ -44,7 +44,7 @@ const Task = sequelize.define('Task', {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: 'users', // Name of the users table
+      model: 'Users', // Name of the users table
       key: 'id'
     },
     onDelete: 'SET NULL'
@@ -58,7 +58,7 @@ const Task = sequelize.define('Task', {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: 'projects', 
+      model: 'Projects', 
       key: 'id'
     },
     onDelete: 'CASCADE'
