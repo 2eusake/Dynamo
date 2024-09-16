@@ -15,6 +15,7 @@ import Footer from './components/Common/Footer';
 import Navbar from './components/Common/Navbar';
 import Sidebar from './components/Dashboard/Sidebar';
 import ProjectProvider from './contexts/ProjectContext';
+import ReportsPage from './components/Reports/ReportsPage';
 import TaskProvider from './contexts/TaskContext';
 import { ToastContainer } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css'; 
@@ -42,6 +43,7 @@ const App = () => {
                 <Route path="/create-project" element={<ProtectedRoute element={<CreateProject />} />} />
                 <Route path="/tasks" element={<ProtectedRoute element={<TasksPage />} />} />
                 <Route path="/tasks/:id" element={<ProtectedRoute element={<TaskDetail />} />} />
+                <Route path="/reports" element={<ProtectedRoute element={<ReportsPage />} />} />
               </Routes>
             </TaskProvider>
           </ProjectProvider>
