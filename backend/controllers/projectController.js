@@ -1,17 +1,17 @@
+// controllers/projectController.js
 const { Project, Task } = require("../models");
 const sequelize = require("../config/database");
 
 const getProjects = async (req, res) => {
   try {
+    const condition = req.user.role === 'director' ? {} : { userId: req.user.id };
     const projects = await Project.findAll({
-      where: { userId: req.user.id },
+      where: condition,
       include: [{ model: Task, as: "tasks" }],
     });
     res.json(projects);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching projects", error: error.message });
+    res.status(500).json({ message: "Error fetching projects", error: error.message });
   }
 };
 
@@ -27,7 +27,7 @@ const getProjectsByUser = async (req, res) => {
 
 const createProject = async (req, res) => {
   const {
-    wbs_element,
+    wbs_code,
     name,
     description,
     startDate,
@@ -41,7 +41,7 @@ const createProject = async (req, res) => {
   try {
     const project = await Project.create(
       {
-        wbs_element,
+        wbs_code,
         name,
         description,
         startDate,
@@ -58,12 +58,11 @@ const createProject = async (req, res) => {
       const taskPromises = tasks.map((task) =>
         Task.create(
           {
-            taskId: task.taskId, // Ensure taskId is being used
+            taskId: task.taskId, 
             name: task.name,
             description: task.description,
             start_date: task.start_date,
             due_date: task.due_date,
-            duration: task.duration,
             assigned_to_user_id: task.assigned_to_user_id,
             project_id: project.id,
           },
@@ -100,7 +99,7 @@ const getProjectById = async (req, res) => {
 
 const updateProject = async (req, res) => {
   const {
-    wbs_element,
+    wbs_code,
     name,
     description,
     startDate,
@@ -117,6 +116,7 @@ const updateProject = async (req, res) => {
     });
     if (!project) return res.status(404).json({ message: "Project not found" });
 
+    project.wbs_code = wbs_code || project.wbs_code;
     project.name = name || project.name;
     project.description = description || project.description;
     project.startDate = startDate || project.startDate;
@@ -126,14 +126,12 @@ const updateProject = async (req, res) => {
     project.projectManagerId = projectManagerId || project.projectManagerId;
     await project.save({ transaction });
 
-    // Delete existing tasks and recreate them if provided
     if (tasks && tasks.length) {
       await Task.destroy({ where: { project_id: project.id }, transaction });
-
       const taskPromises = tasks.map((task) =>
         Task.create(
           {
-            taskId: taskId,
+            taskId: task.taskId,
             name: task.name,
             description: task.description,
             start_date: task.start_date,
@@ -145,7 +143,6 @@ const updateProject = async (req, res) => {
           { transaction }
         )
       );
-
       await Promise.all(taskPromises);
     }
 
@@ -165,9 +162,8 @@ const deleteProject = async (req, res) => {
       where: { id: req.params.id, userId: req.user.id },
     });
     if (!project) return res.status(404).json({ message: "Project not found" });
-
     await project.destroy();
-    res.json({ message: "Project removed" });
+    res.json({ message: "Project deleted successfully" });
   } catch (error) {
     res
       .status(500)
@@ -177,9 +173,9 @@ const deleteProject = async (req, res) => {
 
 module.exports = {
   getProjects,
+  getProjectsByUser,
   createProject,
   getProjectById,
   updateProject,
   deleteProject,
-  getProjectsByUser,
 };

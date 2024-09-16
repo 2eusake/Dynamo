@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 //import Picture3 from "../../assets/Picture3.png";
-import "./Login.css"; // Import the external CSS file
+import "./Login.css"; 
 
 const Login = () => {
   const [email, setEmail] = useState("");

@@ -44,17 +44,17 @@ const Dashboard = () => {
 
   // Calculate projects that are exceeding their allocated time
   const exceedingProjects = projects.filter((project) => {
-    return project.progress < 100 && new Date(project.dueDate) < new Date();
+    return project.progress < 100 && new Date(project.endDate) < new Date();
   });
 
   // Calculate current ongoing projects
   const currentProjects = projects.filter((project) => project.progress < 100);
 
   // Helper function to calculate the difference in days
-  const calculateDaysOverdue = (dueDate) => {
+  const calculateDaysOverdue = (endDate) => {
     const now = new Date();
-    const due = new Date(dueDate);
-    const differenceInTime = now - due;
+    const end = new Date(endDate);
+    const differenceInTime = now - end;
     return Math.ceil(differenceInTime / (1000 * 60 * 60 * 24));
   };
 
@@ -84,13 +84,13 @@ const Dashboard = () => {
                 </h4>
                 <p className="text-red-600">
                   Progress: {project.progress}% done,
-                  {calculateDaysOverdue(project.dueDate)} days past due date
+                  {calculateDaysOverdue(project.endDate)} days past due date
                 </p>
                 <p className="text-deloitte-black mt-2">Pending Tasks:</p>
                 <ul className="list-disc pl-5 text-deloitte-black">
                   {tasks
                     .filter(
-                      (task) => task.projectId === project.id && !task.completed
+                      (task) => task.project_id === project.id && task.status !== 'completed'
                     )
                     .map((task) => (
                       <li key={task.id}>{task.name}</li>
@@ -158,4 +158,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

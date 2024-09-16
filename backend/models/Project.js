@@ -13,7 +13,7 @@ const Project = sequelize.define('Project', {
   },
   wbsElement: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true,  // Unique WBS Element
     field: 'wbs_element',
   },
@@ -26,6 +26,14 @@ const Project = sequelize.define('Project', {
     type: DataTypes.DATE,
     field: 'end_date',
     allowNull: true,
+  },
+  duration: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  progress: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
   status: {
     type: DataTypes.ENUM('not started', 'in progress', 'completed'),

@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./User');
 
 const Task = sequelize.define('Task', {
   id: {
@@ -22,10 +21,15 @@ const Task = sequelize.define('Task', {
     allowNull: true,
     field: 'due_date',
   },
-  hoursAllocated: {
+  hours: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     field: 'hours_allocated',
+  },
+  taskId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: 'task_id',
   },
   status: {
     type: DataTypes.ENUM('pending', 'in progress', 'completed'),
@@ -37,7 +41,7 @@ const Task = sequelize.define('Task', {
     allowNull: true,
     field: 'assigned_to_user_id',
     references: {
-      model: 'Users',  // Foreign key to the Users table for task assignment
+      model: 'Users',
       key: 'id',
     },
     onDelete: 'SET NULL',
@@ -47,7 +51,7 @@ const Task = sequelize.define('Task', {
     allowNull: false,
     field: 'project_id',
     references: {
-      model: 'Projects',  // Foreign key to the Projects table
+      model: 'Projects',
       key: 'id',
     },
     onDelete: 'CASCADE',
@@ -65,20 +69,6 @@ const Task = sequelize.define('Task', {
   },
 }, {
   timestamps: true,
-  hooks: {
-    beforeCreate: async (task) => {
-      const assignedUser = await User.findByPk(task.assignedToUserId);
-      if (assignedUser && assignedUser.role !== 'consultant') {
-        throw new Error('Only consultants can be assigned to tasks.');
-      }
-    },
-    beforeUpdate: async (task) => {
-      const assignedUser = await User.findByPk(task.assignedToUserId);
-      if (assignedUser && assignedUser.role !== 'consultant') {
-        throw new Error('Only consultants can be assigned to tasks.');
-      }
-    },
-  },
 });
 
 module.exports = Task;

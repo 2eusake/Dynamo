@@ -35,13 +35,34 @@ const App = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
-                <Route path="/projects" element={<ProtectedRoute element={<ProjectList />} />} />
-                <Route path="/projects/:id" element={<ProtectedRoute element={<ProjectDetail />} />} />
-                <Route path="/projects/edit/:id" element={<ProtectedRoute element={<EditProject />} />} />
-                <Route path="/create-project" element={<ProtectedRoute element={<CreateProject />} />} />
-                <Route path="/tasks" element={<ProtectedRoute element={<TasksPage />} />} />
-                <Route path="/tasks/:id" element={<ProtectedRoute element={<TaskDetail />} />} />
+                <Route
+                  path="/dashboard"
+                  element={<ProtectedRoute element={<Dashboard />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
+                />
+                <Route
+                  path="/projects"
+                  element={<ProtectedRoute element={<ProjectList />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
+                />
+                <Route
+                  path="/projects/:id"
+                  element={<ProtectedRoute element={<ProjectDetail />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
+                />
+                <Route
+                  path="/projects/edit/:id"
+                  element={<ProtectedRoute element={<EditProject />} allowedRoles={['Director', 'Project Manager']} />}
+                />
+                <Route
+                  path="/create-project"
+                  element={<ProtectedRoute element={<CreateProject />} allowedRoles={['Director', 'Project Manager']} />}
+                />
+                <Route
+                  path="/tasks"
+                  element={<ProtectedRoute element={<TasksPage />} allowedRoles={['director', 'projectManager', 'Consultant']} />}
+                />
+                <Route
+                  path="/tasks/:id"
+                  element={<ProtectedRoute element={<TaskDetail />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
+                />
               </Routes>
             </TaskProvider>
           </ProjectProvider>
