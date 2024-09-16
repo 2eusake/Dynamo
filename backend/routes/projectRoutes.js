@@ -2,9 +2,11 @@
 
 
 
+// routes/projectRoutes.js
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middlewares/authMiddleware');
+const { authMiddleware } = require('../middlewares/authMiddleware');
+const { roleMiddleware } = require('../middlewares/roleMiddleware');
 const { 
     getProjects, 
     createProject, 
@@ -16,13 +18,16 @@ const {
 
 // Project routes
 router.route('/')
-    .get(authMiddleware, getProjects) // Get all projects
-    .post(authMiddleware, createProject); // Create a new project
+    .get(authMiddleware, roleMiddleware(['Project Manager', 'Director']), getProjects) // Only PMs and Directors can view all projects
+    .post(authMiddleware, roleMiddleware(['Project Manager']), createProject); // Only PMs can create a project
 
 router.route('/:id')
-    .get(authMiddleware, getProjectById) // Get project by ID
-    .put(authMiddleware, updateProject) // Update project by ID
-    .delete(authMiddleware, deleteProject); // Delete project by ID
+    .get(authMiddleware, getProjectById) // All users can view project details
+    .put(authMiddleware, roleMiddleware(['Project Manager', 'Director']), updateProject)  // Only PMs and Directors can update projects
+    .delete(authMiddleware, roleMiddleware(['Director']), deleteProject); // Only Directors can delete projects
+
+router.route('/user/:userId')
+    .get(authMiddleware, roleMiddleware(['Consultant', 'Project Manager', 'Director']), getProjectsByUser); // All roles can view projects they're assigned to
 
 router.route('/user')
     .get(authMiddleware, getProjectsByUser);

@@ -5,18 +5,25 @@ import * as tf from '@tensorflow/tfjs';
 
 export const ProjectContext = createContext();
 
-const ProjectProvider = ({ children }) => {
+export const ProjectProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [consultants, setConsultants] = useState([]);
-  const [model, setModel] = useState(null);
   const [latestProject, setLatestProject] = useState(null);
+  const [model, setModel] = useState(null);
 
   const fetchProjects = async () => {
     try {
-      await refreshToken(); // Refresh the token if needed
+      await refreshToken();
       const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+
+      let projectsUrl = 'http://localhost:5000/api/projects';
+      if (role === 'consultant') {
+        projectsUrl = 'http://localhost:5000/api/projects/user';
+      }
+
       const [projectsResponse, usersResponse] = await Promise.all([
-        axios.get('http://localhost:5000/api/projects', {
+        axios.get(projectsUrl, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         axios.get('http://localhost:5000/api/users', {
@@ -29,7 +36,7 @@ const ProjectProvider = ({ children }) => {
       setConsultants(usersResponse.data.filter(user => user.role === 'consultant'));
 
       if (projectsData.length > 0) {
-        const latest = projectsData.reduce((prev, curr) => (new Date(prev.createdAt) > new Date(curr.createdAt) ? prev : curr));
+        const latest = projectsData.reduce((prev, curr) => new Date(prev.createdAt) > new Date(curr.createdAt) ? prev : curr);
         setLatestProject(latest);
       }
     } catch (error) {
@@ -39,7 +46,7 @@ const ProjectProvider = ({ children }) => {
 
   const fetchUserProjects = async () => {
     try {
-      await refreshToken(); // Refresh the token if needed
+      await refreshToken();
       const token = localStorage.getItem('token');
       console.log('Fetching user projects with token:', token);
       const response = await axios.get('http://localhost:5000/api/projects/user', {
@@ -51,10 +58,6 @@ const ProjectProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
   const predictProjectCompletion = (project) => {
     if (!model) return null;
     const inputTensor = tf.tensor2d([project.features]);
@@ -64,12 +67,12 @@ const ProjectProvider = ({ children }) => {
 
   const addProject = async (project) => {
     try {
-      await refreshToken(); // Refresh the token if needed
+      await refreshToken();
       const token = localStorage.getItem('token');
       const response = await axios.post('http://localhost:5000/api/projects', project, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setProjects([...projects, response.data]);
+      setProjects(prevProjects => [...prevProjects, response.data]);
       if (projects.length === 0 || new Date(response.data.createdAt) > new Date(latestProject.createdAt)) {
         setLatestProject(response.data);
       }
@@ -80,13 +83,13 @@ const ProjectProvider = ({ children }) => {
 
   const updateProject = async (id, updatedProject) => {
     try {
-      await refreshToken(); // Refresh the token if needed
+      await refreshToken();
       const token = localStorage.getItem('token');
       const response = await axios.put(`http://localhost:5000/api/projects/${id}`, updatedProject, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setProjects(projects.map(project => project.id === id ? response.data : project));
-      if (new Date(response.data.createdAt) > new Date(latestProject.createdAt)) {
+      setProjects(prevProjects => prevProjects.map(project => project.id === id ? response.data : project));
+      if (latestProject && new Date(response.data.createdAt) > new Date(latestProject.createdAt)) {
         setLatestProject(response.data);
       }
     } catch (error) {
@@ -96,13 +99,13 @@ const ProjectProvider = ({ children }) => {
 
   const deleteProject = async (id) => {
     try {
-      await refreshToken(); // Refresh the token if needed
+      await refreshToken();
       const token = localStorage.getItem('token');
       await axios.delete(`http://localhost:5000/api/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setProjects(projects.filter(project => project.id !== id));
-      if (latestProject.id === id && projects.length > 0) {
+      setProjects(prevProjects => prevProjects.filter(project => project.id !== id));
+      if (latestProject && latestProject.id === id && projects.length > 0) {
         const newLatest = projects.reduce((prev, curr) => (new Date(prev.createdAt) > new Date(curr.createdAt) ? prev : curr));
         setLatestProject(newLatest);
       }
@@ -110,6 +113,20 @@ const ProjectProvider = ({ children }) => {
       console.error('Error deleting project:', error);
     }
   };
+
+  useEffect(() => {
+    fetchProjects();
+
+    const loadModel = async () => {
+      try {
+        const loadedModel = await tf.loadLayersModel('/path/to/model.json');
+        setModel(loadedModel);
+      } catch (error) {
+        console.error('Error loading model:', error);
+      }
+    };
+    loadModel();
+  }, []);
 
   return (
     <ProjectContext.Provider value={{ 

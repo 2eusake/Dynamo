@@ -7,10 +7,11 @@ const CreateProject = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    startDate: '',
-    endDate: '',
+    start_date: '',
+    end_date: '',
     projectManagerId: '',
-    tasks: [{ name: '', dueDate: '', assignedToId: '', durationHours: 0 }],
+    wbs_code: '', // Updated to match the database field
+    tasks: [{ taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
   });
 
   const [consultants, setConsultants] = useState([]);
@@ -41,13 +42,13 @@ const CreateProject = () => {
 
   useEffect(() => {
     // Calculate project duration in weeks whenever startDate or endDate changes
-    if (formData.startDate && formData.endDate) {
-      const startDate = new Date(formData.startDate);
-      const endDate = new Date(formData.endDate);
+    if (formData.start_date && formData.end_date) {
+      const startDate = new Date(formData.start_date);
+      const endDate = new Date(formData.end_date);
       const durationWeeks = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24 * 7));
       setProjectDurationWeeks(durationWeeks);
     }
-  }, [formData.startDate, formData.endDate]);
+  }, [formData.start_date, formData.end_date]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -73,7 +74,7 @@ const CreateProject = () => {
   const addTask = () => {
     setFormData({
       ...formData,
-      tasks: [...formData.tasks, { name: '', dueDate: '', assignedToId: '', durationHours: 0 }],
+      tasks: [...formData.tasks, { taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
     });
   };
 
@@ -92,7 +93,7 @@ const CreateProject = () => {
         },
       });
       setNotification('Project created successfully!');
-      toast.success('Project created successfully!')
+      toast.success('Project created successfully!');
       // Reset form
       setFormData({
         name: '',
@@ -100,13 +101,35 @@ const CreateProject = () => {
         start_date: '',
         end_date: '',
         projectManagerId: '',
-        tasks: [{ name: '', dueDate: '', assignedToId: '', durationHours: 0 }],
+        wbs_code: '', // Reset new field
+        tasks: [{ taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
       });
       setProjectDurationWeeks(0);
     } catch (error) {
       console.error('Error creating project:', error);
       setNotification('Failed to create project.');
       toast.error('Failed to create project.');
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      await axios.post('http://localhost:5000/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      toast.success('File uploaded and processed successfully!');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast.error('Failed to upload file.');
     }
   };
 
@@ -132,20 +155,29 @@ const CreateProject = () => {
           placeholder="Project Description"
           required
         />
+        <input
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+          type="text"
+          name="wbs_code"
+          value={formData.wbs_code}
+          onChange={handleInputChange}
+          placeholder="WBS Code"
+          required
+        />
         <div className="flex space-x-4 mb-4">
           <input
             className="w-1/2 p-2 border border-gray-300 rounded"
             type="date"
-            name="startDate"
-            value={formData.startDate}
+            name="start_date"
+            value={formData.start_date}
             onChange={handleInputChange}
             required
           />
           <input
             className="w-1/2 p-2 border border-gray-300 rounded"
             type="date"
-            name="endDate"
-            value={formData.endDate}
+            name="end_date"
+            value={formData.end_date}
             onChange={handleInputChange}
             required
           />
@@ -184,6 +216,14 @@ const CreateProject = () => {
               placeholder="Task Name"
               required
             />
+            <input
+              className="w-full p-2 mb-2 border border-gray-300 rounded"
+              type="text"
+              value={task.taskId}
+              onChange={(e) => handleTaskChange(index, 'taskId', e.target.value)}
+              placeholder="Task ID"
+              required
+            />
             <div className="flex space-x-4 mb-2">
               <input
                 className="w-1/2 p-2 border border-gray-300 rounded"
@@ -198,56 +238,60 @@ const CreateProject = () => {
                 type="date"
                 value={task.dueDate}
                 onChange={(e) => handleTaskChange(index, 'dueDate', e.target.value)}
+                placeholder="Due Date"
                 required
-              />
-            </div>
-            <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-1">Task Duration (Hours):</label>
-              <input
-                className="w-full p-2 border border-gray-300 rounded bg-gray-100"
-                type="number"
-                value={task.durationHours}
-                readOnly
               />
             </div>
             <select
               className="w-full p-2 mb-2 border border-gray-300 rounded"
-              value={task.assignedToId}
-              onChange={(e) => handleTaskChange(index, 'assignedToId', e.target.value)}
+              value={task.assigned_to_user_id}
+              onChange={(e) => handleTaskChange(index, 'assigned_to_user_id', e.target.value)}
               required
             >
-              <option value="">Assign to Consultant</option>
+              <option value="">Select Consultant</option>
               {consultants.map(consultant => (
                 <option key={consultant.id} value={consultant.id}>
                   {consultant.username}
                 </option>
               ))}
             </select>
-            {index > 0 && (
-              <button
-                type="button"
-                onClick={() => removeTask(index)}
-                className="text-red-500 hover:text-red-700"
-              >
-                Remove Task
-              </button>
-            )}
+            <input
+              className="w-full p-2 mb-2 border border-gray-300 rounded"
+              type="number"
+              value={task.durationHours}
+              readOnly
+              placeholder="Duration Hours"
+            />
+            <button
+              type="button"
+              className="bg-red-500 text-white p-2 rounded"
+              onClick={() => removeTask(index)}
+            >
+              Remove Task
+            </button>
           </div>
         ))}
         <button
           type="button"
+          className="bg-blue-500 text-white p-2 rounded mb-4"
           onClick={addTask}
-          className="w-full mb-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Add Another Task
+          Add Task
         </button>
         <button
           type="submit"
-          className="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600"
+          className="bg-green-500 text-white p-2 rounded"
         >
           Create Project
         </button>
       </form>
+      <div className="upload-file-container mt-6">
+        <input
+          type="file"
+          accept=".xlsx"
+          onChange={handleFileUpload}
+        />
+      </div>
     </div>
   );
 };

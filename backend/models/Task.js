@@ -1,79 +1,74 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./User');
-const Project = require('./Project');
 
 const Task = sequelize.define('Task', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
-  taskId: {  
+  taskName: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true, 
-    field: 'task_id'
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
+    field: 'task_name',
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: true
-  },
-  start_date: {
-    type: DataTypes.DATE,
-    allowNull: true
-  },
-  due_date: {
-    type: DataTypes.DATE,
-    allowNull: true
-  },
-  durationHours: {
-    type: DataTypes.VIRTUAL,
-    get() {
-      const start = new Date(this.start_date);
-      const due = new Date(this.due_date);
-      const duration = Math.round((due - start) / (60 * 60 * 1000));
-      return duration;
-    }
-  },
-  assigned_to_user_id: {
-    type: DataTypes.INTEGER,
     allowNull: true,
-    references: {
-      model: 'Users', // Name of the users table
-      key: 'id'
-    },
-    onDelete: 'SET NULL'
+  },
+  dueDate: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'due_date',
+  },
+  hours: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true,
+    field: 'hours_allocated',
+  },
+  taskId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: 'task_id',
   },
   status: {
-    type: DataTypes.ENUM('notStarted', 'inProgress', 'completed', 'onHold'),
+    type: DataTypes.ENUM('pending', 'in progress', 'completed'),
     allowNull: false,
-    defaultValue: 'notStarted'
+    defaultValue: 'pending',
   },
-  project_id: {
+  assignedToUserId: {
     type: DataTypes.INTEGER,
     allowNull: true,
+    field: 'assigned_to_user_id',
     references: {
-      model: 'Projects', 
-      key: 'id'
+      model: 'Users',
+      key: 'id',
     },
-    onDelete: 'CASCADE'
+    onDelete: 'SET NULL',
+  },
+  projectId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    field: 'project_id',
+    references: {
+      model: 'Projects',
+      key: 'id',
+    },
+    onDelete: 'CASCADE',
   },
   createdAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
+    field: 'created_at',
   },
   updatedAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
-    onUpdate: DataTypes.NOW
-  }
+    onUpdate: DataTypes.NOW,
+    field: 'updated_at',
+  },
 }, {
-  timestamps: true
+  timestamps: true,
 });
 
 module.exports = Task;

@@ -17,7 +17,7 @@ const authMiddleware = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({ message: 'User not found' });
     }
-    
+
     req.user = user;
     next();
   } catch (error) {
@@ -25,4 +25,13 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+const roleCheck = (allowedRoles) => {
+  return (req, res, next) => {
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'Access denied. You do not have the required role.' });
+    }
+    next();
+  };
+};
+
+module.exports = { authMiddleware, roleCheck };
