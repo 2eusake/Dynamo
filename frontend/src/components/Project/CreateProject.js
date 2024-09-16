@@ -6,12 +6,13 @@ import 'react-toastify/dist/ReactToastify.css';
 const CreateProject = () => {
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
+    //description: '',
     start_date: '',
     end_date: '',
     projectManagerId: '',
-    wbs_code: '', // Updated to match the database field
-    tasks: [{ taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
+    projectDurationWeeks:'',
+    wbsElement: '', // Updated to match the database field
+    tasks: [{ taskId: '', name: '', description:'', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
   });
 
   const [consultants, setConsultants] = useState([]);
@@ -74,7 +75,7 @@ const CreateProject = () => {
   const addTask = () => {
     setFormData({
       ...formData,
-      tasks: [...formData.tasks, { taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
+      tasks: [...formData.tasks, { taskId: '', name: '', description:'',startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
     });
   };
 
@@ -102,7 +103,7 @@ const CreateProject = () => {
         end_date: '',
         projectManagerId: '',
         wbs_code: '', // Reset new field
-        tasks: [{ taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
+        tasks: [{ taskId: '', name: '',description:'', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
       });
       setProjectDurationWeeks(0);
     } catch (error) {
@@ -138,6 +139,15 @@ const CreateProject = () => {
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Create New Project</h2>
       {notification && <div className="notification mb-4 p-2 bg-green-100 text-green-700 rounded">{notification}</div>}
       <form onSubmit={handleSubmit}>
+      <input
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+          type="text"
+          name="wbs_code"
+          value={formData.wbsElement}
+          onChange={handleInputChange}
+          placeholder="WBS Element"
+          required
+        />
         <input
           className="w-full p-2 mb-4 border border-gray-300 rounded"
           type="text"
@@ -147,23 +157,22 @@ const CreateProject = () => {
           placeholder="Project Name"
           required
         />
-        <textarea
+         <select
           className="w-full p-2 mb-4 border border-gray-300 rounded"
-          name="description"
-          value={formData.description}
+          name="projectManagerId"
+          value={formData.projectManagerId}
           onChange={handleInputChange}
-          placeholder="Project Description"
           required
-        />
-        <input
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-          type="text"
-          name="wbs_code"
-          value={formData.wbs_code}
-          onChange={handleInputChange}
-          placeholder="WBS Code"
-          required
-        />
+        >
+          <option value="">Select Project Manager</option>
+          {projectManagers.map(pm => (
+            <option key={pm.id} value={pm.id}>
+              {pm.username}
+            </option>
+          ))}
+        </select>
+        
+        
         <div className="flex space-x-4 mb-4">
           <input
             className="w-1/2 p-2 border border-gray-300 rounded"
@@ -191,31 +200,10 @@ const CreateProject = () => {
             readOnly
           />
         </div>
-        <select
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-          name="projectManagerId"
-          value={formData.projectManagerId}
-          onChange={handleInputChange}
-          required
-        >
-          <option value="">Select Project Manager</option>
-          {projectManagers.map(pm => (
-            <option key={pm.id} value={pm.id}>
-              {pm.username}
-            </option>
-          ))}
-        </select>
+       
         <h3 className="text-xl font-bold mb-2 text-gray-700">Tasks</h3>
         {formData.tasks.map((task, index) => (
           <div key={index} className="task-container mb-4 p-4 bg-gray-50 rounded-lg shadow-inner">
-            <input
-              className="w-full p-2 mb-2 border border-gray-300 rounded"
-              type="text"
-              value={task.name}
-              onChange={(e) => handleTaskChange(index, 'name', e.target.value)}
-              placeholder="Task Name"
-              required
-            />
             <input
               className="w-full p-2 mb-2 border border-gray-300 rounded"
               type="text"
@@ -224,6 +212,36 @@ const CreateProject = () => {
               placeholder="Task ID"
               required
             />
+            <input
+              className="w-full p-2 mb-2 border border-gray-300 rounded"
+              type="text"
+              value={task.name}
+              onChange={(e) => handleTaskChange(index, 'name', e.target.value)}
+              placeholder="Task Name"
+              required
+            />
+            <textarea
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
+          placeholder="Task Description"
+          required
+        />
+        <select
+              className="w-full p-2 mb-2 border border-gray-300 rounded"
+              value={task.assigned_to_user_id}
+              onChange={(e) => handleTaskChange(index, 'assigned_to_user_id', e.target.value)}
+              required
+            >
+              <option value="">Select Consultant</option>
+              {consultants.map(consultant => (
+                <option key={consultant.id} value={consultant.id}>
+                  {consultant.username}
+                </option>
+              ))}
+            </select>
+            
             <div className="flex space-x-4 mb-2">
               <input
                 className="w-1/2 p-2 border border-gray-300 rounded"
@@ -242,19 +260,7 @@ const CreateProject = () => {
                 required
               />
             </div>
-            <select
-              className="w-full p-2 mb-2 border border-gray-300 rounded"
-              value={task.assigned_to_user_id}
-              onChange={(e) => handleTaskChange(index, 'assigned_to_user_id', e.target.value)}
-              required
-            >
-              <option value="">Select Consultant</option>
-              {consultants.map(consultant => (
-                <option key={consultant.id} value={consultant.id}>
-                  {consultant.username}
-                </option>
-              ))}
-            </select>
+            
             <input
               className="w-full p-2 mb-2 border border-gray-300 rounded"
               type="number"

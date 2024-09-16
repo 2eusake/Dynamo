@@ -7,6 +7,11 @@ const Task = sequelize.define('Task', {
     primaryKey: true,
     autoIncrement: true,
   },
+  taskId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: 'task_id',
+  },
   taskName: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -16,27 +21,34 @@ const Task = sequelize.define('Task', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  dueDate: {
+  start_date:{
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'start_date',
+  },
+  due_date: {
     type: DataTypes.DATE,
     allowNull: true,
     field: 'due_date',
   },
+  
   hours: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     field: 'hours_allocated',
   },
-  taskId: {
-    type: DataTypes.STRING,
+  actualHours:{
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
-    field: 'task_id',
+    field: 'actual_hours',
   },
+ 
   status: {
     type: DataTypes.ENUM('pending', 'in progress', 'completed'),
     allowNull: false,
     defaultValue: 'pending',
   },
-  assignedToUserId: {
+  assigned_to_user_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
     field: 'assigned_to_user_id',
