@@ -17,6 +17,7 @@ const Project = sequelize.define('Project', {
     unique: true,  // Unique WBS Element
     field: 'wbs_element',
   },
+
   startDate: {
     type: DataTypes.DATE,
     field: 'start_date',
