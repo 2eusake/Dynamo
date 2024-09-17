@@ -64,7 +64,7 @@ const createProject = async (req, res) => {
   const {
     wbsElement,
     name,
-    description,
+    //description,
     startDate,
     endDate,
     duration,
@@ -79,7 +79,7 @@ const createProject = async (req, res) => {
       {
         wbsElement,
         name,
-        description,
+        //description,
         startDate,
         endDate,
         duration,
@@ -96,10 +96,11 @@ const createProject = async (req, res) => {
         Task.create(
           {
             taskId: task.taskId, 
-            name: task.name,
+            name: task.taskName,
             description: task.description,
             start_date: task.start_date,
             due_date: task.due_date,
+            hours:task.hours,
             assigned_to_user_id: task.assigned_to_user_id,
             project_id: project.id,
           },
@@ -186,11 +187,11 @@ const updateProject = async (req, res) => {
         Task.create(
           {
             taskId: task.taskId,
-            name: task.name,
+            name: task.taskName,
             description: task.description,
             start_date: task.start_date,
             due_date: task.due_date,
-            duration: task.duration,
+            hours: task.hours,
             assigned_to_user_id: task.assigned_to_user_id,
             project_id: project.id,
           },

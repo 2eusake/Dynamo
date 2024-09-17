@@ -80,15 +80,6 @@ const Sidebar = () => {
         </li>
         <li>
           <Link
-            to="/team-management"
-            className="flex items-center hover:text-deloitte-cyan"
-          >
-            <FaUsersCog className="mr-2" />
-            {!isCollapsed && <span>Team Management</span>}
-          </Link>
-        </li>
-        <li>
-          <Link
             to="/settings"
             className="flex items-center hover:text-deloitte-cyan"
           >

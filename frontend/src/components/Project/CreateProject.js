@@ -6,27 +6,34 @@ import 'react-toastify/dist/ReactToastify.css';
 const CreateProject = () => {
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
-    start_date: '',
-    end_date: '',
-    projectManagerId: '', 
-    directorId: '', 
-    wbsElement: '',
-    tasks: [{ taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
+    //description: '',
+    startDate: '',
+    endDate: '',
+    projectManagerId: '',
+    directorId:'',
+   duration:'',
+    wbsElement: '', // Updated to match the database field
+    tasks: [{ taskId: '', taskIdame: '', description:'', start_date: '', due_date: '', assigned_to_user_id: '', hours:''}],
   });
 
   const [consultants, setConsultants] = useState([]);
   const [projectManagers, setProjectManagers] = useState([]);
-  const [directors, setDirectors] = useState([]);
+  const [Directors, setDirectors] = useState([]);
   const [notification, setNotification] = useState('');
   const [projectDurationWeeks, setProjectDurationWeeks] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('No token found, please log in.');
+        return;
+      }
+  
       try {
         const response = await axios.get('http://localhost:5000/api/users', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${token}`,
           },
         });
         const users = response.data;
@@ -35,47 +42,63 @@ const CreateProject = () => {
         setDirectors(users.filter(user => user.role === 'director'));
       } catch (error) {
         console.error('Error fetching users:', error);
-        toast.error('Failed to fetch users.');
+        if (error.response && error.response.status === 401) {
+          toast.error('Unauthorized, please log in again.');
+        } else {
+          toast.error('Failed to fetch users.');
+        }
       }
     };
-
+  
     fetchUsers();
   }, []);
 
   useEffect(() => {
-    if (formData.start_date && formData.end_date) {
-      const startDate = new Date(formData.start_date);
-      const endDate = new Date(formData.end_date);
-      const durationWeeks = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24 * 7));
-      setProjectDurationWeeks(durationWeeks);
+    // Calculate project duration in weeks whenever startDate or endDate changes
+    if (formData.startDate && formData.endDate) {
+      const start_Date = new Date(formData.startDate);
+      const end_Date = new Date(formData.endDate);
+      const duration = Math.ceil((end_Date - start_Date) / (1000 * 60 * 60 * 24 * 7));
+      setProjectDurationWeeks(duration );
     }
-  }, [formData.start_date, formData.end_date]);
+  }, [formData.startDate, formData.endDate]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e, taskIndex = null) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (taskIndex !== null) {
+      // Handle task update
+      setFormData(prevState => ({
+        ...prevState,
+        tasks: prevState.tasks.map((task, index) =>
+          index === taskIndex ? { ...task, [name]: value } : task
+        )
+      }));
+    } else {
+      // Handle top-level form data update
+      setFormData(prevState => ({ ...prevState, [name]: value }));
+    }
   };
 
   const handleTaskChange = (index, field, value) => {
     const newTasks = [...formData.tasks];
     newTasks[index][field] = value;
 
-    if (field === 'dueDate' || field === 'startDate') {
-      const taskStartDate = newTasks[index].startDate ? new Date(newTasks[index].startDate) : null;
-      const taskDueDate = newTasks[index].dueDate ? new Date(newTasks[index].dueDate) : null;
-      if (taskStartDate && taskDueDate) {
-        const durationHours = Math.ceil((taskDueDate - taskStartDate) / (1000 * 60 * 60));
-        newTasks[index].durationHours = durationHours;
-      }
-    }
+    // if (field === 'dueDate' || field === 'startDate') {
+    //   const taskStartDate = newTasks[index].startDate ? new Date(newTasks[index].startDate) : null;
+    //   const taskDueDate = newTasks[index].dueDate ? new Date(newTasks[index].dueDate) : null;
+    //   if (taskStartDate && taskDueDate) {
+    //     const durationHours = Math.ceil((taskDueDate - taskStartDate) / (1000 * 60 * 60));
+    //     newTasks[index].durationHours = durationHours;
+    //   }
+    // }
 
-    setFormData({ ...formData, tasks: newTasks });
+    // setFormData({ ...formData, tasks: newTasks });
   };
 
   const addTask = () => {
     setFormData({
       ...formData,
-      tasks: [...formData.tasks, { taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
+      tasks: [...formData.tasks, { taskId: '', taskName: '', description:'',start_date: '', due_date: '', assigned_to_user_id: '', hours:''}],
     });
   };
 
@@ -97,12 +120,12 @@ const CreateProject = () => {
       setFormData({
         name: '',
         description: '',
-        start_date: '',
-        end_date: '',
+        startDate: '',
+        endDate: '',
         projectManagerId: '',
-        directorId: '',
-        wbsElement: '',
-        tasks: [{ taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
+        directorId:'',
+        wbsElement: '', // Reset new field
+        tasks: [{ taskId: '', taskName: '',description:'', start_date: '', due_date: '', assigned_to_user_id: '', hours:''}],
       });
       setProjectDurationWeeks(0);
     } catch (error) {
@@ -138,6 +161,15 @@ const CreateProject = () => {
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Create New Project</h2>
       {notification && <div className="notification mb-4 p-2 bg-green-100 text-green-700 rounded">{notification}</div>}
       <form onSubmit={handleSubmit}>
+      <input
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+          type="text"
+          name="wbs_code"
+          value={formData.wbsElement}
+          onChange={handleInputChange}
+          placeholder="WBS Element"
+          required
+        />
         <input
           className="w-full p-2 mb-4 border border-gray-300 rounded"
           type="text"
@@ -147,37 +179,54 @@ const CreateProject = () => {
           placeholder="Project Name"
           required
         />
-        <textarea
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange}
-          placeholder="Project Description"
-          required
-        />
-        <input
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-          type="text"
-          name="wbsElement"
-          value={formData.wbsElement}
-          onChange={handleInputChange}
-          placeholder="WBS Element"
-          required
-        />
+        <div className="mb-4">
+  <label htmlFor="project-manager" className="block text-gray-700 font-bold mb-2">Project Manager:</label>
+  <select
+    id="project-manager"
+    className="w-full p-2 border border-gray-300 rounded"
+    name="projectManagerId"
+    value={formData.projectManagerId}
+    onChange={handleInputChange}
+    required
+  >
+    <option value="">Select Project Manager</option>
+    {projectManagers.map(pm => (
+      <option key={pm.id} value={pm.id}>
+        {pm.username}
+      </option>
+    ))}
+  </select>
+</div>
+        <select
+  className="w-full p-2 mb-4 border border-gray-300 rounded"
+  name="directorId"
+  value={formData.directorId}
+  onChange={handleInputChange}
+  required
+>
+  <option value="">Select Director</option>
+  {Directors.map(director => (
+    <option key={director.id} value={director.id}>
+      {director.username}
+    </option>
+  ))}
+</select>
+        
+        
         <div className="flex space-x-4 mb-4">
           <input
             className="w-1/2 p-2 border border-gray-300 rounded"
             type="date"
-            name="start_date"
-            value={formData.start_date}
+            name="startDate"
+            value={formData.startDate}
             onChange={handleInputChange}
             required
           />
           <input
             className="w-1/2 p-2 border border-gray-300 rounded"
             type="date"
-            name="end_date"
-            value={formData.end_date}
+            name="endDate"
+            value={formData.endDate}
             onChange={handleInputChange}
             required
           />
@@ -188,56 +237,14 @@ const CreateProject = () => {
             className="w-full p-2 border border-gray-300 rounded bg-gray-100"
             type="number"
             value={projectDurationWeeks}
+            // onChange={(e) => handleTaskChange(index, 'duration', e.target.value)}
             readOnly
           />
         </div>
-        <select
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-          name="projectManagerId"
-          value={formData.projectManagerId}
-          onChange={handleInputChange}
-          required
-        >
-          <option value="">Select Project Manager</option>
-          {projectManagers.length > 0 ? (
-            projectManagers.map(pm => (
-              <option key={pm.id} value={pm.id}>
-                {pm.username}
-              </option>
-            ))
-          ) : (
-            <option value="">No Project Managers available</option>
-          )}
-        </select>
-        <select
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-          name="directorId"
-          value={formData.directorId}
-          onChange={handleInputChange}
-          required
-        >
-          <option value="">Select Director</option>
-          {directors.length > 0 ? (
-            directors.map(director => (
-              <option key={director.id} value={director.id}>
-                {director.username}
-              </option>
-            ))
-          ) : (
-            <option value="">No Directors available</option>
-          )}
-        </select>
+       
         <h3 className="text-xl font-bold mb-2 text-gray-700">Tasks</h3>
         {formData.tasks.map((task, index) => (
           <div key={index} className="task-container mb-4 p-4 border border-gray-300 rounded">
-            <input
-              className="w-full p-2 mb-2 border border-gray-300 rounded"
-              type="text"
-              value={task.name}
-              onChange={(e) => handleTaskChange(index, 'name', e.target.value)}
-              placeholder="Task Name"
-              required
-            />
             <input
               className="w-full p-2 mb-2 border border-gray-300 rounded"
               type="text"
@@ -246,47 +253,61 @@ const CreateProject = () => {
               placeholder="Task ID"
               required
             />
-            <div className="flex space-x-4 mb-2">
-              <input
-                className="w-1/2 p-2 border border-gray-300 rounded"
-                type="date"
-                value={task.startDate}
-                onChange={(e) => handleTaskChange(index, 'startDate', e.target.value)}
-                placeholder="Start Date"
-                required
-              />
-              <input
-                className="w-1/2 p-2 border border-gray-300 rounded"
-                type="date"
-                value={task.dueDate}
-                onChange={(e) => handleTaskChange(index, 'dueDate', e.target.value)}
-                placeholder="Due Date"
-                required
-              />
-            </div>
-            <select
+            <input
+              className="w-full p-2 mb-2 border border-gray-300 rounded"
+              type="text"
+              value={task.taskName}
+              onChange={(e) => handleTaskChange(index, 'taskName', e.target.value)}
+              placeholder="Task Name"
+              required
+            />
+            <textarea
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
+          placeholder="Task Description"
+          required
+        />
+        <select
               className="w-full p-2 mb-2 border border-gray-300 rounded"
               value={task.assigned_to_user_id}
               onChange={(e) => handleTaskChange(index, 'assigned_to_user_id', e.target.value)}
               required
             >
               <option value="">Select Consultant</option>
-              {consultants.length > 0 ? (
-                consultants.map(consultant => (
-                  <option key={consultant.id} value={consultant.id}>
-                    {consultant.username}
-                  </option>
-                ))
-              ) : (
-                <option value="">No Consultants available</option>
-              )}
+              {consultants.map(consultant => (
+                <option key={consultant.id} value={consultant.id}>
+                  {consultant.username}
+                </option>
+              ))}
             </select>
+            
+            <div className="flex space-x-4 mb-2">
+              <input
+                className="w-1/2 p-2 border border-gray-300 rounded"
+                type="date"
+                value={task.start_date}
+                onChange={(e) => handleTaskChange(index, 'start_date', e.target.value)}
+                placeholder="Start Date"
+                required
+              />
+              <input
+                className="w-1/2 p-2 border border-gray-300 rounded"
+                type="date"
+                value={task.due_date}
+                onChange={(e) => handleTaskChange(index, 'due_date', e.target.value)}
+                placeholder="Due Date"
+                required
+              />
+            </div>
+            
             <input
               className="w-full p-2 mb-2 border border-gray-300 rounded"
               type="number"
-              value={task.durationHours}
-              readOnly
-              placeholder="Duration Hours"
+              value={task.hours}
+              onChange={(e) => handleTaskChange(index, 'hours', e.target.value)}
+              placeholder="allocated Hours"
             />
             <button
               type="button"

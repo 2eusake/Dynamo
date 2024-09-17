@@ -154,6 +154,16 @@ const Dashboard = () => {
           </section>
         </div>
       </div>
+
+      {/* Notification Bar */}
+      <aside className="w-full lg:w-1/4 p-4">
+        <h3 className="text-xl font-semibold text-deloitte-black">
+          Notifications
+        </h3>
+        <div className="border border-gray-300 p-4 rounded-md shadow-md h-64 overflow-auto">
+          {/* Render notifications here */}
+        </div>
+      </aside>
     </div>
   );
 };

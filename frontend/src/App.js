@@ -15,10 +15,14 @@ import Footer from './components/Common/Footer';
 import Navbar from './components/Common/Navbar';
 import Sidebar from './components/Dashboard/Sidebar';
 import ProjectProvider from './contexts/ProjectContext';
+import ReportsPage from './components/Reports/ReportsPage';
 import TaskProvider from './contexts/TaskContext';
+import Settings from './SettingsPage';
 import { ToastContainer } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css'; 
 import './tailwind.css';
+import './SettingPage.css';
+
 
 const App = () => {
   const { user } = useContext(AuthContext);
@@ -56,6 +60,10 @@ const App = () => {
                   element={<ProtectedRoute element={<CreateProject />} allowedRoles={['Director', 'Project Manager']} />}
                 />
                 <Route
+                  path="/settings"
+                  element={<ProtectedRoute element={<Settings />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
+                />
+                <Route
                   path="/tasks"
                   element={<ProtectedRoute element={<TasksPage />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
                 />
@@ -63,6 +71,11 @@ const App = () => {
                   path="/tasks/:id"
                   element={<ProtectedRoute element={<TaskDetail />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
                 />
+                <Route
+                path="/reports"
+                element={<ProtectedRoute element={<ReportsPage />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
+                />
+
               </Routes>
             </TaskProvider>
           </ProjectProvider>

@@ -1,3 +1,7 @@
+
+
+
+
 // routes/projectRoutes.js
 const express = require('express');
 const router = express.Router();
@@ -25,4 +29,8 @@ router.route('/:id')
 router.route('/user/:userId')
     .get(authMiddleware, roleMiddleware(['Consultant', 'Project Manager', 'Director']), getProjectsByUser); // All roles can view projects they're assigned to
 
+router.route('/user')
+    .get(authMiddleware, getProjectsByUser);
+
+    
 module.exports = router;

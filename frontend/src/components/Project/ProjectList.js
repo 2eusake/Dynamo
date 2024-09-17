@@ -62,10 +62,7 @@ const ProjectsPage = () => {
       <h1>Projects and Tasks</h1>
       {notification && <div className="notification">{notification}</div>}
       
-      <form onSubmit={handleFileUpload}>
-        <input type="file" onChange={handleFileChange} />
-        <button type="submit">Upload File</button>
-      </form>
+     
 
       <div className="tiles-container">
         {projects.length > 0 ? (
