@@ -14,8 +14,8 @@ const router = express.Router();
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.get('/profile', authMiddleware, getUserProfile); // Any authenticated user can get their profile
-router.get('/', authMiddleware, roleMiddleware(['admin']), getAllUsers); // Only Admins can get all users
+router.get('/profile', authMiddleware, getUserProfile); 
+router.get('/', authMiddleware, roleMiddleware, getAllUsers);
 router.post('/refresh', refreshToken); 
 router.post('/logout', logoutUser);
 

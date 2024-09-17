@@ -3,23 +3,16 @@ const fs = require("fs");
 
 //KPiu7qTJnGs51CGDX7ab
 
-const sequelize = new Sequelize(
-  "dpms_serv",
-  "zeusake",
-  "KPiu7qTJnGs51CGDX7ab",
-  {
-    host: "dynamo.c324ec2065m6.eu-north-1.rds.amazonaws.com",
-    dialect: "mysql",
-    port: 5000,
-    dialectOptions: {
-      ssl: {
-        ca: fs.readFileSync(
-          "C:/Users/kwnvhu001/Desktop/DPMS-P/backend/config/eu-north-1-bundle.pem"
-        ),
-      },
-    },
+const sequelize = new Sequelize('dpms_serv', 'zeusake', 'KPiu7qTJnGs51CGDX7ab', {
+  host: 'dynamo.c324ec2065m6.eu-north-1.rds.amazonaws.com',
+  dialect: 'mysql',
+  port: 5000,
+  dialectOptions: {
+    ssl: {
+      ca: fs.readFileSync('C:/Users/blnivi001/Downloads/DPMS-P/backend/config/eu-north-1-bundle.pem') 
+    }
   }
-);
+});
 
 sequelize
   .authenticate()
