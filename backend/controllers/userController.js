@@ -70,9 +70,9 @@ const logoutUser = (req, res) => {
 
 // Get all users (restricted to directors)
 const getAllUsers = async (req, res) => {
-  if (req.user.role !== 'Director') {
-    return res.status(403).json({ message: 'Access denied' });
-  }
+  // if (req.user.role !== 'Director') {
+  //   return res.status(403).json({ message: 'Access denied' });
+  // }
 
   try {
     const users = await User.findAll();

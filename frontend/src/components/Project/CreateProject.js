@@ -9,18 +9,19 @@ const CreateProject = () => {
     description: '',
     start_date: '',
     end_date: '',
-    projectManagerId: '',
-    wbs_code: '', // Updated to match the database field
+    projectManagerId: '', 
+    directorId: '', 
+    wbsElement: '',
     tasks: [{ taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
   });
 
   const [consultants, setConsultants] = useState([]);
   const [projectManagers, setProjectManagers] = useState([]);
+  const [directors, setDirectors] = useState([]);
   const [notification, setNotification] = useState('');
   const [projectDurationWeeks, setProjectDurationWeeks] = useState(0);
 
   useEffect(() => {
-    // Fetch consultants and project managers
     const fetchUsers = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/users', {
@@ -31,6 +32,7 @@ const CreateProject = () => {
         const users = response.data;
         setConsultants(users.filter(user => user.role === 'consultant'));
         setProjectManagers(users.filter(user => user.role === 'projectManager'));
+        setDirectors(users.filter(user => user.role === 'director'));
       } catch (error) {
         console.error('Error fetching users:', error);
         toast.error('Failed to fetch users.');
@@ -41,7 +43,6 @@ const CreateProject = () => {
   }, []);
 
   useEffect(() => {
-    // Calculate project duration in weeks whenever startDate or endDate changes
     if (formData.start_date && formData.end_date) {
       const startDate = new Date(formData.start_date);
       const endDate = new Date(formData.end_date);
@@ -86,7 +87,6 @@ const CreateProject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Send POST request to create a new project
       await axios.post('http://localhost:5000/api/projects', formData, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -94,14 +94,14 @@ const CreateProject = () => {
       });
       setNotification('Project created successfully!');
       toast.success('Project created successfully!');
-      // Reset form
       setFormData({
         name: '',
         description: '',
         start_date: '',
         end_date: '',
         projectManagerId: '',
-        wbs_code: '', // Reset new field
+        directorId: '',
+        wbsElement: '',
         tasks: [{ taskId: '', name: '', startDate: '', dueDate: '', assigned_to_user_id: '', durationHours: 0 }],
       });
       setProjectDurationWeeks(0);
@@ -158,10 +158,10 @@ const CreateProject = () => {
         <input
           className="w-full p-2 mb-4 border border-gray-300 rounded"
           type="text"
-          name="wbs_code"
-          value={formData.wbs_code}
+          name="wbsElement"
+          value={formData.wbsElement}
           onChange={handleInputChange}
-          placeholder="WBS Code"
+          placeholder="WBS Element"
           required
         />
         <div className="flex space-x-4 mb-4">
@@ -199,15 +199,37 @@ const CreateProject = () => {
           required
         >
           <option value="">Select Project Manager</option>
-          {projectManagers.map(pm => (
-            <option key={pm.id} value={pm.id}>
-              {pm.username}
-            </option>
-          ))}
+          {projectManagers.length > 0 ? (
+            projectManagers.map(pm => (
+              <option key={pm.id} value={pm.id}>
+                {pm.username}
+              </option>
+            ))
+          ) : (
+            <option value="">No Project Managers available</option>
+          )}
+        </select>
+        <select
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+          name="directorId"
+          value={formData.directorId}
+          onChange={handleInputChange}
+          required
+        >
+          <option value="">Select Director</option>
+          {directors.length > 0 ? (
+            directors.map(director => (
+              <option key={director.id} value={director.id}>
+                {director.username}
+              </option>
+            ))
+          ) : (
+            <option value="">No Directors available</option>
+          )}
         </select>
         <h3 className="text-xl font-bold mb-2 text-gray-700">Tasks</h3>
         {formData.tasks.map((task, index) => (
-          <div key={index} className="task-container mb-4 p-4 bg-gray-50 rounded-lg shadow-inner">
+          <div key={index} className="task-container mb-4 p-4 border border-gray-300 rounded">
             <input
               className="w-full p-2 mb-2 border border-gray-300 rounded"
               type="text"
@@ -249,11 +271,15 @@ const CreateProject = () => {
               required
             >
               <option value="">Select Consultant</option>
-              {consultants.map(consultant => (
-                <option key={consultant.id} value={consultant.id}>
-                  {consultant.username}
-                </option>
-              ))}
+              {consultants.length > 0 ? (
+                consultants.map(consultant => (
+                  <option key={consultant.id} value={consultant.id}>
+                    {consultant.username}
+                  </option>
+                ))
+              ) : (
+                <option value="">No Consultants available</option>
+              )}
             </select>
             <input
               className="w-full p-2 mb-2 border border-gray-300 rounded"

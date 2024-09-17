@@ -57,7 +57,7 @@ const App = () => {
                 />
                 <Route
                   path="/tasks"
-                  element={<ProtectedRoute element={<TasksPage />} allowedRoles={['director', 'projectManager', 'Consultant']} />}
+                  element={<ProtectedRoute element={<TasksPage />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
                 />
                 <Route
                   path="/tasks/:id"

@@ -1,15 +1,30 @@
-// controllers/projectController.js
-const { Project, Task } = require("../models");
+const { Project, Task, User } = require("../models");
 const sequelize = require("../config/database");
 
 const getProjects = async (req, res) => {
   try {
     const condition = req.user.role === 'Director' 
-  ? {} 
-  : { [sequelize.Op.or]: [{ userId: req.user.id }, { projectManagerId: req.user.id }] };
+      ? {} 
+      : { [sequelize.Op.or]: [{ projectManagerId: req.user.id }, { userId: req.user.id }] };
+
     const projects = await Project.findAll({
       where: condition,
-      include: [{ model: Task, as: "tasks" }],
+      include: [
+        {
+          model: Task,
+          as: 'tasks',
+        },
+        {
+          model: User,
+          as: 'projectManager',  // Alias for project manager
+          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
+        },
+        {
+          model: User,
+          as: 'projectDirector',  // Alias for director
+          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
+        }
+      ],
     });
     res.json(projects);
   } catch (error) {
@@ -20,7 +35,25 @@ const getProjects = async (req, res) => {
 const getProjectsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    const projects = await Project.findAll({ where: { userId } });
+    const projects = await Project.findAll({
+      where: { userId },
+      include: [
+        {
+          model: Task,
+          as: 'tasks',
+        },
+        {
+          model: User,
+          as: 'projectManager',  // Alias for project manager
+          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
+        },
+        {
+          model: User,
+          as: 'projectDirector',  // Alias for director
+          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
+        }
+      ],
+    });
     res.json(projects);
   } catch (error) {
     res.status(500).json({ error: "Server Error" });
@@ -29,7 +62,7 @@ const getProjectsByUser = async (req, res) => {
 
 const createProject = async (req, res) => {
   const {
-    wbs_code,
+    wbsElement,
     name,
     description,
     startDate,
@@ -37,13 +70,14 @@ const createProject = async (req, res) => {
     duration,
     status,
     projectManagerId,
+    directorId,
     tasks,
   } = req.body;
   const transaction = await sequelize.transaction();
   try {
     const project = await Project.create(
       {
-        wbs_code,
+        wbsElement,
         name,
         description,
         startDate,
@@ -51,6 +85,7 @@ const createProject = async (req, res) => {
         duration,
         status: status || "not started",
         projectManagerId,
+        directorId,
         userId: req.user.id,
       },
       { transaction }
@@ -88,7 +123,22 @@ const getProjectById = async (req, res) => {
   try {
     const project = await Project.findOne({
       where: { id: req.params.id, userId: req.user.id },
-      include: [{ model: Task, as: "tasks" }],
+      include: [
+        {
+          model: Task,
+          as: 'tasks',
+        },
+        {
+          model: User,
+          as: 'projectManager',  // Alias for project manager
+          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
+        },
+        {
+          model: User,
+          as: 'projectDirector',  // Alias for director
+          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
+        }
+      ],
     });
     if (!project) return res.status(404).json({ message: "Project not found" });
     res.json(project);
@@ -101,7 +151,7 @@ const getProjectById = async (req, res) => {
 
 const updateProject = async (req, res) => {
   const {
-    wbs_code,
+    wbsElement,
     name,
     description,
     startDate,
@@ -109,6 +159,7 @@ const updateProject = async (req, res) => {
     duration,
     status,
     projectManagerId,
+    directorId,
     tasks,
   } = req.body;
   const transaction = await sequelize.transaction();
@@ -118,7 +169,7 @@ const updateProject = async (req, res) => {
     });
     if (!project) return res.status(404).json({ message: "Project not found" });
 
-    project.wbs_code = wbs_code || project.wbs_code;
+    project.wbsElement = wbsElement || project.wbsElement;
     project.name = name || project.name;
     project.description = description || project.description;
     project.startDate = startDate || project.startDate;
@@ -126,6 +177,7 @@ const updateProject = async (req, res) => {
     project.duration = duration || project.duration;
     project.status = status || project.status;
     project.projectManagerId = projectManagerId || project.projectManagerId;
+    project.directorId = directorId || project.directorId;
     await project.save({ transaction });
 
     if (tasks && tasks.length) {

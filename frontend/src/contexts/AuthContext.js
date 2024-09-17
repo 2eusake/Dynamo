@@ -17,8 +17,8 @@ const AuthProvider = ({ children }) => {
 
   // Refresh token function
   const refreshToken = async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
-    console.log('Stored Refresh Token:', refreshToken); // Log the refresh token
+    const token = localStorage.getItem('refreshToken');
+    console.log('Stored Refresh Token:', token); // Log the refresh token
 
     if (!refreshToken) {
       throw new Error('No refresh token available');
@@ -67,7 +67,7 @@ const AuthProvider = ({ children }) => {
     };
 
     loadUser();
-  }, [user]);
+  }, []);
 
   const login = async (email, password) => {
     try {

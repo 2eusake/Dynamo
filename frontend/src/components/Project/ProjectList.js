@@ -74,21 +74,31 @@ const ProjectsPage = () => {
               <Link to={`/projects/${project.id}`}>
                 <h2>{project.name}</h2>
                 <p>{project.description || 'No description available'}</p>
+                <p>WBS Element: {project.wbsElement || 'N/A'}</p>
+                <p>Start Date: {project.startDate ? new Date(project.startDate).toLocaleDateString() : 'N/A'}</p>
+                <p>End Date: {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'N/A'}</p>
+                <p>Duration: {project.duration || 'N/A'} days</p>
                 <div className="progress-bar">
                   <div className="progress" style={{ width: `${project.progress || 0}%` }}>
                     <span>{project.progress || 0}%</span>
                   </div>
                 </div>
                 <p>Status: {project.status}</p>
+                <p>Project Manager ID: {project.projectManagerId || 'N/A'}</p>
+                <p>Director ID: {project.directorId || 'N/A'}</p>
               </Link>
               {project.tasks && project.tasks.length > 0 && (
                 <div className="tasks-container">
                   {project.tasks.map(task => (
                     <div key={task.id} className="task-tile">
                       <Link to={`/tasks/${task.id}`}>
-                        <h3>{task.name}</h3>
-                        <p>Assigned To: {task.assignedToUser?.username || 'Unassigned'}</p>
+                        <h3>{task.taskName}</h3>
+                        <p>Description: {task.description || 'No description available'}</p>
+                        <p>Due Date: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A'}</p>
+                        <p>Hours Allocated: {task.hoursAllocated || 'N/A'}</p>
+                        <p>Task ID: {task.taskId || 'N/A'}</p>
                         <p>Status: {task.status}</p>
+                        <p>Assigned To User ID: {task.assignedToUserId || 'Unassigned'}</p>
                       </Link>
                     </div>
                   ))}
