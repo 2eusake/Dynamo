@@ -69,10 +69,11 @@ const Dashboard = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="flex flex-col p-4 bg-gray-100 min-h-screen">
-      <h2 className="text-2xl font-bold text-blue-700 mb-6">
-        Welcome back, {user?.username}!
-      </h2>
+    <div className="flex-1 flex flex-col">
+      <div className="flex-1 p-4 overflow-auto">
+        <h2 className="text-2xl font-bold text-deloitte-dark-green">
+          Welcome back, {user?.username}!
+        </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Current Projects */}
