@@ -112,5 +112,12 @@ input:checked + .slider:before {
   font-size: 18px;
   font-weight: 500;
 }
+
+/* Add this to your CSS file */
+body.dark-mode {
+  background-color: #1a202c; /* Dark background */
+  color: #f7fafc; /* Light text */
+}
+
   
   
