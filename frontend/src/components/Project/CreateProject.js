@@ -23,7 +23,6 @@ const CreateProject = () => {
   const [projectDurationWeeks, setProjectDurationWeeks] = useState(0);
 
   useEffect(() => {
-    // Fetch consultants and project managers
     const fetchUsers = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -111,7 +110,6 @@ const CreateProject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Send POST request to create a new project
       await axios.post('http://localhost:5000/api/projects', formData, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -119,7 +117,6 @@ const CreateProject = () => {
       });
       setNotification('Project created successfully!');
       toast.success('Project created successfully!');
-      // Reset form
       setFormData({
         name: '',
         description: '',
@@ -247,7 +244,7 @@ const CreateProject = () => {
        
         <h3 className="text-xl font-bold mb-2 text-gray-700">Tasks</h3>
         {formData.tasks.map((task, index) => (
-          <div key={index} className="task-container mb-4 p-4 bg-gray-50 rounded-lg shadow-inner">
+          <div key={index} className="task-container mb-4 p-4 border border-gray-300 rounded">
             <input
               className="w-full p-2 mb-2 border border-gray-300 rounded"
               type="text"

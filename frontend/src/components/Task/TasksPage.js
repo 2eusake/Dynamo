@@ -39,7 +39,7 @@ const TasksPage = () => {
 
   return (
     <div className="tasks-page">
-      <h1>Tasks</h1>
+      <h1 className="text-2xl font-bold text-deloitte-dark-green">Tasks</h1>
       <div className="projects-container">
         {Object.keys(groupedTasks).length > 0 ? (
           Object.values(groupedTasks).map(projectGroup => (
