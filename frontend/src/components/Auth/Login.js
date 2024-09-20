@@ -1,24 +1,33 @@
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
-//import Picture3 from "../../assets/Picture3.png";
 import "./Login.css"; 
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
     try {
       await login(email, password);
       navigate("/dashboard");
     } catch (error) {
-      setError("Unable to process that login, please try again.");
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Unable to process that login. Please try again.");
+      }
       console.error("Login failed", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -31,7 +40,6 @@ const Login = () => {
             alt="Deloitte Logo"
             className="deloitte-logo"
           />
-          {/* <img src={Picture3} alt="App Name" className="app-name" /> */}
         </div>
 
         <h2 className="login-title">Login</h2>
@@ -72,8 +80,8 @@ const Login = () => {
             />
           </div>
           <div className="button-group">
-            <button type="submit" className="login-button">
-              Login
+            <button type="submit" className="login-button" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Login"}
             </button>
           </div>
           <div className="link-group">

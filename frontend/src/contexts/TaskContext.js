@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { refreshToken } from '../utils/auth';
+import apiClient from '../utils/apiClient'; // Import the centralized API client
 
 export const TaskContext = createContext();
 
@@ -9,18 +8,14 @@ const TaskProvider = ({ children }) => {
 
   const fetchTasks = async () => {
     try {
-      await refreshToken();
-      const token = localStorage.getItem('token');
       const role = localStorage.getItem('role');
+      let tasksUrl = '/tasks';
 
-      let tasksUrl = 'http://localhost:5000/api/tasks';
-      if (role === 'consultant') {
-        tasksUrl = 'http://localhost:5000/api/tasks/user';
+      if (role === 'Consultant') {
+        tasksUrl = '/tasks/user';
       }
 
-      const response = await axios.get(tasksUrl, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await apiClient.get(tasksUrl);
       setTasks(response.data);
     } catch (error) {
       console.error('Error fetching tasks:', error);
@@ -29,11 +24,7 @@ const TaskProvider = ({ children }) => {
 
   const fetchUserTasks = async () => {
     try {
-      await refreshToken(); // Refresh the token if needed
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/tasks/user', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await apiClient.get('/tasks/user');
       setTasks(response.data);
     } catch (error) {
       console.error('Error fetching user tasks:', error);
@@ -42,11 +33,7 @@ const TaskProvider = ({ children }) => {
 
   const addTask = async (task) => {
     try {
-      await refreshToken(); // Refresh the token if needed
-      const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:5000/api/tasks', task, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await apiClient.post('/tasks', task);
       setTasks([...tasks, response.data]);
     } catch (error) {
       console.error('Error adding task:', error);
@@ -55,11 +42,7 @@ const TaskProvider = ({ children }) => {
 
   const updateTask = async (id, updatedTask) => {
     try {
-      await refreshToken(); // Refresh the token if needed
-      const token = localStorage.getItem('token');
-      const response = await axios.put(`http://localhost:5000/api/tasks/${id}`, updatedTask, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await apiClient.put(`/tasks/${id}`, updatedTask);
       setTasks(tasks.map(task => task.id === id ? response.data : task));
     } catch (error) {
       console.error('Error updating task:', error);
@@ -68,11 +51,7 @@ const TaskProvider = ({ children }) => {
 
   const deleteTask = async (id) => {
     try {
-      await refreshToken(); // Refresh the token if needed
-      const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiClient.delete(`/tasks/${id}`);
       setTasks(tasks.filter(task => task.id !== id));
     } catch (error) {
       console.error('Error deleting task:', error);

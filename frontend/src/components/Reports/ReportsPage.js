@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
-import Alert from '../../components/Reports/Alert'; // Use default import
-import AlertDescription from '../../components/Reports/AlertDescription'; // Adjust the path accordingly
-import './ReportsPage.css'; 
+import Alert from '../../components/Reports/Alert';
+import AlertDescription from '../../components/Reports/AlertDescription';
+import apiClient from '../../utils/apiClient'; // Use apiClient here
+import './ReportsPage.css';
 
 const ReportsPage = () => {
   const [projects, setProjects] = useState([]);
@@ -14,19 +14,11 @@ const ReportsPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const projectsResponse = await axios.get('http://localhost:5000/api/projects', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setProjects(projectsResponse.data);
+        const { data: projectsData } = await apiClient.get('/projects');
+        setProjects(projectsData);
 
-        const tasksResponse = await axios.get('http://localhost:5000/api/tasks', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setTasks(tasksResponse.data);
+        const { data: tasksData } = await apiClient.get('/tasks');
+        setTasks(tasksData);
       } catch (error) {
         console.error('Error fetching data:', error);
         setNotification('Failed to fetch reports data.');
@@ -81,8 +73,7 @@ const ReportsPage = () => {
                   <div 
                     className="bg-blue-600 h-2.5 rounded-full" 
                     style={{ width: `${project.progress || 0}%` }}
-                  >
-                  </div>
+                  ></div>
                 </div>
                 <div className="flex justify-between items-center">
                   <p className="text-sm text-gray-500">Progress: {project.progress || 0}%</p>

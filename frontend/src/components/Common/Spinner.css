@@ -1,0 +1,23 @@
+/* src/components/Spinner.css */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full height of the viewport */
+    background: linear-gradient(135deg, #ffffff, #e1e1e1); /* Gradient similar to the login page */
+  }
+  
+  .spinner {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #002776; /* Deloitte Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1.5s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
