@@ -28,6 +28,10 @@ const User = sequelize.define(
       allowNull: false,
       defaultValue: "Consultant",
     },
+    refreshToken: {
+      type: DataTypes.STRING,
+      allowNull: true, // Refresh token can be null until login
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
