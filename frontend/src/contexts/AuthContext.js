@@ -36,8 +36,8 @@ const AuthProvider = ({ children }) => {
 
   const handleLogout = async () => {
     try {
-      await apiClient.post('/users/logout');
-      setUser(null);
+      await logoutUtil(); // Call the logout utility function
+      setUser(null); // Clear user session from the context
     } catch (error) {
       console.error('Logout error:', error);
     }

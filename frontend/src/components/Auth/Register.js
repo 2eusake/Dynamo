@@ -15,26 +15,17 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
-      const token = await refreshToken();
-      if (!token) {
-        console.error('No valid token available. Cannot register.');
-        return;
-      }
-
       await apiClient.post('/users/register', {
         username,
         email,
         password,
         role,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Use token for authorization
-        },
       });
-
+  
       alert(`Registration successful! Welcome, ${username}`);
-      navigate('/login');
+      navigate('/login'); // Redirect to login page after successful registration
     } catch (error) {
       console.error('Registration failed', error);
       alert('Registration failed');
