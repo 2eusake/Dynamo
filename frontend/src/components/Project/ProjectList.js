@@ -5,7 +5,7 @@ import apiClient from '../../utils/apiClient';
 import { Link } from 'react-router-dom';
 import './ProjectsList.css';
 import { AuthContext } from '../../contexts/AuthContext';
-import axios from 'axios';
+
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
