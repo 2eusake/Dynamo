@@ -30,7 +30,7 @@ const App = () => {
   return (
     <AuthProvider>
       <Router>
-        <div className="bg-deloitte-white text-deloitte-black min-h-screen flex">
+        
           <AuthContext.Consumer>
             {({ user, loading }) => {
               if (loading) {
@@ -40,6 +40,7 @@ const App = () => {
               return (
                 <>
                   {user && <Navbar />}
+                  <div classname = "bg-deloitte-white text-deloitte-black min-h-screen flex">
                   {user && <Sidebar />}
                   <div className={`flex-1 ${user ? 'ml-48' : ''} p-4`}>
                     <ProjectProvider>
@@ -88,11 +89,12 @@ const App = () => {
                       </TaskProvider>
                     </ProjectProvider>
                   </div>
+                </div>
                 </>
               );
             }}
           </AuthContext.Consumer>
-        </div>
+        
         <Footer />
         <ToastContainer
           position="top-right"
