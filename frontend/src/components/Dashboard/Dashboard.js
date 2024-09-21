@@ -1,50 +1,47 @@
-import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import React, { useState, useContext, useEffect } from "react";
+import apiClient from '../../utils/apiClient';
+import { AuthContext } from '../../contexts/AuthContext';
+import Spinner from '../Common/Spinner';
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
 
+
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user, handleLogout } = useContext(AuthContext);
   const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('token');
-
-        const [projectsResponse, tasksResponse, userResponse] = await Promise.all([
-          axios.get('http://localhost:5000/api/projects', {
-            headers: { 'Authorization': `Bearer ${token}` },
-          }),
-          axios.get('http://localhost:5000/api/tasks', {
-            headers: { 'Authorization': `Bearer ${token}` },
-          }),
-          axios.get('http://localhost:5000/api/users/profile', {
-            headers: { 'Authorization': `Bearer ${token}` },
-          })
+        const [projectsResponse, tasksResponse] = await Promise.all([
+          apiClient.get('/projects'),
+          apiClient.get('/tasks'),
         ]);
 
         setProjects(projectsResponse.data);
         setTasks(tasksResponse.data);
-        setUser(userResponse.data);
       } catch (err) {
-        setError('Failed to fetch data. Please try again later.');
-        console.error('Error fetching data:', err);
+        if (err.response && err.response.status === 401) {
+          handleLogout();
+        } else {
+          setError('Failed to fetch data. Please try again later.');
+          console.error('Error fetching data:', err);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [handleLogout]);
 
   const currentProjects = projects.filter(project => project.progress < 100);
   const completedProjects = projects.filter(project => project.progress === 100);
@@ -65,8 +62,8 @@ const Dashboard = () => {
     setSelectedProject(project);
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <Spinner />;
+  if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <div className="flex-1 flex flex-col">
