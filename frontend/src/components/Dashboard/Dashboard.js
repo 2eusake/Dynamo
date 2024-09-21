@@ -47,7 +47,7 @@ const Dashboard = () => {
 
         setProjects(projectsResponse.data);
         setTasks(tasksResponse.data);
-        setUser(userResponse.data);
+        setUser(user);
         setNotifications([
           "User X completed task Y.",
           "User Z updated project A.",

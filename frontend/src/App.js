@@ -70,8 +70,16 @@ const App = () => {
                             element={<ProtectedRoute element={<CreateProject />} allowedRoles={['Director', 'Project Manager']} />}
                           />
                           <Route
-                            path="/settings"
+                            exact path="/settings"
                             element={<ProtectedRoute element={<Settings />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
+                          />
+                          <Route
+                            path="/settings/edit-profile"
+                            element={<ProtectedRoute element={<EditProfilePage />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
+                          />
+                          <Route
+                            path="/settings/reset-password"
+                            element={<ProtectedRoute element={<ResetPasswordPage />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
                           />
                           <Route
                             path="/tasks"
@@ -95,7 +103,7 @@ const App = () => {
             }}
           </AuthContext.Consumer>
         
-        <Footer />
+        
         <ToastContainer
           position="top-right"
           autoClose={5000}
@@ -108,7 +116,9 @@ const App = () => {
           pauseOnHover
         />
       </Router>
+      <Footer/>
     </AuthProvider>
+    
   );
 };
 
