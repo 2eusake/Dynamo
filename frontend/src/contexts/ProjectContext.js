@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient'; // Import the centralized API client
 import * as tf from '@tensorflow/tfjs';
 
+
 export const ProjectContext = createContext();
 
 export const ProjectProvider = ({ children }) => {
@@ -45,6 +46,7 @@ export const ProjectProvider = ({ children }) => {
       console.error('Error fetching user projects:', error);
     }
   };
+  
 
   const predictProjectCompletion = (project) => {
     if (!model) return null;

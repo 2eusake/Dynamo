@@ -5,6 +5,7 @@ import apiClient from '../../utils/apiClient';
 import { Link } from 'react-router-dom';
 import './ProjectsList.css';
 import { AuthContext } from '../../contexts/AuthContext';
+import axios from 'axios';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
@@ -41,7 +42,7 @@ const ProjectsPage = () => {
 
     fetchProjects();
   }, [refreshToken, notificationShown]);
-
+  
   const groupedProjects = projects.reduce((acc, project) => {
     const projectId = project.id || 'Unassigned';
     if (!acc[projectId]) {
