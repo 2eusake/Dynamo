@@ -12,7 +12,7 @@ const sequelize = new Sequelize('dpms_serv', 'zeusake', 'KPiu7qTJnGs51CGDX7ab', 
       ca: fs.readFileSync('C:/Users/blnivi001/Downloads/DPMS-P/backend/config/eu-north-1-bundle.pem') 
     }
   }
-});
+);
 
 sequelize
   .authenticate()
