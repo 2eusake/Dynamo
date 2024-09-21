@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
+import apiClient from '../../utils/apiClient';
 
 import "./Register.css"; // Import the CSS file
 
@@ -10,21 +11,24 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("consultant");
   const navigate = useNavigate();
+  const { refreshToken } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
-      await axios.post("http://localhost:5000/api/users/register", {
+      await apiClient.post('/users/register', {
         username,
         email,
         password,
         role,
       });
+  
       alert(`Registration successful! Welcome, ${username}`);
-      navigate("/login");
+      navigate('/login'); // Redirect to login page after successful registration
     } catch (error) {
-      console.error("Registration failed", error);
-      alert("Registration failed");
+      console.error('Registration failed', error);
+      alert('Registration failed');
     }
   };
 

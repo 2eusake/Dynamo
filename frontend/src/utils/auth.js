@@ -1,14 +1,20 @@
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode'; // Use this to decode JWT
+import { jwtDecode } from 'jwt-decode'; // Ensure this import is correct
 
 // Function to check if the token has expired
 const isTokenExpired = (token) => {
   if (!token) return true;
 
-  const decoded = jwtDecode(token);
-  const currentTime = Date.now() / 1000; // In seconds
-
-  return decoded.exp < currentTime;
+  try {
+    const decoded = jwtDecode(token);
+    const currentTime = Date.now() / 1000; // Convert to seconds
+    const bufferTime = 60; // Buffer time (in seconds)
+    
+    return decoded.exp < (currentTime + bufferTime);
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return true; // Consider token expired if decoding fails
+  }
 };
 
 export const refreshToken = async () => {
@@ -18,36 +24,37 @@ export const refreshToken = async () => {
   console.log('Token:', token); 
   console.log('RefreshToken:', refreshToken);
 
-  // Handle case when tokens are missing
   if (!token || !refreshToken) {
     console.error('Tokens missing');
-    // Optionally redirect to login page here
-    window.location.href = '/login'; 
-    return;
+    return null; // Signal that tokens are missing
   }
 
-  // Check if the token has expired
   if (!isTokenExpired(token)) {
     console.log('Token is still valid.');
-    return;
+    return token; // Return the existing valid token
   }
 
   try {
-    // Send request to refresh token
-    const response = await axios.post('http://localhost:5000/api/auth/refresh', { refreshToken });
+    // Request to refresh the token
+    const response = await axios.post('http://localhost:5000/api/users/refresh', { refreshToken });
 
+    // Update tokens in local storage
     localStorage.setItem('token', response.data.token);
     localStorage.setItem('refreshToken', response.data.refreshToken);
+    
+    console.log('Token refreshed successfully.');
+    return response.data.token; // Return the new token
   } catch (error) {
     console.error('Error refreshing token:', error);
 
-    // Handle specific errors like token expiry or network issues
     if (error.response && error.response.status === 401) {
-      // Refresh token expired or invalid, redirect to login
-      window.location.href = '/login';
+      // Invalidate tokens if refresh fails
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      return null; // Signal that the refresh failed
     } else {
-      // Handle other errors (e.g., network issues)
       alert('Failed to refresh token. Please try again.');
+      return null; // General failure
     }
   }
 };

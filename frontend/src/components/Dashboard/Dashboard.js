@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import React, { useState, useContext, useEffect } from "react";
+import apiClient from '../../utils/apiClient';
+import { AuthContext } from '../../contexts/AuthContext';
+import Spinner from '../Common/Spinner';
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -25,9 +27,9 @@ const AlertDescription = ({ children, ...props }) => (
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user, handleLogout } = useContext(AuthContext);
   const [selectedProject, setSelectedProject] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -37,18 +39,9 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('token');
-
-        const [projectsResponse, tasksResponse, userResponse] = await Promise.all([
-          axios.get('http://localhost:5000/api/projects', {
-            headers: { 'Authorization': `Bearer ${token}` },
-          }),
-          axios.get('http://localhost:5000/api/tasks', {
-            headers: { 'Authorization': `Bearer ${token}` },
-          }),
-          axios.get('http://localhost:5000/api/users/profile', {
-            headers: { 'Authorization': `Bearer ${token}` },
-          })
+        const [projectsResponse, tasksResponse] = await Promise.all([
+          apiClient.get('/projects'),
+          apiClient.get('/tasks'),
         ]);
 
         setProjects(projectsResponse.data);
@@ -82,15 +75,19 @@ const Dashboard = () => {
         setEvents([...projectEvents, ...taskEvents]);
 
       } catch (err) {
-        setError('Failed to fetch data. Please try again later.');
-        console.error('Error fetching data:', err);
+        if (err.response && err.response.status === 401) {
+          handleLogout();
+        } else {
+          setError('Failed to fetch data. Please try again later.');
+          console.error('Error fetching data:', err);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [handleLogout]);
 
   const currentProjects = projects.filter(project => project.progress < 100 && new Date(project.startDate) <= new Date() && new Date(project.endDate) >= new Date());
   const upcomingProjects = projects.filter(project => new Date(project.startDate) > new Date());
@@ -143,6 +140,7 @@ const Dashboard = () => {
         <h2 className="text-3xl font-bold text-indigo-800">
           Welcome back, {user?.username}!
         </h2>
+<<<<<<< HEAD
       </header>
       
       <main className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -164,6 +162,9 @@ const Dashboard = () => {
             </div>
           </CardContent>
         </Card>
+=======
+        </div>
+>>>>>>> 03412d113761a75f5b9dca6040dc583f65e282d4
 
         {// Current Projects //}
         <Card className="col-span-1 bg-gradient-to-r from-blue-400 to-indigo-500">
@@ -347,12 +348,39 @@ const Dashboard = () => {
                 className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
                 onClick={() => setSelectedProject(null)}
               >
+<<<<<<< HEAD
                 Close
               </button>
             </CardContent>
           </Card>
         </div>
       )}
+=======
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                  {project.name}
+                </h4>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-gray-600">Progress: {project.progress}%</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                    project.progress < 50 ? "bg-red-200 text-red-800" :
+                    project.progress < 80 ? "bg-yellow-200 text-yellow-800" :
+                    "bg-green-200 text-green-800"
+                  }`}>
+                    {project.progress < 50 ? "At Risk" : project.progress < 80 ? "In Progress" : "Near Completion"}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full"
+                    style={{ width: `${project.progress}%` }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+>>>>>>> 03412d113761a75f5b9dca6040dc583f65e282d4
 
       {// Selected Date Alert //}
       {selectedDate && (
