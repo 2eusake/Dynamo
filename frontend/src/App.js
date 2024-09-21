@@ -92,7 +92,7 @@ const App = () => {
           </ProjectProvider>
         </div>
       </div>
-      <Footer />
+      
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -104,6 +104,7 @@ const App = () => {
         draggable
         pauseOnHover
       />
+      <Footer />
     </Router>
   );
 };
