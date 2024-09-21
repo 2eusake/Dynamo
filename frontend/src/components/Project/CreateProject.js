@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import apiClient from '../../utils/apiClient'; // Adjust the import path as necessary
 
 const CreateProject = () => {
   const [formData, setFormData] = useState({
     name: '',
-    //description: '',
     startDate: '',
     endDate: '',
     projectManagerId: '',
-    directorId:'',
-   duration:'',
-    wbsElement: '', // Updated to match the database field
-    tasks: [{ taskId: '', taskIdame: '', description:'', start_date: '', due_date: '', assigned_to_user_id: '', hours:''}],
+    directorId: '',
+    duration: '',
+    wbsElement: '',
+    tasks: [{ taskId: '', taskName: '', description: '', start_date: '', due_date: '', assigned_to_user_id: '', hours: '' }],
   });
 
   const [consultants, setConsultants] = useState([]);
   const [projectManagers, setProjectManagers] = useState([]);
-  const [Directors, setDirectors] = useState([]);
+  const [directors, setDirectors] = useState([]);
   const [notification, setNotification] = useState('');
   const [projectDurationWeeks, setProjectDurationWeeks] = useState(0);
 
@@ -29,17 +28,13 @@ const CreateProject = () => {
         toast.error('No token found, please log in.');
         return;
       }
-  
+
       try {
-        const response = await axios.get('http://localhost:5000/api/users', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await apiClient.get('/users');
         const users = response.data;
-        setConsultants(users.filter(user => user.role === 'consultant'));
-        setProjectManagers(users.filter(user => user.role === 'projectManager'));
-        setDirectors(users.filter(user => user.role === 'director'));
+        setConsultants(users.filter(user => user.role === 'Consultant'));
+        setProjectManagers(users.filter(user => user.role === 'Project Manager'));
+        setDirectors(users.filter(user => user.role === 'Director'));
       } catch (error) {
         console.error('Error fetching users:', error);
         if (error.response && error.response.status === 401) {
@@ -49,7 +44,7 @@ const CreateProject = () => {
         }
       }
     };
-  
+
     fetchUsers();
   }, []);
 
@@ -59,7 +54,7 @@ const CreateProject = () => {
       const start_Date = new Date(formData.startDate);
       const end_Date = new Date(formData.endDate);
       const duration = Math.ceil((end_Date - start_Date) / (1000 * 60 * 60 * 24 * 7));
-      setProjectDurationWeeks(duration );
+      setProjectDurationWeeks(duration);
     }
   }, [formData.startDate, formData.endDate]);
 
@@ -82,23 +77,13 @@ const CreateProject = () => {
   const handleTaskChange = (index, field, value) => {
     const newTasks = [...formData.tasks];
     newTasks[index][field] = value;
-
-    // if (field === 'dueDate' || field === 'startDate') {
-    //   const taskStartDate = newTasks[index].startDate ? new Date(newTasks[index].startDate) : null;
-    //   const taskDueDate = newTasks[index].dueDate ? new Date(newTasks[index].dueDate) : null;
-    //   if (taskStartDate && taskDueDate) {
-    //     const durationHours = Math.ceil((taskDueDate - taskStartDate) / (1000 * 60 * 60));
-    //     newTasks[index].durationHours = durationHours;
-    //   }
-    // }
-
-    // setFormData({ ...formData, tasks: newTasks });
+    setFormData({ ...formData, tasks: newTasks });
   };
 
   const addTask = () => {
     setFormData({
       ...formData,
-      tasks: [...formData.tasks, { taskId: '', taskName: '', description:'',start_date: '', due_date: '', assigned_to_user_id: '', hours:''}],
+      tasks: [...formData.tasks, { taskId: '', taskName: '', description: '', start_date: '', due_date: '', assigned_to_user_id: '', hours: '' }],
     });
   };
 
@@ -110,11 +95,7 @@ const CreateProject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/projects', formData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      await apiClient.post('/projects', formData);
       setNotification('Project created successfully!');
       toast.success('Project created successfully!');
       setFormData({
@@ -123,9 +104,9 @@ const CreateProject = () => {
         startDate: '',
         endDate: '',
         projectManagerId: '',
-        directorId:'',
-        wbsElement: '', // Reset new field
-        tasks: [{ taskId: '', taskName: '',description:'', start_date: '', due_date: '', assigned_to_user_id: '', hours:''}],
+        directorId: '',
+        wbsElement: '',
+        tasks: [{ taskId: '', taskName: '', description: '', start_date: '', due_date: '', assigned_to_user_id: '', hours: '' }],
       });
       setProjectDurationWeeks(0);
     } catch (error) {
@@ -143,10 +124,9 @@ const CreateProject = () => {
     formData.append('file', file);
 
     try {
-      await axios.post('http://localhost:5000/api/upload', formData, {
+      await apiClient.post('/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
       toast.success('File uploaded and processed successfully!');
@@ -161,15 +141,18 @@ const CreateProject = () => {
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Create New Project</h2>
       {notification && <div className="notification mb-4 p-2 bg-green-100 text-green-700 rounded">{notification}</div>}
       <form onSubmit={handleSubmit}>
-      <input
+        {/* WBS Element */}
+        <input
           className="w-full p-2 mb-4 border border-gray-300 rounded"
           type="text"
-          name="wbs_code"
+          name="wbsElement"
           value={formData.wbsElement}
           onChange={handleInputChange}
           placeholder="WBS Element"
           required
         />
+
+        {/* Project Name */}
         <input
           className="w-full p-2 mb-4 border border-gray-300 rounded"
           type="text"
@@ -179,40 +162,48 @@ const CreateProject = () => {
           placeholder="Project Name"
           required
         />
+
+        {/* Project Manager Dropdown */}
         <div className="mb-4">
-  <label htmlFor="project-manager" className="block text-gray-700 font-bold mb-2">Project Manager:</label>
-  <select
-    id="project-manager"
-    className="w-full p-2 border border-gray-300 rounded"
-    name="projectManagerId"
-    value={formData.projectManagerId}
-    onChange={handleInputChange}
-    required
-  >
-    <option value="">Select Project Manager</option>
-    {projectManagers.map(pm => (
-      <option key={pm.id} value={pm.id}>
-        {pm.username}
-      </option>
-    ))}
-  </select>
-</div>
-        <select
-  className="w-full p-2 mb-4 border border-gray-300 rounded"
-  name="directorId"
-  value={formData.directorId}
-  onChange={handleInputChange}
-  required
->
-  <option value="">Select Director</option>
-  {Directors.map(director => (
-    <option key={director.id} value={director.id}>
-      {director.username}
-    </option>
-  ))}
-</select>
-        
-        
+          <label htmlFor="project-manager" className="block text-gray-700 font-bold mb-2">Project Manager:</label>
+          <select
+            id="project-manager"
+            className="w-full p-2 border border-gray-300 rounded"
+            name="projectManagerId"
+            value={formData.projectManagerId}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select Project Manager</option>
+            {projectManagers.map(pm => (
+              <option key={pm.id} value={pm.id}>
+                {pm.username}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Director Dropdown */}
+        <div className="mb-4">
+          <label htmlFor="director" className="block text-gray-700 font-bold mb-2">Director:</label>
+          <select
+            id="director"
+            className="w-full p-2 border border-gray-300 rounded"
+            name="directorId"
+            value={formData.directorId}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select Director</option>
+            {directors.map(director => (
+              <option key={director.id} value={director.id}>
+                {director.username}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Start and End Date */}
         <div className="flex space-x-4 mb-4">
           <input
             className="w-1/2 p-2 border border-gray-300 rounded"
@@ -231,17 +222,19 @@ const CreateProject = () => {
             required
           />
         </div>
+
+        {/* Project Duration */}
         <div className="mb-4">
           <label className="block text-gray-700 font-bold mb-2">Project Duration (Weeks):</label>
           <input
             className="w-full p-2 border border-gray-300 rounded bg-gray-100"
             type="number"
             value={projectDurationWeeks}
-            // onChange={(e) => handleTaskChange(index, 'duration', e.target.value)}
             readOnly
           />
         </div>
-       
+
+        {/* Tasks */}
         <h3 className="text-xl font-bold mb-2 text-gray-700">Tasks</h3>
         {formData.tasks.map((task, index) => (
           <div key={index} className="task-container mb-4 p-4 border border-gray-300 rounded">
@@ -262,56 +255,53 @@ const CreateProject = () => {
               required
             />
             <textarea
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange}
-          placeholder="Task Description"
-          required
-        />
-        <select
+              className="w-full p-2 mb-2 border border-gray-300 rounded"
+              value={task.description}
+              onChange={(e) => handleTaskChange(index, 'description', e.target.value)}
+              placeholder="Description"
+              rows="3"
+              required
+            />
+            <input
+              className="w-full p-2 mb-2 border border-gray-300 rounded"
+              type="date"
+              value={task.start_date}
+              onChange={(e) => handleTaskChange(index, 'start_date', e.target.value)}
+              placeholder="Start Date"
+              required
+            />
+            <input
+              className="w-full p-2 mb-2 border border-gray-300 rounded"
+              type="date"
+              value={task.due_date}
+              onChange={(e) => handleTaskChange(index, 'due_date', e.target.value)}
+              placeholder="Due Date"
+              required
+            />
+            <select
               className="w-full p-2 mb-2 border border-gray-300 rounded"
               value={task.assigned_to_user_id}
               onChange={(e) => handleTaskChange(index, 'assigned_to_user_id', e.target.value)}
               required
             >
               <option value="">Select Consultant</option>
-              {consultants.map(consultant => (
-                <option key={consultant.id} value={consultant.id}>
-                  {consultant.username}
+              {consultants.map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.username}
                 </option>
               ))}
             </select>
-            
-            <div className="flex space-x-4 mb-2">
-              <input
-                className="w-1/2 p-2 border border-gray-300 rounded"
-                type="date"
-                value={task.start_date}
-                onChange={(e) => handleTaskChange(index, 'start_date', e.target.value)}
-                placeholder="Start Date"
-                required
-              />
-              <input
-                className="w-1/2 p-2 border border-gray-300 rounded"
-                type="date"
-                value={task.due_date}
-                onChange={(e) => handleTaskChange(index, 'due_date', e.target.value)}
-                placeholder="Due Date"
-                required
-              />
-            </div>
-            
             <input
               className="w-full p-2 mb-2 border border-gray-300 rounded"
               type="number"
               value={task.hours}
               onChange={(e) => handleTaskChange(index, 'hours', e.target.value)}
-              placeholder="allocated Hours"
+              placeholder="Hours"
+              required
             />
             <button
               type="button"
-              className="bg-red-500 text-white p-2 rounded"
+              className="text-red-500 mt-2"
               onClick={() => removeTask(index)}
             >
               Remove Task
@@ -320,22 +310,26 @@ const CreateProject = () => {
         ))}
         <button
           type="button"
-          className="bg-blue-500 text-white p-2 rounded mb-4"
+          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
           onClick={addTask}
         >
           Add Task
         </button>
+
+        {/* Submit Button */}
         <button
           type="submit"
-          className="bg-green-500 text-white p-2 rounded"
+          className="px-4 py-2 bg-green-500 text-white rounded"
         >
           Create Project
         </button>
       </form>
-      <div className="upload-file-container mt-6">
+
+      {/* File Upload */}
+      <div className="file-upload mt-6">
         <input
           type="file"
-          accept=".xlsx"
+          accept=".csv,.xlsx"
           onChange={handleFileUpload}
         />
       </div>

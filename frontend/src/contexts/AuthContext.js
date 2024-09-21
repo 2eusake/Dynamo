@@ -1,108 +1,72 @@
-import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode'; // Ensure this is correctly imported
+import React, { createContext, useState, useEffect, useCallback } from 'react';
+import apiClient from '../utils/apiClient';
+import { logout as logoutUtil } from '../utils/tokenUtils';
+import Spinner from '../components/Common/Spinner';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Check if the token is expired
-  const isTokenExpired = (token) => {
-    if (!token) return true;
-    const payload = jwtDecode(token); // Decode JWT using jwtDecode
-    console.log('Decoded Token Payload:', payload); // Log the decoded token
-    return payload.exp < Date.now() / 1000; // Check expiry timestamp
-  };
-
-  // Refresh token function
-  const refreshToken = async () => {
-    const token = localStorage.getItem('refreshToken');
-    console.log('Stored Refresh Token:', token); // Log the refresh token
-
-    if (!refreshToken) {
-      throw new Error('No refresh token available');
-    }
-
+  const loadUser = useCallback(async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/users/refresh', { refreshToken });
-      console.log('New Access Token after Refresh:', response.data.token); // Log the new access token
-      localStorage.setItem('token', response.data.token); // Update the access token
-      return response.data.token;
+      const response = await apiClient.get('/users/profile');
+      return response.data;
     } catch (error) {
-      console.error('Error refreshing token:', error);
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      throw new Error('Token refresh failed');
+      if (error.response && error.response.status === 401) {
+        console.log('User not authenticated');
+        return null;
+      }
+      console.error('Failed to fetch user:', error);
+      return null;
     }
-  };
-
-  useEffect(() => {
-    const loadUser = async () => {
-      let token = localStorage.getItem('token');
-      console.log('Stored Token:', token); // Log the stored token
-
-      // Check if the token is expired and refresh if necessary
-      if (token && isTokenExpired(token)) {
-        try {
-          console.log('Token expired. Attempting to refresh...');
-          token = await refreshToken();
-        } catch (error) {
-          console.error('Failed to refresh token', error);
-          return; // Exit if the refresh fails
-        }
-      }
-
-      if (token && !user) {
-        console.log('Fetching user profile with token...');
-        axios.get('http://localhost:5000/api/users/profile', {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then(response => {
-          console.log('User profile fetched:', response.data); // Log the fetched user profile
-          setUser(response.data); // Set user data
-        })
-        .catch(error => console.error('Failed to fetch user', error));
-      }
-    };
-
-    loadUser();
   }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', { email, password });
-      console.log('Login Response:', response.data); // Log the login response
-      
-      localStorage.setItem('token', response.data.accessToken); // Save access token
-      localStorage.setItem('refreshToken', response.data.refreshToken); // Save refresh token
-      
-      // Check if the token is a valid string before decoding
-      const accessToken = response.data.accessToken;
-      if (typeof accessToken === 'string') {
-        const decodedToken = jwtDecode(accessToken); // Decode token
-        console.log('Decoded Token at Login:', decodedToken); // Log the decoded token
-        setUser({ ...response.data.user, role: decodedToken.role }); // Ensure role is in user data
-      } else {
-        console.error('Access token is not a string:', accessToken);
-      }
+      await apiClient.post('/users/login', { email, password });
+      const userProfile = await loadUser();
+      setUser(userProfile);
     } catch (error) {
-      console.error('Failed to log in', error);
+      console.error('Login error:', error);
+      throw error;
     }
   };
 
-  const logout = () => {
-    console.log('Logging out...'); // Log the logout action
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    setUser(null);
+  const handleLogout = async () => {
+    try {
+      await apiClient.post('/users/logout');
+      setUser(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
+  useEffect(() => {
+    const initializeUser = async () => {
+      try {
+        const userProfile = await loadUser();
+        setUser(userProfile);
+      } catch (error) {
+        console.error('Error during user initialization:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeUser();
+  }, [loadUser]);
+
+  if (loading) {
+    return <Spinner />;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, handleLogout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export { AuthContext, AuthProvider };
+export { AuthProvider, AuthContext };

@@ -159,3 +159,11 @@
     margin-right: 8px;
   }
   
+  .login-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .login-button:disabled:hover {
+    background-color: #cccccc;
+  }
