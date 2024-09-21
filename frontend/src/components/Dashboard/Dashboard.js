@@ -74,6 +74,7 @@ const Dashboard = () => {
         <h2 className="text-2xl font-bold text-deloitte-dark-green">
           Welcome back, {user?.username}!
         </h2>
+        </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Current Projects */}
@@ -111,7 +112,7 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-        </div>
+        
 
         {/* Project Overview */}
         <div className="bg-white rounded-lg shadow-md p-6">
