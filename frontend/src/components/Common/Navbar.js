@@ -4,7 +4,7 @@ import useAuth from "../../hooks/useAuth";
 import { FaBell } from "react-icons/fa";
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, handleLogout } = useAuth(); // Changed to handleLogout
 
   return (
     <nav className="navbar">
@@ -20,7 +20,7 @@ const Navbar = () => {
           <>
             <FaBell className="navbar-icon" />
             <span>{user.username}</span>
-            <button onClick={logout}>Logout</button>
+            <button onClick={handleLogout}>Logout</button> {/* Updated to handleLogout */}
           </>
         ) : (
           <Link to="/login">Login</Link>

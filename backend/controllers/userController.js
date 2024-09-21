@@ -11,19 +11,32 @@ const generateTokens = (user) => {
 };
 
 // Register a new user
+// UserController.js (registerUser function)
 const registerUser = async (req, res) => {
   const { username, email, password, role } = req.body;
-  try {
-    const user = await User.findOne({ where: { email } });
-    if (user) return res.status(400).json({ message: 'User already exists with this email' });
 
+  try {
+    // Check if the user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists with this email' });
+    }
+
+    // Hash the password and create the new user
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username, email, password: hashedPassword, role });
+    const newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      role,
+    });
+
     res.status(201).json({ message: 'User created successfully', user: newUser });
   } catch (error) {
-    res.status(500).json({ message: 'Error registering user', error: error.message });
+    return res.status(500).json({ message: 'Error registering user', error: error.message });
   }
 };
+
 
 // Login a user
 const loginUser = async (req, res) => {
@@ -111,25 +124,28 @@ const refreshToken = async (req, res) => {
 };
 
 // Logout a user
+// UserController.js (logoutUser function)
 const logoutUser = async (req, res) => {
-  const token = req.cookies.refreshToken;
+  const refreshToken = req.cookies.refreshToken;
+
   try {
-    if (token) {
-      const user = await User.findOne({ where: { refreshToken: token } });
+    if (refreshToken) {
+      const user = await User.findOne({ where: { refreshToken } });
       if (user) {
-        user.refreshToken = null; // Remove the refresh token
+        user.refreshToken = null; // Clear refresh token
         await user.save();
       }
     }
 
-    // Clear cookies
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
-    res.json({ message: 'Logged out successfully' });
+    // Clear cookies on logout
+    res.clearCookie('accessToken', { path: '/' });
+    res.clearCookie('refreshToken', { path: '/api/users/refresh' });
+    return res.status(200).json({ message: 'Logout successful' });
   } catch (error) {
-    res.status(500).json({ message: 'Error logging out', error: error.message });
+    return res.status(500).json({ message: 'Error logging out', error: error.message });
   }
 };
+
 
 
 
