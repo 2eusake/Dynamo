@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import apiClient from '../utils/apiClient';
-import { logout as logoutUtil } from '../utils/tokenUtils';
+import { logout as logoutUtil, refreshToken } from '../utils/tokenUtils';
 import Spinner from '../components/Common/Spinner';
 
 const AuthContext = createContext();
@@ -63,7 +63,7 @@ const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, handleLogout }}>
+    <AuthContext.Provider value={{ user, login, handleLogout, refreshToken }}>
       {children}
     </AuthContext.Provider>
   );

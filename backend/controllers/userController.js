@@ -145,10 +145,20 @@ const logoutUser = async (req, res) => {
     return res.status(500).json({ message: 'Error logging out', error: error.message });
   }
 };
-xports.getAllUsers = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}).select('id username role');
-    res.json(users);
+    const users = await User.findAll({
+      attributes: ['id', 'username', 'role'],
+      order: [['username', 'ASC']]
+    });
+
+    const groupedUsers = {
+      consultants: users.filter(user => user.role === 'Consultant'),
+      projectManagers: users.filter(user => user.role === 'Project Manager'),
+      directors: users.filter(user => user.role === 'Director')
+    };
+
+    res.json(groupedUsers);
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({ message: 'Error fetching users' });
