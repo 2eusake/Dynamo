@@ -72,7 +72,7 @@ const updateTask = async (req, res) => {
     }
 
     const { name, description, status, start_date, due_date } = req.body;
-    await task.update({ name, description, status, start_date, due_date, hours });
+    await task.update({ name, description, status, start_date, due_date, hours,actualHours });
     res.json(task);
   } catch (error) {
     res.status(500).json({ message: 'Error updating task', error: error.message });

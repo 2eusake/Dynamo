@@ -23,14 +23,14 @@ import './tailwind.css';
 import Settings from './components/Settings/SettingsPage';
 import EditProfilePage from './components/Settings/EditProfilePage';
 import ResetPasswordPage from './components/Settings/ResetPasswordPage';
-
+import { UserProvider } from './contexts/UserContext'; // Ensure correct path
 import Spinner from './components/Common/Spinner';
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
-        
+     
           <AuthContext.Consumer>
             {({ user, loading }) => {
               if (loading) {
@@ -45,6 +45,7 @@ const App = () => {
                   <div className={`flex-1 ${user ? 'ml-48' : ''} p-4`}>
                     <ProjectProvider>
                       <TaskProvider>
+                      <UserProvider>
                         <Routes>
                           <Route path="/" element={<Login />} />
                           <Route path="/login" element={<Login />} />
@@ -86,7 +87,7 @@ const App = () => {
                             element={<ProtectedRoute element={<TasksPage />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
                           />
                           <Route
-                            path="/tasks/:id"
+                            path="/tasks/:taskId"
                             element={<ProtectedRoute element={<TaskDetail />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
                           />
                           <Route
@@ -94,6 +95,7 @@ const App = () => {
                             element={<ProtectedRoute element={<ReportsPage />} allowedRoles={['Director', 'Project Manager', 'Consultant']} />}
                           />
                         </Routes>
+                        </UserProvider>
                       </TaskProvider>
                     </ProjectProvider>
                   </div>
@@ -118,7 +120,6 @@ const App = () => {
       </Router>
       <Footer/>
     </AuthProvider>
-    
   );
 };
 
