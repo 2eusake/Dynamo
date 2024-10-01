@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { getReportsData } = require('../controllers/reportController');
+const { getReports } = require('../controllers/reportController');
 
 // Route to get reports data
-router.get('/data', getReportsData);
+router.get('/data', getReports);
 module.exports = router;
