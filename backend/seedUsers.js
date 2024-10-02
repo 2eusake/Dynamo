@@ -10,7 +10,7 @@ const dbConfig = {
   database: 'dpms_serv',
   port: 5000,
   ssl: {
-    ca: fs.readFileSync('C:/Users/Zusakhe/OneDrive - University of Cape Town/Desktop/DPMS-P/backend/config/eu-north-1-bundle.pem')
+    ca: fs.readFileSync('./config/eu-north-1-bundle.pem')
   }
 };
 

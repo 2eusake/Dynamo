@@ -48,7 +48,7 @@ async function seedData() {
       password: 'KPiu7qTJnGs51CGDX7ab',  
       database: 'dpms_serv',
       ssl: {
-        ca: fs.readFileSync('C:/Users/Zusakhe/OneDrive - University of Cape Town/Desktop/DPMS-P/backend/config/eu-north-1-bundle.pem')
+        ca: fs.readFileSync('./config/eu-north-1-bundle.pem')
       },
       connectTimeout: 120000, // Increased to 2 minutes
       connectionLimit: 10 // Using a connection pool
