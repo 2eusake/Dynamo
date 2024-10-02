@@ -11,6 +11,7 @@ const ProjectsPage = () => {
 
   useEffect(() => {
     const loadProjects = async () => {
+    const loadProjects = async () => {
       try {
         await fetchProjects();
         if (!notificationShown) {
@@ -18,8 +19,10 @@ const ProjectsPage = () => {
           setNotificationShown(true);
         }
       } catch (error) {
-        console.error('Error fetching projects:', error);
-        toast.error('Failed to fetch projects.');
+        console.error("Failed to load projects:", error);
+        setError("Failed to load projects. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     };
 
