@@ -17,33 +17,24 @@ const CreateProject = () => {
   });
 
   
-  const [consultants, setConsultants] = useState([]);
-  const [projectManagers, setProjectManagers] = useState([]);
-  const [directors, setDirectors] = useState([]);
+  // const [consultants, setConsultants] = useState([]);
+  // const [projectManagers, setProjectManagers] = useState([]);
+  // const [directors, setDirectors] = useState([]);
+  const [users, setUsers] = useState({
+    consultants: [],
+    projectManagers: [],
+    directors: []
+  });
   const [notification, setNotification] = useState('');
   const [projectDurationWeeks, setProjectDurationWeeks] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error('No token found, please log in.');
-        return;
-      }
-
       try {
         const response = await apiClient.get('/users');
-        const users = response.data;
-        setConsultants(users.filter(user => user.role === 'Consultant'));
-        setProjectManagers(users.filter(user => user.role === 'Project Manager'));
-        setDirectors(users.filter(user => user.role === 'Director'));
+        setUsers(response.data);  // Sets consultants, projectManagers, directors from API response
       } catch (error) {
         console.error('Error fetching users:', error);
-        if (error.response && error.response.status === 401) {
-          toast.error('Unauthorized, please log in again.');
-        } else {
-          toast.error('Failed to fetch users.');
-        }
       }
     };
 
@@ -181,41 +172,27 @@ const CreateProject = () => {
               <label htmlFor="project-manager" className="block text-sm font-medium text-gray-700 mb-2">
                 Project Manager
               </label>
-              <select
-                id="project-manager"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                name="projectManagerId"
-                value={formData.projectManagerId}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select Project Manager</option>
-                {projectManagers.map(pm => (
-                  <option key={pm.id} value={pm.id}>
-                    {pm.username}
-                  </option>
-                ))}
-              </select>
+              <select name="projectManagerId">
+        <option value="">Select Project Manager</option>
+        {users.projectManagers.map((pm) => (
+          <option key={pm.id} value={pm.id}>
+            {pm.username}
+          </option>
+        ))}
+      </select>
             </div>
             <div>
               <label htmlFor="director" className="block text-sm font-medium text-gray-700 mb-2">
                 Director
               </label>
-              <select
-                id="director"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                name="directorId"
-                value={formData.directorId}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select Director</option>
-                {directors.map(director => (
-                  <option key={director.id} value={director.id}>
-                    {director.username}
-                  </option>
-                ))}
-              </select>
+              <select name="directorId">
+        <option value="">Select Director</option>
+        {users.directors.map((director) => (
+          <option key={director.id} value={director.id}>
+            {director.username}
+          </option>
+        ))}
+      </select>
             </div>
           </div>
 
@@ -352,20 +329,14 @@ const CreateProject = () => {
                     <label htmlFor={`consultant-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
                       Assigned Consultant
                     </label>
-                    <select
-                      id={`consultant-${index}`}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      value={task.assigned_to_user_id}
-                      onChange={(e) => handleTaskChange(index, 'assigned_to_user_id', e.target.value)}
-                      required
-                    >
-                      <option value="">Select Consultant</option>
-                      {consultants.map(c => (
-                        <option key={c.id} value={c.id}>
-                          {c.username}
-                        </option>
-                      ))}
-                    </select>
+                    <select name="consultantId">
+        <option value="">Select Consultant</option>
+        {users.consultants.map((consultant) => (
+          <option key={consultant.id} value={consultant.id}>
+            {consultant.username}
+          </option>
+        ))}
+      </select>
                   </div>
                   <div>
                     <label htmlFor={`hours-${index}`} className="block text-sm font-medium text-gray-700 mb-2">

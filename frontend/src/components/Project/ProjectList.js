@@ -1,35 +1,18 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import apiClient from '../../utils/apiClient';
+import { ProjectContext } from '../../contexts/ProjectContext';
 import { Link } from 'react-router-dom';
-import './ProjectsList.css';
-import { AuthContext } from '../../contexts/AuthContext';
-
+import { Card, CardHeader, CardTitle, CardContent, Button } from '../Task/UIComp';
 
 const ProjectsPage = () => {
-  const [projects, setProjects] = useState([]);
-  const { refreshToken } = useContext(AuthContext);
+  const { projects, fetchProjects } = useContext(ProjectContext);
   const [notificationShown, setNotificationShown] = useState(false);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const loadProjects = async () => {
       try {
-        const token = await refreshToken();
-        if (!token) {
-          console.log('No valid token available. Cannot fetch projects.');
-          toast.error('Error: Unable to fetch projects due to authentication issues.');
-          return;
-        }
-
-        const response = await apiClient.get('/projects', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setProjects(response.data);
-
+        await fetchProjects();
         if (!notificationShown) {
           toast.success('Projects fetched successfully!');
           setNotificationShown(true);
@@ -40,53 +23,53 @@ const ProjectsPage = () => {
       }
     };
 
-    fetchProjects();
-  }, [refreshToken, notificationShown]);
-  
-  const groupedProjects = projects.reduce((acc, project) => {
-    const projectId = project.id || 'Unassigned';
-    if (!acc[projectId]) {
-      acc[projectId] = { project_id: projectId, tasks: [] };
-    }
-    if (project.tasks && project.tasks.length > 0) {
-      acc[projectId].tasks.push(...project.tasks);
-    }
-    return acc;
-  }, {});
+    loadProjects();
+  }, [fetchProjects, notificationShown]);
 
   return (
-    <div className="projects-page">
-      <h1>Projects and Tasks</h1>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6">Projects</h1>
       <ToastContainer />
-
-      <div className="tiles-container">
-        {Object.keys(groupedProjects).length > 0 ? (
-          Object.values(groupedProjects).map((projectGroup) => (
-            <div key={projectGroup.project_id} className="tile">
-              <h2>Project ID: {projectGroup.project_id}</h2>
-              {projectGroup.tasks.length > 0 ? (
-                projectGroup.tasks.map((task) => (
-                  <div key={task.id} className="task-item">
-                    <Link to={`/tasks/${task.id}`}>
-                      <h3>{task.name}</h3>
+      {projects.length > 0 ? (
+        projects.map((project) => (
+          <Card key={project.id} className="mb-6">
+            <CardHeader>
+              <CardTitle>Project: {project.name || project.id}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Description: {project.description || 'No description available'}</p>
+              <p>Start Date: {project.startDate ? new Date(project.startDate).toLocaleDateString() : 'N/A'}</p>
+              <p>End Date: {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'N/A'}</p>
+              <p>Status: {project.status || 'Unknown'}</p>
+              {project.tasks && project.tasks.length > 0 ? (
+                <div>
+                  <h3 className="text-lg font-semibold mt-4 mb-2">Tasks:</h3>
+                  {project.tasks.map((task) => (
+                    <div key={task.id} className="mb-4 p-4 bg-white rounded-lg shadow">
+                      <h4 className="text-md font-semibold">{task.name || 'Unnamed Task'}</h4>
                       <p>Description: {task.description || 'No description available'}</p>
-                      <p>Due Date: {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'N/A'}</p>
-                      <p>Hours Allocated: {task.hours || 'N/A'}</p>
-                      <p>Task ID: {task.id || 'N/A'}</p>
-                      <p>Status: {task.status || 'Not started'}</p>
-                      <p>Assigned To: {task.assigned_to_user_id || 'Unassigned'}</p>
-                    </Link>
-                  </div>
-                ))
+                      <p>Due Date: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A'}</p>
+                      <p>Status: {task.status || 'Unknown'}</p>
+                      {task.id && (
+                        <Link to={`/tasks/${task.id}`}>
+                          <Button variant="outline" className="mt-2">View Task Details</Button>
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <p>No tasks available for this project.</p>
               )}
-            </div>
-          ))
-        ) : (
-          <p>No projects available.</p>
-        )}
-      </div>
+              <Link to={`/projects/${project.id}`}>
+                <Button variant="outline" className="mt-4">View Project Details</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ))
+      ) : (
+        <p>No projects available.</p>
+      )}
     </div>
   );
 };
