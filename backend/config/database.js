@@ -9,7 +9,7 @@ const sequelize = new Sequelize('dpms_serv', 'zeusake', 'KPiu7qTJnGs51CGDX7ab', 
   port: 5000,
   dialectOptions: {
     ssl: {
-      ca: fs.readFileSync('./config/eu-north-1-bundle.pem') 
+      ca: fs.readFileSync('backend/config/eu-north-1-bundle.pem') 
     }
   }}
 );
