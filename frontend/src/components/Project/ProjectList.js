@@ -1,173 +1,77 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import apiClient from "../../utils/apiClient";
-import { AuthContext } from "../../contexts/AuthContext";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "../Task/UIComp";
-import { ProjectContext } from "../../contexts/ProjectContext";
+import React, { useContext, useEffect, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ProjectContext } from '../../contexts/ProjectContext';
+import { Link } from 'react-router-dom';
+import { Card, CardHeader, CardTitle, CardContent, Button } from '../Task/UIComp';
 
-const ProjectList = () => {
-  const [projects, setProjects] = useState([]);
-  const { user } = useContext(AuthContext);
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [expandedProjects, setExpandedProjects] = useState({});
-  const navigate = useNavigate();
+const ProjectsPage = () => {
+  const { projects, fetchProjects } = useContext(ProjectContext);
+  const [notificationShown, setNotificationShown] = useState(false);
 
   useEffect(() => {
     const loadProjects = async () => {
       try {
-        setLoading(true);
-        let response;
-        if (user.role === "Director") {
-          response = await apiClient.get("/projects");
-        } else if (user.role === "Project Manager") {
-          response = await apiClient.get(`/projects/manager/${user.id}`);
-        } else {
-          response = await apiClient.get(`/projects/user/${user.id}`);
+        await fetchProjects();
+        if (!notificationShown) {
+          toast.success('Projects fetched successfully!');
+          setNotificationShown(true);
         }
-        setProjects(response.data);
-        setError(null);
       } catch (error) {
-        console.error("Failed to load projects:", error);
-        setError("Failed to load projects. Please try again later.");
-      } finally {
-        setLoading(false);
+        console.error('Error fetching projects:', error);
+        toast.error('Failed to fetch projects.');
       }
     };
 
     loadProjects();
-  }, [user]);
-
-  const toggleProjectExpansion = (projectId) => {
-    setExpandedProjects((prev) => ({
-      ...prev,
-      [projectId]: !prev[projectId],
-    }));
-  };
-
-  // const navigateToProjectDetails = (projectId, event) => {
-  //   event.stopPropagation();
-  //   navigate(`/projects/${id}`);
-  // };
-
-  // const navigateToTaskDetails = (taskId, event) => {
-  //   event.stopPropagation();
-  //   navigate(`/tasks/${taskId}`);
-  // };
-
-  if (loading)
-    return <div className="text-center py-4">Loading projects...</div>;
-  if (error)
-    return <div className="text-red-500 text-center py-4">Error: {error}</div>;
+  }, [fetchProjects, notificationShown]);
 
   return (
-    <div className="container mx-auto px-4">
-      <h3 className="text-2xl font-bold mb-4">
-        {user.role === "Director" ? "All Projects" : "Your Projects"}
-      </h3>
-      {projects.length === 0 ? (
-        <p className="text-gray-500">No projects found.</p>
-      ) : (
-        <div className="space-y-4">
-          {projects.map((project) => (
-            <div key={project.id} className="border rounded-lg shadow-sm">
-              <div
-                className="flex justify-between items-center p-4 cursor-pointer bg-gray-50 hover:bg-gray-100"
-                onClick={() => toggleProjectExpansion(project.id)}
-              >
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6">Projects</h1>
+      <ToastContainer />
+      {projects.length > 0 ? (
+        projects.map((project) => (
+          <Card key={project.id} className="mb-6">
+            <CardHeader>
+              <CardTitle>Project: {project.name || project.id}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Description: {project.description || 'No description available'}</p>
+              <p>Start Date: {project.startDate ? new Date(project.startDate).toLocaleDateString() : 'N/A'}</p>
+              <p>End Date: {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'N/A'}</p>
+              <p>Status: {project.status || 'Unknown'}</p>
+              {project.tasks && project.tasks.length > 0 ? (
                 <div>
-                  <h4 className="text-lg font-semibold">{project.name}</h4>
-                  <p className="text-sm text-gray-600">
-                    WBS Element: {project.wbsElement}
-                  </p>
+                  <h3 className="text-lg font-semibold mt-4 mb-2">Tasks:</h3>
+                  {project.tasks.map((task) => (
+                    <div key={task.id} className="mb-4 p-4 bg-white rounded-lg shadow">
+                      <h4 className="text-md font-semibold">{task.name || 'Unnamed Task'}</h4>
+                      <p>Description: {task.description || 'No description available'}</p>
+                      <p>Due Date: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A'}</p>
+                      <p>Status: {task.status || 'Unknown'}</p>
+                      {task.id && (
+                        <Link to={`/tasks/${task.id}`}>
+                          <Button variant="outline" className="mt-2">View Task Details</Button>
+                        </Link>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                <div className="text-right">
-                  <p className="text-sm">
-                    Status:{" "}
-                    <span
-                      className={`font-semibold ${
-                        project.status === "Completed"
-                          ? "text-green-600"
-                          : "text-blue-600"
-                      }`}
-                    >
-                      {project.status}
-                    </span>
-                  </p>
-                  <p className="text-sm">
-                    Due: {new Date(project.endDate).toLocaleDateString()}
-                  </p>
-                </div>
-                {expandedProjects[project.id] ? (
-                  <ChevronUp size={20} />
-                ) : (
-                  <ChevronDown size={20} />
-                )}
-              </div>
-              {expandedProjects[project.id] && (
-                <div className="p-4 border-t">
-                  {project.id ? (
-                    <Link to={`/projects/${project.id}`}>
-                      <Button variant="outline" className="mt-2">
-                        View Details
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button variant="outline" className="mt-2" disabled>
-                      Details Unavailable
-                    </Button>
-                  )}
-                  <h5 className="font-semibold mb-2">Tasks:</h5>
-                  {project.tasks && project.tasks.length > 0 ? (
-                    <ul className="space-y-2">
-                      {project.tasks.map((task) => (
-                        <li
-                          key={task.id}
-                          className="bg-white p-2 rounded border"
-                        >
-                          <div className="flex justify-between items-center">
-                            <span>{task.taskName}</span>
-                            {task.id ? (
-                              <Link to={`/tasks/${task.id}`}>
-                                <Button variant="outline" className="mt-2">
-                                  View Details
-                                </Button>
-                              </Link>
-                            ) : (
-                              <Button
-                                variant="outline"
-                                className="mt-2"
-                                disabled
-                              >
-                                Details Unavailable
-                              </Button>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-600">
-                            Status: {task.status}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Assigned to: {task.assignedTo}
-                          </p>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-gray-500">
-                      No tasks found for this project.
-                    </p>
-                  )}
-                </div>
+              ) : (
+                <p>No tasks available for this project.</p>
               )}
-            </div>
-          ))}
-        </div>
+              <Link to={`/projects/${project.id}`}>
+                <Button variant="outline" className="mt-4">View Project Details</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ))
+      ) : (
+        <p>No projects available.</p>
       )}
     </div>
   );
 };
 
-export default ProjectList;
+export default ProjectsPage;

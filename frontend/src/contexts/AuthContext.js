@@ -8,6 +8,7 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState(null);
 
   const loadUser = useCallback(async () => {
     try {
@@ -25,7 +26,10 @@ const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      await apiClient.post('/users/login', { email, password });
+      const response = await apiClient.post('/users/login', { email, password });
+      const { accessToken } = response.data;
+      setAccessToken(accessToken);
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       const userProfile = await loadUser();
       setUser(userProfile);
     } catch (error) {
@@ -36,10 +40,23 @@ const AuthProvider = ({ children }) => {
 
   const handleLogout = async () => {
     try {
-      await logoutUtil(); // Call the logout utility function
-      setUser(null); // Clear user session from the context
+      await logoutUtil(); // Call logout utility to handle API logout
+      setUser(null);
+      setAccessToken(null);
+      delete apiClient.defaults.headers.common['Authorization']; // Clear axios auth header
     } catch (error) {
       console.error('Logout error:', error);
+    } finally {
+      window.location.href = '/login'; // Redirect to login after logout
+    }
+  };
+
+  const refreshAccessToken = async () => {
+    try {
+      const newToken = await refreshToken();
+      setAccessToken(newToken);
+    } catch (error) {
+      console.error('Error refreshing token:', error);
     }
   };
 
@@ -63,7 +80,7 @@ const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, handleLogout, refreshToken }}>
+    <AuthContext.Provider value={{ user, login, handleLogout, refreshAccessToken, accessToken }}>
       {children}
     </AuthContext.Provider>
   );
