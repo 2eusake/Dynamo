@@ -44,12 +44,12 @@ const TaskDetail = () => {
 
 export default TaskDetail;*/
 
-import React, { useContext, useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { TaskContext } from '../../contexts/TaskContext';
-import { UserContext } from '../../contexts/UserContext'; // Assume we have a UserContext
-import { Card, CardHeader, CardTitle, CardContent, Button } from './UIComp';
-import { UserCircle, Calendar, Clock, FileText, Briefcase } from 'lucide-react';
+import React, { useContext, useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { TaskContext } from "../../contexts/TaskContext";
+import { UserContext } from "../../contexts/UserContext"; // Assume we have a UserContext
+import { Card, CardHeader, CardTitle, CardContent, Button } from "./UIComp";
+import { UserCircle, Calendar, Clock, FileText, Briefcase } from "lucide-react";
 
 const TaskDetailsPage = () => {
   const { taskId } = useParams();
@@ -59,18 +59,23 @@ const TaskDetailsPage = () => {
   const [assignedUser, setAssignedUser] = useState(null);
 
   useEffect(() => {
-    const foundTask = tasks.find(t => t.id && t.id.toString() === taskId);
+    const foundTask = tasks.find((t) => t.id && t.id.toString() === taskId);
     setTask(foundTask);
 
     if (foundTask && foundTask.assigned_to_user_id) {
-      getUser(foundTask.assigned_to_user_id).then(user => setAssignedUser(user));
+      getUser(foundTask.assigned_to_user_id).then((users) =>
+        setAssignedUser(users)
+      );
     }
   }, [taskId, tasks, getUser]);
 
   if (!task) {
     return (
       <div className="container mx-auto p-4">
-        <Link to="/tasks" className="text-blue-500 hover:underline mb-4 inline-block">
+        <Link
+          to="/tasks"
+          className="text-blue-500 hover:underline mb-4 inline-block"
+        >
           ← Back to Tasks
         </Link>
         <Card className="mt-4">
@@ -82,29 +87,37 @@ const TaskDetailsPage = () => {
     );
   }
 
-  const progress = task.actualHours && task.hours 
-    ? Math.min(100, Math.round((task.actualHours / task.hours) * 100))
-    : 0;
+  const progress =
+    task.actualHours && task.hours
+      ? Math.min(100, Math.round((task.actualHours / task.hours) * 100))
+      : 0;
 
   const statusColors = {
-    'In Progress': 'bg-yellow-500',
-    'Completed': 'bg-green-500',
-    'Not Started': 'bg-red-500',
-    'default': 'bg-gray-500'
+    "In Progress": "bg-yellow-500",
+    Completed: "bg-green-500",
+    "Not Started": "bg-red-500",
+    default: "bg-gray-500",
   };
 
   const statusColor = statusColors[task.status] || statusColors.default;
 
   return (
     <div className="container mx-auto p-4">
-      <Link to="/tasks" className="text-blue-500 hover:underline mb-4 inline-block">
+      <Link
+        to="/tasks"
+        className="text-blue-500 hover:underline mb-4 inline-block"
+      >
         ← Back to Tasks
       </Link>
       <Card className="mt-4">
         <CardHeader className="flex justify-between items-center">
-          <CardTitle className="text-2xl font-bold">{task.taskName || 'Unnamed Task'}</CardTitle>
-          <div className={`${statusColor} text-white px-3 py-1 rounded-full text-sm`}>
-            {task.status || 'Unknown'}
+          <CardTitle className="text-2xl font-bold">
+            {task.taskName || "Unnamed Task"}
+          </CardTitle>
+          <div
+            className={`${statusColor} text-white px-3 py-1 rounded-full text-sm`}
+          >
+            {task.status || "Unknown"}
           </div>
         </CardHeader>
         <CardContent>
@@ -113,29 +126,33 @@ const TaskDetailsPage = () => {
               <div className="flex items-center">
                 <FileText className="mr-2 text-gray-500" />
                 <span className="font-semibold">Description:</span>
-                <p className="ml-2">{task.description || 'No description available'}</p>
+                <p className="ml-2">
+                  {task.description || "No description available"}
+                </p>
               </div>
               <div className="flex items-center">
                 <Calendar className="mr-2 text-gray-500" />
                 <span className="font-semibold">Start Date:</span>
-                <span className="ml-2">{task.start_date || 'N/A'}</span>
+                <span className="ml-2">{task.start_date || "N/A"}</span>
               </div>
               <div className="flex items-center">
                 <Calendar className="mr-2 text-gray-500" />
                 <span className="font-semibold">Due Date:</span>
                 <span className="ml-2">
-                  {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'N/A'}
+                  {task.due_date
+                    ? new Date(task.due_date).toLocaleDateString()
+                    : "N/A"}
                 </span>
               </div>
               <div className="flex items-center">
                 <Clock className="mr-2 text-gray-500" />
                 <span className="font-semibold">Hours Allocated:</span>
-                <span className="ml-2">{task.hours || 'N/A'}</span>
+                <span className="ml-2">{task.hours || "N/A"}</span>
               </div>
               <div className="flex items-center">
                 <Clock className="mr-2 text-gray-500" />
                 <span className="font-semibold">Actual Hours Spent:</span>
-                <span className="ml-2">{task.actualHours || 'N/A'}</span>
+                <span className="ml-2">{task.actualHours || "N/A"}</span>
               </div>
             </div>
             <div className="space-y-4">
@@ -143,23 +160,25 @@ const TaskDetailsPage = () => {
                 <UserCircle className="mr-2 text-gray-500" />
                 <span className="font-semibold">Assigned To:</span>
                 <span className="ml-2">
-                  {assignedUser ? assignedUser.userName : 'Loading...'}
+                  {assignedUser ? assignedUser.userName : "Loading..."}
                 </span>
               </div>
               <div className="flex items-center">
                 <Briefcase className="mr-2 text-gray-500" />
                 <span className="font-semibold">Project ID:</span>
-                <span className="ml-2">{task.project_id || 'Unassigned'}</span>
+                <span className="ml-2">{task.project_id || "Unassigned"}</span>
               </div>
               <div className="mt-4">
                 <span className="font-semibold">Progress:</span>
                 <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                  <div 
-                    className="bg-blue-600 h-2.5 rounded-full" 
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full"
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
-                <span className="text-sm text-gray-600">{progress}% Complete</span>
+                <span className="text-sm text-gray-600">
+                  {progress}% Complete
+                </span>
               </div>
             </div>
           </div>
