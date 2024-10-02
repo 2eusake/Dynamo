@@ -1,3 +1,4 @@
+
 import React, { useState, useContext, useEffect } from "react";
 import apiClient from "../../utils/apiClient";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -23,7 +24,7 @@ import {
   AlertTriangle,
   Briefcase,
 } from "lucide-react";
-import { Card, CardContent, CardHeader } from "./UIComponents";
+import { Card, CardContent, CardHeader, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Select } from "./UIComponents";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const localizer = momentLocalizer(moment);
@@ -33,21 +34,6 @@ const CardTitle = ({ children, className, ...props }) => (
   <h3 className={`text-xl font-semibold ${className}`} {...props}>
     {children}
   </h3>
-);
-
-const Alert = ({ children, className, ...props }) => (
-  <div
-    className={`bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 ${className}`}
-    {...props}
-  >
-    {children}
-  </div>
-);
-
-const AlertDescription = ({ children, ...props }) => (
-  <p className="text-sm" {...props}>
-    {children}
-  </p>
 );
 
 const Dashboard = () => {
@@ -134,7 +120,6 @@ const Dashboard = () => {
   };
 
   const handleSelectEvent = (event) => {
-    // Handle event selection (e.g., show details, allow editing)
     console.log("Selected event:", event);
   };
 
@@ -182,34 +167,28 @@ const Dashboard = () => {
       <div className="flex-1 overflow-auto">
         <main className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Project Overview */}
-          <Card className="col-span-3 bg-gradient-to-r from-blue-400 to-indigo-500">
+          <Card className="col-span-3 bg-white">
             <CardHeader>
-              <CardTitle className="text-white flex items-center">
+              <CardTitle className="text-darkGray flex items-center">
                 <Briefcase className="mr-2" /> Project Overview
               </CardTitle>
             </CardHeader>
             <CardContent className="flex justify-between">
               <div>
-                <p className="text-white">Total Projects: {projects.length}</p>
-                <p className="text-white">
-                  Current Projects: {currentProjects.length}
-                </p>
+                <p>Total Projects: {projects.length}</p>
+                <p>Current Projects: {currentProjects.length}</p>
               </div>
               <div>
-                <p className="text-white">
-                  Upcoming Projects: {upcomingProjects.length}
-                </p>
-                <p className="text-white">
-                  Overdue Projects: {overdueProjects.length}
-                </p>
+                <p>Upcoming Projects: {upcomingProjects.length}</p>
+                <p>Overdue Projects: {overdueProjects.length}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Current Projects */}
-          <Card className="col-span-1 bg-gradient-to-r from-blue-400 to-indigo-500">
+          <Card className="col-span-1 bg-lightGray">
             <CardHeader>
-              <CardTitle className="text-white flex items-center">
+              <CardTitle className="text-darkGray flex items-center">
                 <CalendarIcon className="mr-2" /> Current Projects
               </CardTitle>
             </CardHeader>
@@ -218,16 +197,14 @@ const Dashboard = () => {
                 {currentProjects.map((project) => (
                   <div
                     key={project.id}
-                    className="bg-white bg-opacity-20 p-2 rounded-md shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
+                    className="bg-white p-2 rounded-md shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
                     onClick={() => handleProjectClick(project)}
                   >
-                    <h4 className="text-lg font-semibold text-white mb-1">
+                    <h4 className="text-lg font-semibold text-darkGray mb-1">
                       {project.name}
                     </h4>
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm text-white">
-                        Progress: {project.progress}%
-                      </span>
+                      <span className="text-sm">Progress: {project.progress}%</span>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold ${
                           project.progress < 50
@@ -244,9 +221,9 @@ const Dashboard = () => {
                           : "Near Completion"}
                       </span>
                     </div>
-                    <div className="w-full bg-white bg-opacity-30 rounded-full h-2.5">
+                    <div className="w-full bg-lightGray rounded-full h-2.5">
                       <div
-                        className="bg-white h-2.5 rounded-full"
+                        className="bg-darkGray h-2.5 rounded-full"
                         style={{ width: `${project.progress}%` }}
                       ></div>
                     </div>
@@ -256,62 +233,10 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Upcoming Projects */}
-          <Card className="bg-gradient-to-r from-yellow-400 to-orange-500">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center">
-                <Clock className="mr-2" /> Upcoming Projects
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {upcomingProjects.length > 0 ? (
-                  upcomingProjects.map((project) => (
-                    <div
-                      key={project.id}
-                      className="bg-white bg-opacity-20 p-2 rounded-md text-white"
-                    >
-                      {project.name} (Starts on:{" "}
-                      {new Date(project.startDate).toLocaleDateString()})
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-white">No upcoming projects.</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Overdue Projects */}
-          <Card className="bg-gradient-to-r from-red-400 to-pink-500">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center">
-                <AlertTriangle className="mr-2" /> Overdue Projects
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {overdueProjects.length > 0 ? (
-                  overdueProjects.map((project) => (
-                    <div
-                      key={project.id}
-                      className="bg-white bg-opacity-20 p-2 rounded-md text-white"
-                    >
-                      {project.name} (Due:{" "}
-                      {new Date(project.endDate).toLocaleDateString()})
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-white">No overdue projects.</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Calendar Section */}
           <Card className="col-span-2 bg-white">
             <CardHeader>
-              <CardTitle className="text-gray-800 flex items-center">
+              <CardTitle className="text-darkGray flex items-center">
                 <CalendarIcon className="mr-2" /> Project and Task Calendar
               </CardTitle>
             </CardHeader>
@@ -335,9 +260,9 @@ const Dashboard = () => {
           </Card>
 
           {/* Notifications */}
-          <Card className="bg-gradient-to-r from-purple-400 to-pink-500">
+          <Card className="bg-lightGray">
             <CardHeader>
-              <CardTitle className="text-white flex items-center">
+              <CardTitle className="text-darkGray flex items-center">
                 <Bell className="mr-2" /> Notifications
               </CardTitle>
             </CardHeader>
@@ -347,13 +272,13 @@ const Dashboard = () => {
                   notifications.map((notification, index) => (
                     <li
                       key={index}
-                      className="bg-white bg-opacity-20 p-2 rounded-md text-white"
+                      className="bg-white p-2 rounded-md text-darkGray"
                     >
                       {notification}
                     </li>
                   ))
                 ) : (
-                  <li className="text-white">No new notifications.</li>
+                  <li>No new notifications.</li>
                 )}
               </ul>
             </CardContent>
@@ -362,7 +287,7 @@ const Dashboard = () => {
           {/* Performance Chart */}
           <Card className="col-span-1 bg-white">
             <CardHeader>
-              <CardTitle className="text-gray-800">
+              <CardTitle className="text-darkGray">
                 Project Performance
               </CardTitle>
             </CardHeader>
@@ -373,10 +298,10 @@ const Dashboard = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="actualTime" fill="#8884d8" name="Actual Time" />
+                  <Bar dataKey="actualTime" fill="#86BC25" name="Actual Time" />
                   <Bar
                     dataKey="allocatedTime"
-                    fill="#82ca9d"
+                    fill="#00653b"
                     name="Allocated Time"
                   />
                 </BarChart>
@@ -387,7 +312,7 @@ const Dashboard = () => {
           {/* Project Status Chart */}
           <Card className="col-span-1 bg-white">
             <CardHeader>
-              <CardTitle className="text-gray-800">Project Status</CardTitle>
+              <CardTitle className="text-darkGray">Project Status</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -398,7 +323,7 @@ const Dashboard = () => {
                     cy="50%"
                     labelLine={false}
                     outerRadius={80}
-                    fill="#8884d8"
+                    fill="#86BC25"
                     dataKey="value"
                     label={({ name, percent }) =>
                       `${name} ${(percent * 100).toFixed(0)}%`
@@ -438,7 +363,7 @@ const Dashboard = () => {
               </p>
               <p>Progress: {selectedProject.progress}%</p>
               <button
-                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
+                className="mt-4 bg-green-500 text-white px-4 py-2 rounded-md"
                 onClick={() => setSelectedProject(null)}
               >
                 Close
@@ -450,4 +375,5 @@ const Dashboard = () => {
     </div>
   );
 };
+
 export default Dashboard;
