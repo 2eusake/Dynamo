@@ -230,7 +230,7 @@ import {
 import { AuthProvider, AuthContext } from "./contexts/AuthContext"; // AuthProvider
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
-import Dashboard from "./components/Dashboard/Dashboard";
+import Dashboard from "./components/Dashboard/RoleBasedDashboard";
 import ProjectDetail from "./components/Project/ProjectDetail";
 import ProjectList from "./components/Project/ProjectList";
 import CreateProject from "./components/Project/CreateProject";
