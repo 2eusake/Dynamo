@@ -1,4 +1,4 @@
-/* src/components/TasksPage/TasksPage.css */
+/* src/components/TasksPage/TasksPage.css 
 
 .tasks-page {
     padding: 20px;
@@ -56,5 +56,108 @@
     border-radius: 5px;
     margin-bottom: 15px;
   }
-  
-  
+  */
+  /* Overall layout of the page */
+.layout {
+  display: flex;
+  min-height: 100vh; /* Ensure full height */
+  background-color: #f7f9fc; /* Light background similar to login */
+}
+
+
+
+/* Main content needs to be pushed down below the navbar */
+.main-content {
+  margin-top: 60px; 
+  padding: 20px; 
+  background-color: #f4f4f4; 
+}
+/* Main content box */
+.main-content {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Match the login-box shadow */
+  min-height: calc(100vh - 60px); /* Full height minus navbar */
+  border: 1px solid #e1e1e1;
+}
+
+/* Task title */
+h1 {
+  color:#000000; /* Deloitte green */
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Task card styling */
+.task-card {
+  background-color: #ffffff;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* Task headings */
+.task-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000; /* Deloitte black */
+}
+
+/* Status badge styling */
+.task-status {
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Completed status */
+.task-status.completed {
+  background-color: #006747; /* Deloitte green */
+  color: #ffffff;
+}
+
+/* In Progress status */
+.task-status.in-progress {
+  background-color: #ffcc00; /* Yellow */
+  color: #000000;
+}
+
+/* No status available */
+.task-status.unknown {
+  background-color: #d9d9d9; /* Light gray */
+  color: #000000;
+}
+
+/* Buttons */
+button {
+  background-color: #006747;
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+  background-color: #004b8d; /* Deloitte dark blue */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: #cccccc;
+}
+
+
