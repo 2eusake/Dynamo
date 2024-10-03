@@ -2,12 +2,17 @@
 html,
 body {
   height: 100%;
-  margin: 0;
+  margin: 10;
+  margin-left:60px;
+  margin-top: 60px;
 }
 
 /* Main container that wraps the content and footer */
 .container {
+  margin-left:60px;
+  margin-top: 60px; /* Adjust based on navbar height */
   display: flex;
+  padding: 20px;
   flex-direction: column;
   flex-grow: 1;
   height: 64px;
@@ -24,6 +29,7 @@ body {
 
 /* Footer styling */
 footer {
+  position: relative;
   background-color: #0a643b; /* Deloitte dark green */
   color: white;
   padding: 10px 0;
