@@ -111,6 +111,7 @@ export const TableCell = ({ children, ...props }) => (
   </td>
 );
 
+
 // Select component with Deloitte green accents
 export const Select = ({ children, ...props }) => (
   <select
@@ -136,3 +137,4 @@ export const SelectItem = ({ children, ...props }) => (
 
 // Selected value for the select input
 export const SelectValue = ({ children }) => children;
+export const Button= ({ children }) => children;
