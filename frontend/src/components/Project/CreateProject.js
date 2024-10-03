@@ -133,7 +133,7 @@ const CreateProject = () => {
     <div className={` mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
     <div className="flex-1 bg-gray-100 p-8">
       <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-3xl font-bold mb-8 text-blue-600 text-center">Create New Project</h2>
+        <h2 className="text-3xl font-bold mb-8 text-black-600 text-center">Create New Project</h2>
         {notification && (
           <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-md">
             {notification}
@@ -251,7 +251,7 @@ const CreateProject = () => {
           
 
           <div className="mt-10">
-            <h3 className="text-2xl font-semibold mb-6 text-blue-600 text-center">Tasks</h3>
+            <h3 className="text-2xl font-semibold mb-6 text-black-600 text-center">Tasks</h3>
             {formData.tasks.map((task, index) => (
               <div key={index} className="bg-gray-50 p-6 rounded-md mb-6 shadow-sm">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">

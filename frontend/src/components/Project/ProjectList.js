@@ -93,7 +93,7 @@ const ProjectList = () => {
                       className={`font-semibold ${
                         project.status === "Completed"
                           ? "text-green-600"
-                          : "text-blue-600"
+                          : "text-green-600"
                       }`}
                     >
                       {project.status}
