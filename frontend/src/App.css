@@ -4,7 +4,7 @@ body {
   height: 100%;
   margin: 10;
   margin-left:60px;
-  margin-top: 60px;
+  margin-top: 30px;
 }
 
 /* Main container that wraps the content and footer */
@@ -41,13 +41,17 @@ footer {
 
 body.dark-mode {
   background-color: #121212;
-  color: #ffffff;
+  --text-color: #ffffff;
 }
 
 .dark-mode .bg-white {
-  background-color: #1e1e1e;
+  background-color:#1d1c1c;
 }
 
 .dark-mode .text-white-500 {
   color: #ffffff;
 }
+
+.container.dark-mode {
+  background-color: #1e1e1e;
+} 

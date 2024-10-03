@@ -3,6 +3,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiClient from '../../utils/apiClient'; // Adjust the import path as necessary
 import { Plus, Minus, Upload, Calendar } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
+
 
 const CreateProject = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +17,7 @@ const CreateProject = () => {
     wbsElement: '',
     tasks: [{ taskId: '', taskName: '', description: '', start_date: '', due_date: '', assigned_to_user_id: '', hours: '' }],
   });
+  const { isDarkMode, toggleDarkMode } = useTheme(); // Use the context
 
   
   // const [consultants, setConsultants] = useState([]);
@@ -127,6 +130,7 @@ const CreateProject = () => {
   };
 
   return (
+    <div className={` mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
     <div className="flex-1 bg-gray-100 p-8">
       <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-8">
         <h2 className="text-3xl font-bold mb-8 text-blue-600 text-center">Create New Project</h2>
@@ -164,8 +168,8 @@ const CreateProject = () => {
                 onChange={handleInputChange}
                 required
               />
+              </div>
             </div>
-          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
@@ -244,6 +248,7 @@ const CreateProject = () => {
               />
             </div>
           </div>
+          
 
           <div className="mt-10">
             <h3 className="text-2xl font-semibold mb-6 text-blue-600 text-center">Tasks</h3>
@@ -375,7 +380,7 @@ const CreateProject = () => {
           <div className="flex justify-between items-center">
             <button
               type="submit"
-              className="px-8 py-4 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300 text-lg font-semibold"
+              className="px-8 py-4 bg-green-500 text-white rounded-md hover:bg-dark-green-600 transition duration-300 text-lg font-semibold"
             >
               Create Project
             </button>
@@ -389,7 +394,7 @@ const CreateProject = () => {
               />
               <label
                 htmlFor="file-upload"
-                className="cursor-pointer flex items-center px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+                className="cursor-pointer flex items-center px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-gray-600 transition duration-300"
               >
                 <Upload size={20} className="mr-2" />
                 Upload File
@@ -398,6 +403,7 @@ const CreateProject = () => {
           </div>
         </form>
       </div>
+    </div>
     </div>
   );
 };

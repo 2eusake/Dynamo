@@ -6,11 +6,12 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "../Task/UIComp";
 import { ProjectContext } from "../../contexts/ProjectContext";
+import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const { user } = useContext(AuthContext);
-
+  const { isDarkMode, toggleDarkMode } = useTheme(); // Use the context
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedProjects, setExpandedProjects] = useState({});
@@ -64,6 +65,7 @@ const ProjectList = () => {
     return <div className="text-red-500 text-center py-4">Error: {error}</div>;
 
   return (
+    <div className={` mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
     <div className="container mx-auto px-4">
       <h3 className="text-2xl font-bold mb-4">
         {user.role === "Director" ? "All Projects" : "Your Projects"}
@@ -166,6 +168,7 @@ const ProjectList = () => {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 };
