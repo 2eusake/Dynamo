@@ -145,7 +145,7 @@ const logoutUser = async (req, res) => {
     return res.status(500).json({ message: 'Error logging out', error: error.message });
   }
 };
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
       attributes: ['id', 'username', 'role'],
@@ -165,19 +165,15 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-
-
-
-
 // Get all users (restricted to directors)
-const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.findAll();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching users', error: error.message });
-  }
-};
+// const getAllUsers = async (req, res) => {
+//   try {
+//     const users = await User.findAll();
+//     res.json(users);
+//   } catch (error) {``
+//     res.status(500).json({ message: 'Error fetching users', error: error.message });
+//   }
+// };
 
 // Get user profile (open to the logged-in user)
 const getUserProfile = async (req, res) => {

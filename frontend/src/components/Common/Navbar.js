@@ -17,19 +17,25 @@ import {
 const NavbarWithSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { user, logout } = useAuth();
+  const { user, handleLogout } = useAuth();
 
   const logoUrl =
     "https://s3.amazonaws.com/company-photo.theladders.com/17064/fec5ed0f-31ae-46f8-b7e1-6b09b01c6714.png";
 
+  // Sidebar items with roles
   const sidebarItems = [
-    { icon: FaTachometerAlt, text: "Dashboard", link: "/dashboard" },
-    { icon: FaProjectDiagram, text: "Projects", link: "/projects" },
-    { icon: FaTasks, text: "Tasks", link: "/tasks" },
-    { icon: FaPlusCircle, text: "Create Project", link: "/create-project" },
-    { icon: FaChartBar, text: "Reports", link: "/reports" },
-    { icon: FaCog, text: "Settings", link: "/settings" },
+    { icon: FaTachometerAlt, text: "Dashboard", link: "/dashboard", roles: ["Consultant", "Project Manager", "Director"] },
+    { icon: FaProjectDiagram, text: "Projects", link: "/projects", roles: ["Consultant", "Project Manager", "Director"] },
+    { icon: FaTasks, text: "Tasks", link: "/tasks", roles: ["Consultant", "Project Manager", "Director"] },
+    { icon: FaPlusCircle, text: "Create Project", link: "/create-project", roles: ["Project Manager", "Director"] }, // Only PMs and Directors
+    { icon: FaChartBar, text: "Reports", link: "/reports", roles: ["Project Manager", "Director", "Consultant"] }, // Only PMs and Directors
+    { icon: FaCog, text: "Settings", link: "/settings", roles: ["Consultant", "Project Manager", "Director"] },
   ];
+
+  // Filter sidebar items based on the user's role
+  const filteredSidebarItems = sidebarItems.filter(item =>
+    item.roles.includes(user?.role)
+  );
 
   return (
     <div className="flex h-screen">
@@ -40,7 +46,7 @@ const NavbarWithSidebar = () => {
         } shadow-lg pt-16`}
       >
         <div className="flex flex-col h-full">
-          {sidebarItems.map((item, index) => (
+          {filteredSidebarItems.map((item, index) => (
             <Link
               key={index}
               to={item.link}
@@ -95,7 +101,7 @@ const NavbarWithSidebar = () => {
                 <span className="text-sm font-medium">{user.username}</span>
               </div>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="bg-deloitte-dark-green hover:bg-deloitte-cyan text-white px-4 py-2 rounded-full transition-colors duration-200"
               >
                 Logout

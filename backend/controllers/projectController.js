@@ -64,7 +64,6 @@ const createProject = async (req, res) => {
   const {
     wbsElement,
     name,
-    //description,
     startDate,
     endDate,
     duration,
@@ -73,17 +72,19 @@ const createProject = async (req, res) => {
     directorId,
     tasks,
   } = req.body;
+
   const transaction = await sequelize.transaction();
+  
   try {
+    // Step 1: Create the project
     const project = await Project.create(
       {
         wbsElement,
         name,
-        //description,
         startDate,
         endDate,
         duration,
-        status: status || "not started",
+        status: status || 'not started',
         projectManagerId,
         directorId,
         userId: req.user.id,
@@ -91,34 +92,47 @@ const createProject = async (req, res) => {
       { transaction }
     );
 
+    // Step 2: Validate and create the tasks associated with the project
     if (tasks && tasks.length) {
-      const taskPromises = tasks.map((task) =>
-        Task.create(
+      const taskPromises = tasks.map((task) => {
+        if (!task.taskName) {
+          throw new Error('Task name cannot be empty');
+        }
+
+        // Step 3: Create each task linked to the project ID
+        return Task.create(
           {
-            taskId: task.taskId, 
-            name: task.taskName,
+            taskId: task.taskId,
+            taskName: task.taskName,
             description: task.description,
             start_date: task.start_date,
             due_date: task.due_date,
-            hours:task.hours,
-            assigned_to_user_id: task.assigned_to_user_id,
-            project_id: project.id,
+            hours: task.hours,
+            assigned_to_user_id: task.assigned_to_user_id || null,
+            projectId: project.id, // Link task to the created project
           },
           { transaction }
-        )
-      );
+        );
+      });
+
       await Promise.all(taskPromises);
     }
 
+    // Step 4: Commit the transaction
     await transaction.commit();
+
+    // Step 5: Return the created project and tasks as a response
     res.status(201).json(project);
+    
   } catch (error) {
+    // Rollback the transaction if something goes wrong
     await transaction.rollback();
-    res
-      .status(500)
-      .json({ message: "Error creating project", error: error.message });
+
+    // Return an error message
+    res.status(500).json({ message: 'Error creating project', error: error.message });
   }
 };
+
 
 const getProjectById = async (req, res) => {
   try {
@@ -187,7 +201,7 @@ const updateProject = async (req, res) => {
         Task.create(
           {
             taskId: task.taskId,
-            name: task.taskName,
+            taskName: task.taskName,
             description: task.description,
             start_date: task.start_date,
             due_date: task.due_date,

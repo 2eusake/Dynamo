@@ -63,6 +63,14 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeUser = async () => {
       try {
+        // Check if the token exists and is valid
+        if (!accessToken) {
+          // Attempt to refresh the token if there's no access token
+          const newToken = await refreshToken();
+          setAccessToken(newToken);
+        }
+  
+        // Fetch the user profile
         const userProfile = await loadUser();
         setUser(userProfile);
       } catch (error) {
@@ -71,9 +79,10 @@ const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     };
-
+  
     initializeUser();
-  }, [loadUser]);
+  }, [loadUser, accessToken]); // Add `accessToken` as a dependency
+  
 
   if (loading) {
     return <Spinner />;

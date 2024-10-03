@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import apiClient from '../../utils/apiClient'; // Adjust the import path as necessary
+import apiClient from '../../utils/apiClient'; 
+//import { UserContext } from '../../contexts/UserContext';
 import { Plus, Minus, Upload, Calendar } from 'lucide-react';
 
 const CreateProject = () => {
@@ -27,17 +28,19 @@ const CreateProject = () => {
   });
   const [notification, setNotification] = useState('');
   const [projectDurationWeeks, setProjectDurationWeeks] = useState(0);
+  // const {getUser} = useContext(UserContext);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await apiClient.get('/users');
-        setUsers(response.data);  // Sets consultants, projectManagers, directors from API response
+        const { consultants, projectManagers, directors } = response.data;  // Ensure response is structured this way
+        setUsers({ consultants, projectManagers, directors });
       } catch (error) {
         console.error('Error fetching users:', error);
       }
     };
-
+  
     fetchUsers();
   }, []);
 
@@ -70,6 +73,8 @@ const CreateProject = () => {
     setFormData({ ...formData, tasks: newTasks });
   };
 
+  
+
   const addTask = () => {
     setFormData({
       ...formData,
@@ -85,26 +90,52 @@ const CreateProject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await apiClient.post('/projects', formData);
-      setNotification('Project created successfully!');
-      toast.success('Project created successfully!');
+      // Post the project first
+      const projectResponse = await apiClient.post('/projects', formData);
+      const projectId = projectResponse.data.id; // Retrieve created project ID
+  
+      // Assign the projectId to each task
+      const tasksWithProjectId = formData.tasks.map(task => ({
+        ...task,
+        projectId,
+      }));
+
+      console.log('Tasks with projectId:', tasksWithProjectId);
+  
+      
+      
+      const validateTasks = (tasks) => {
+        return tasks.every(task => task.taskName && task.projectId);
+      };
+      
+      if (!validateTasks(tasksWithProjectId)) {
+        toast.error('All tasks must have a task name and a project ID.');
+        return;
+      }
+      
+      
+      // Post the tasks associated with the project
+      await apiClient.post(`/projects/${projectId}/tasks`, tasksWithProjectId);
+
       setFormData({
         name: '',
-        description: '',
         startDate: '',
         endDate: '',
         projectManagerId: '',
         directorId: '',
+        duration: '',
         wbsElement: '',
         tasks: [{ taskId: '', taskName: '', description: '', start_date: '', due_date: '', assigned_to_user_id: '', hours: '' }],
       });
       setProjectDurationWeeks(0);
     } catch (error) {
-      console.error('Error creating project:', error);
+      // Provide error feedback
+      console.error('Error creating project and tasks:', error);
       setNotification('Failed to create project.');
       toast.error('Failed to create project.');
     }
   };
+  
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -172,27 +203,37 @@ const CreateProject = () => {
               <label htmlFor="project-manager" className="block text-sm font-medium text-gray-700 mb-2">
                 Project Manager
               </label>
-              <select name="projectManagerId">
-        <option value="">Select Project Manager</option>
-        {users.projectManagers.map((pm) => (
-          <option key={pm.id} value={pm.id}>
-            {pm.username}
-          </option>
-        ))}
-      </select>
+              <select
+            name="projectManagerId"
+            value={formData.projectManagerId}
+            onChange={handleInputChange}
+            className="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="">Select Project Manager</option>
+            {users.projectManagers.map(pm => (
+              <option key={pm.id} value={pm.id}>
+                {pm.username}
+              </option>
+            ))}
+          </select>
             </div>
             <div>
               <label htmlFor="director" className="block text-sm font-medium text-gray-700 mb-2">
                 Director
               </label>
-              <select name="directorId">
-        <option value="">Select Director</option>
-        {users.directors.map((director) => (
-          <option key={director.id} value={director.id}>
-            {director.username}
-          </option>
-        ))}
-      </select>
+              <select
+            name="directorId"
+            value={formData.directorId}
+            onChange={handleInputChange}
+            className="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="">Select Director</option>
+            {users.directors.map(director => (
+              <option key={director.id} value={director.id}>
+                {director.username}
+              </option>
+            ))}
+          </select>
             </div>
           </div>
 
@@ -324,14 +365,19 @@ const CreateProject = () => {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                   <div>
                     <label htmlFor={`consultant-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
                       Assigned Consultant
                     </label>
-                    <select name="consultantId">
+                    <select 
+                    name="consultantId"
+                    value={task.assigned_to_user_id}
+                    onChange={(e) => handleTaskChange(index, 'assigned_to_user_id', e.target.value)}
+                    className="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    >
         <option value="">Select Consultant</option>
-        {users.consultants.map((consultant) => (
+        {users.consultants.map(consultant => (
           <option key={consultant.id} value={consultant.id}>
             {consultant.username}
           </option>

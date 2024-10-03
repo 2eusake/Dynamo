@@ -29,9 +29,9 @@ app.use('/api', uploadRoutes);
 app.use('/api/reports', reportRoutes);  // Reports routes
 
 // Import Models
-const User = require('./models/User');
-const Project = require('./models/Project');
-const Task = require('./models/Task');
+// const User = require('./models/User');
+// const Project = require('./models/Project');
+// const Task = require('./models/Task');
 
 // Define relationships (currently commented out, uncomment if needed)
 // Project.hasMany(Task, { foreignKey: 'project_id', as: 'tasks' });

@@ -12,6 +12,10 @@ const {
   getProjectsByUser,
 } = require("../controllers/projectController");
 
+const {
+  createTask // Import the createTask controller from taskController
+} = require("../controllers/taskController");
+
 // Project routes
 router
   .route("/")
@@ -20,7 +24,7 @@ router
     roleMiddleware(["Project Manager", "Director"]),
     getProjects
   ) // Only PMs and Directors can view all projects
-  .post(authMiddleware, roleMiddleware(["Project Manager"]), createProject); // Only PMs can create a project
+  .post(authMiddleware, roleMiddleware(["Director","Project Manager"]), createProject); // Only PMs can create a project
 
 router
   .route("/:id")
@@ -41,6 +45,11 @@ router
   ); // All roles can view projects they're assigned to
 
 router.route("/user").get(authMiddleware, getProjectsByUser);
+
+router
+  .route("/:id/tasks")
+  .post(authMiddleware, roleMiddleware(["Project Manager", "Director"]), createTask); // Project Managers and Directors can create tasks
+
 
 router.route("/projects").get(authMiddleware, getProjects);
 module.exports = router;

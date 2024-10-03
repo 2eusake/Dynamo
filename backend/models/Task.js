@@ -21,7 +21,7 @@ const Task = sequelize.define('Task', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  start_date:{
+  start_date: {
     type: DataTypes.DATE,
     allowNull: true,
     field: 'start_date',
@@ -31,18 +31,16 @@ const Task = sequelize.define('Task', {
     allowNull: true,
     field: 'due_date',
   },
-  
   hours: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     field: 'hours_allocated',
   },
-  actualHours:{
+  actualHours: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     field: 'actual_hours',
   },
- 
   status: {
     type: DataTypes.ENUM('pending', 'in progress', 'completed'),
     allowNull: false,

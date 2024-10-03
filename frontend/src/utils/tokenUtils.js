@@ -20,9 +20,11 @@ export const refreshToken = async () => {
 export const logout = async () => {
   try {
     await apiClient.post('/users/logout');
+    delete apiClient.defaults.headers.common['Authorization']; // Clear the axios header
     window.location.href = '/login'; // Redirect to login
   } catch (error) {
     console.error('Error during logout:', error);
-    window.location.href = '/login'; // Redirect to login even on error
+    window.location.href = '/login'; // Redirect to login on error
   }
 };
+

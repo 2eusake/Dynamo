@@ -14,10 +14,9 @@ const Project = sequelize.define('Project', {
   wbsElement: {
     type: DataTypes.STRING,
     allowNull: true,
-    unique: true,  // Unique WBS Element
+    unique: true,
     field: 'wbs_element',
   },
-
   startDate: {
     type: DataTypes.DATE,
     field: 'start_date',
@@ -46,7 +45,7 @@ const Project = sequelize.define('Project', {
     allowNull: true,
     field: 'project_manager_id',
     references: {
-      model: 'Users',  // Foreign key to the Users table for project manager
+      model: 'Users',
       key: 'id',
     },
     onDelete: 'SET NULL',
@@ -57,7 +56,7 @@ const Project = sequelize.define('Project', {
     allowNull: true,
     field: 'director_id',
     references: {
-      model: 'Users',  // Foreign key to the Users table for director
+      model: 'Users',
       key: 'id',
     },
     onDelete: 'SET NULL',
