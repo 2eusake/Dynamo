@@ -37,6 +37,8 @@
     margin-top: 60px; /* Adjust based on navbar height */
     flex-grow: 1;
     padding: 20px;
+    min-height: calc(100vh - 60px); /* Assuming header height is 64px */
+    overflow-y: auto;
 }
 
 /* Footer styling */
@@ -47,3 +49,4 @@ footer {
     padding: 20px;
     text-align: center;
   }
+  

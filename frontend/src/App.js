@@ -252,8 +252,11 @@ import Spinner from "./components/Common/Spinner";
 import "./App.css";
 import Layout from './components/Layout'; // Import the Layout component
 
+
+
 const App = () => {
   return (
+    
     <AuthProvider>
       <Router>
         <AuthContext.Consumer>

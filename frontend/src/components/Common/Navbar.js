@@ -3,11 +3,12 @@ import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { FaBars, FaSearch, FaUserCircle } from "react-icons/fa";
 import { AuthContext } from "../../contexts/AuthContext"; // Import your authentication context
+import { useTheme } from '../../contexts/ThemeContext';
 
 const Navbar = ({ onSidebarToggle }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useContext(AuthContext); // Replace with actual user data
-
+  const { isDarkMode } = useTheme();
   const logoUrl =
     "https://s3.amazonaws.com/company-photo.theladders.com/17064/fec5ed0f-31ae-46f8-b7e1-6b09b01c6714.png"; // Deloitte logo placeholder
 
@@ -23,6 +24,7 @@ const Navbar = ({ onSidebarToggle }) => {
         </button>
         <img src={logoUrl} alt="Deloitte Logo" className="h-8" />
       </div>
+      
 
       {/* Center Section: Search Bar */}
       <div className="flex-1 max-w-2xl mx-6">
@@ -37,6 +39,12 @@ const Navbar = ({ onSidebarToggle }) => {
           <FaSearch className="absolute right-4 top-3 text-gray-400" />
         </div>
       </div>
+      <div className={`p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-white'}`}>
+      <ul className="flex space-x-4">
+       
+        {/* Add more links as needed */}
+      </ul>
+    </div>
 
       {/* Right Section: User Profile */}
       <div className="flex items-center space-x-6">
@@ -62,6 +70,7 @@ const Navbar = ({ onSidebarToggle }) => {
         )}
       </div>
     </nav>
+     
   );
 };
 

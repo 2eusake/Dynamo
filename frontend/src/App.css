@@ -9,13 +9,18 @@ body {
 .container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensures full viewport height */
+  flex-grow: 1;
+  height: 64px;
+  min-height: calc(100vh - 64px); /* Assuming header height is 64px */
+    overflow-y: auto;
 }
 
 /* Content should expand to fill the available space */
 .content {
   flex: 1;
 }
+
+
 
 /* Footer styling */
 footer {
@@ -26,4 +31,17 @@ footer {
   position: relative; /* Or leave as static */
   bottom: 0;
   width: 100%;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.dark-mode .bg-white {
+  background-color: #1e1e1e;
+}
+
+.dark-mode .text-white-500 {
+  color: #ffffff;
 }
