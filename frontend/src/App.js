@@ -45,7 +45,7 @@ const App = () => {
             return (
               <>
                 {user && <Navbar />}
-                <div classname="bg-deloitte-white text-deloitte-black min-h-screen flex">
+                <div className="bg-deloitte-white text-deloitte-black min-h-screen flex">
                   {user && <Sidebar />}
                   <div className={`flex-1 ${user ? "ml-48" : ""} p-4`}>
                     <ProjectProvider>
