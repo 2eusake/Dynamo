@@ -2,10 +2,18 @@
 
 .projects-page {
   padding: 20px;
+  height: 100%;
+  margin: 10;
+  margin-left:60px;
+  margin-top: 30px;
   font-family: 'Deloitte', sans-serif;
 }
 
 .tiles-container {
+  height: 100%;
+  margin: 10;
+  margin-left:60px;
+  margin-top: 30px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;

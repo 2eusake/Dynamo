@@ -1,3 +1,4 @@
+
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -34,6 +35,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-box">
+        {/* Logo container */}
         <div className="logo-container">
           <img
             src="https://s3.amazonaws.com/company-photo.theladders.com/17064/fec5ed0f-31ae-46f8-b7e1-6b09b01c6714.png"
@@ -43,11 +45,15 @@ const Login = () => {
         </div>
 
         <h2 className="login-title">Login</h2>
+
+        {/* Error message */}
         {error && (
           <div className="error-message" role="alert">
             {error}
           </div>
         )}
+
+        {/* Login Form */}
         <form onSubmit={handleSubmit} className="login-form">
           <div className="input-group">
             <label htmlFor="eid" className="input-label">
@@ -64,6 +70,7 @@ const Login = () => {
               required
             />
           </div>
+
           <div className="input-group">
             <label htmlFor="pw" className="input-label">
               Password
@@ -79,11 +86,15 @@ const Login = () => {
               required
             />
           </div>
+
+          {/* Button with loading state */}
           <div className="button-group">
             <button type="submit" className="login-button" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}
             </button>
           </div>
+
+          {/* Links for forgot password and register */}
           <div className="link-group">
             <Link to="/forgot-password" className="link">
               Forgot password?

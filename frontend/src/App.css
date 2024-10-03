@@ -2,14 +2,22 @@
 html,
 body {
   height: 100%;
-  margin: 0;
+  margin: 10;
+  margin-left:60px;
+  margin-top: 30px;
 }
 
 /* Main container that wraps the content and footer */
 .container {
+  margin-left:60px;
+  margin-top: 60px; /* Adjust based on navbar height */
   display: flex;
+  padding: 20px;
   flex-direction: column;
-  min-height: 100vh; /* Ensures full viewport height */
+  flex-grow: 1;
+  height: 64px;
+  min-height: calc(100vh - 64px); /* Assuming header height is 64px */
+    overflow-y: auto;
 }
 
 /* Content should expand to fill the available space */
@@ -17,8 +25,11 @@ body {
   flex: 1;
 }
 
+
+
 /* Footer styling */
 footer {
+  position: relative;
   background-color: #0a643b; /* Deloitte dark green */
   color: white;
   padding: 10px 0;
@@ -27,3 +38,20 @@ footer {
   bottom: 0;
   width: 100%;
 }
+
+body.dark-mode {
+  background-color: #121212;
+  --text-color: #ffffff;
+}
+
+.dark-mode .bg-white {
+  background-color:#1d1c1c;
+}
+
+.dark-mode .text-white-500 {
+  color: #ffffff;
+}
+
+.container.dark-mode {
+  background-color: #1e1e1e;
+} 

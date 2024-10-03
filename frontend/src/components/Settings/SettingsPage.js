@@ -247,29 +247,21 @@ const SettingsPage = () => {
 export default SettingsPage;*/
 
 import React, { useEffect, useState } from 'react';
-import { ChevronRight, Settings, Key, Sun, Bell ,ToggleLeft, ToggleRight} from 'lucide-react';
+import { ChevronRight, Settings, Key, Sun, Bell, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
+
 
 const SettingsPage = () => {
   const navigate = useNavigate();
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  //const [notificationsEnabled, setNotificationsEnabled] = useState(true);//
+  const { isDarkMode, toggleDarkMode } = useTheme(); // Use the context
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const toggleNotifications = (enabled) => 
-    new Promise((resolve) => setTimeout(() => resolve(enabled), 500));
+  const toggleNotifications = (enabled) => new Promise((resolve) => setTimeout(() => resolve(enabled), 500));
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const storedPreference = localStorage.getItem('dark-mode');
-    if (storedPreference === 'true') {
-      setIsDarkMode(true);
-      document.body.classList.add('dark-mode');
-    }
-  }, []);
-  useEffect(() => {
     const fetchPreferences = async () => {
       setIsLoading(true);
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       setNotificationsEnabled(true); // Default to true for this example
       setIsLoading(false);
@@ -285,23 +277,14 @@ const SettingsPage = () => {
       setNotificationsEnabled(newState);
     } catch (error) {
       console.error('Failed to toggle notifications:', error);
-      // Optionally, show an error message to the user
     }
     setIsLoading(false);
-  };
-
-
-  const handleDarkModeToggle = () => {
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    document.body.classList.toggle('dark-mode', newMode);
-    localStorage.setItem('dark-mode', newMode);
   };
 
   const settingsOptions = [
     { icon: Settings, title: 'Edit profile', description: 'Change your avatar, email, and username', section: 'Profile', path: '/settings/edit-profile' },
     { icon: Key, title: 'Reset password', description: 'Change your password', section: 'Account', path: '/settings/reset-password' },
-    { icon: Sun, title: 'Appearance', description: `Turn ${isDarkMode ? 'off' : 'on'} dark mode`, section: 'Account', onClick: handleDarkModeToggle },
+    { icon: Sun, title: 'Appearance', description: `Turn ${isDarkMode ? 'off' : 'on'} dark mode`, section: 'Account', onClick: toggleDarkMode },
     {
       icon: Bell,
       title: 'Notifications',
@@ -311,10 +294,9 @@ const SettingsPage = () => {
       toggle: true,
       isToggled: notificationsEnabled,
     },
-    //{ icon: Bell, title: 'Notifications', description: `${notificationsEnabled ? 'Disable' : 'Enable'} notifications`, section: 'Account', onClick: () => setNotificationsEnabled(!notificationsEnabled) },
   ];
 
-  const SettingsOption = ({ icon: Icon, title, description, onClick, path,  toggle, isToggled }) => (
+  const SettingsOption = ({ icon: Icon, title, description, onClick, path, toggle, isToggled }) => (
     <button
       className="w-full flex items-center justify-between p-3 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors"
       onClick={() => {
@@ -340,7 +322,7 @@ const SettingsPage = () => {
   );
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <div className={`max-w-2xl mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Settings</h1>
       </header>
@@ -368,6 +350,7 @@ const SettingsPage = () => {
 };
 
 export default SettingsPage;
+
 
 
 

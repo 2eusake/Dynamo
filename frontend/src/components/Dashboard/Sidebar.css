@@ -1,11 +1,21 @@
+/* Sidebar Base Styles */
 .sidebar {
   background-color: #0a192f; /* Darker shade for the sidebar */
   color: #ffffff; /* Text color */
   transition: width 0.3s ease-in-out;
+  height: 100vh; /* Full height */
+  position: fixed; /* Fixed on the left side */
+  top: 0;
+  left: 0;
+  z-index: 100; /* Ensure it's on top of other elements */
+  overflow-x: hidden; /* Hide horizontal overflow */
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
 }
 
 .sidebar ul {
   padding-left: 0;
+  margin-top: 1rem; /* Add spacing between the header and the first item */
 }
 
 .sidebar li {
@@ -19,10 +29,12 @@
   color: inherit;
   text-decoration: none;
   font-size: 1rem;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .sidebar a:hover {
   color: #00c3ff; /* Hover color (cyan) */
+  background-color: rgba(0, 195, 255, 0.1); /* Add a subtle background highlight on hover */
 }
 
 .sidebar .fa-bars {
@@ -47,6 +59,7 @@
   margin-right: 0.5rem;
 }
 
+/* Transition Width for Collapsing */
 .sidebar .transition-width {
   transition: width 0.3s ease-in-out;
 }
@@ -57,4 +70,85 @@
 
 .sidebar .w-56 {
   width: 14rem;
+}
+
+/* Icon Sizing */
+.sidebar a .icon {
+  margin-right: 10px;
+  font-size: 1.25rem; /* Larger icons for better visibility */
+}
+
+.sidebar a span {
+  display: inline-block;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Collapsed State */
+.sidebar.collapsed .w-16 {
+  width: 4rem;
+}
+
+.sidebar.collapsed a span {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.sidebar.collapsed a .icon {
+  margin-right: 0;
+}
+
+/* Active Link Styling */
+.sidebar a.active {
+  color: #ffffff; /* White text on active */
+  background-color: #00653b; /* Deloitte green */
+}
+
+.sidebar a.active .icon {
+  color: #ffffff; /* Ensure icon is also white when active */
+}
+
+/* Header Section for Sidebar (Logo, etc.) */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Subtle bottom border */
+}
+
+.sidebar-header .logo {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-header img {
+  height: 40px; /* Adjust logo size */
+}
+
+.sidebar-header .title {
+  font-size: 1.25rem;
+  color: #ffffff;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+/* Sidebar Footer for additional actions (optional) */
+.sidebar-footer {
+  margin-top: auto; /* Push the footer to the bottom */
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Subtle top border */
+}
+
+.sidebar-footer a {
+  color: #ffffff;
+  font-size: 0.875rem;
+  display: block;
+  text-align: center;
+  padding: 0.75rem;
+  background-color: #00653b; /* Deloitte green */
+  border-radius: 4px;
+}
+
+.sidebar-footer a:hover {
+  background-color: #004b8d; /* Darker green on hover */
 }

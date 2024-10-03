@@ -3,12 +3,11 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useNavigate,
 } from "react-router-dom"; // Correct import
 import { AuthProvider, AuthContext } from "./contexts/AuthContext"; // AuthProvider
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
-import Dashboard from "./components/Dashboard/Dashboard";
+import Dashboard from "./components/Dashboard/RoleBasedDashboard";
 import ProjectDetail from "./components/Project/ProjectDetail";
 import ProjectList from "./components/Project/ProjectList";
 import CreateProject from "./components/Project/CreateProject";
@@ -16,9 +15,6 @@ import EditProject from "./components/Project/EditProject";
 import TaskDetail from "./components/Task/TaskDetail";
 import TasksPage from "./components/Task/TasksPage";
 import ProtectedRoute from "./protectedRoute";
-import Footer from "./components/Common/Footer";
-import Navbar from "./components/Common/Navbar";
-import Sidebar from "./components/Dashboard/Sidebar";
 import ProjectProvider from "./contexts/ProjectContext";
 import ReportsPage from "./components/Reports/ReportsPage";
 import TaskProvider from "./contexts/TaskContext";
@@ -31,9 +27,13 @@ import ResetPasswordPage from "./components/Settings/ResetPasswordPage";
 import { UserProvider } from "./contexts/UserContext"; // Ensure correct path
 import Spinner from "./components/Common/Spinner";
 import "./App.css";
+import Layout from './components/Layout'; // Import the Layout component
+
+
 
 const App = () => {
   return (
+    
     <AuthProvider>
       <Router>
         <AuthContext.Consumer>
@@ -44,159 +44,163 @@ const App = () => {
 
             return (
               <>
-                {user && <Navbar />}
-                <div classname="bg-deloitte-white text-deloitte-black min-h-screen flex">
-                  {user && <Sidebar />}
-                  <div className={`flex-1 ${user ? "ml-48" : ""} p-4`}>
-                    <ProjectProvider>
-                      <TaskProvider>
-                        <UserProvider>
-                          <Routes>
-                            <Route path="/" element={<Login />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route
-                              path="/dashboard"
+                <ProjectProvider>
+                  <TaskProvider>
+                    <UserProvider>
+                      <Routes>
+                        {/* Routes that don't need Layout */}
+                        <Route path="/" element={<Login />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+
+                        {/* Routes that need Layout */}
+                        <Route
+                          path="/dashboard"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<Dashboard />}
-                                  allowedRoles={[
-                                    "Director",
-                                    "Project Manager",
-                                    "Consultant",
-                                  ]}
-                                />
+                                <Layout>
+                                  <Dashboard />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager", "Consultant"]}
                             />
-                            <Route
-                              path="/projects"
+                          }
+                        />
+                        <Route
+                          path="/projects"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<ProjectList />}
-                                  allowedRoles={[
-                                    "Director",
-                                    "Project Manager",
-                                    "Consultant",
-                                  ]}
-                                />
+                                <Layout>
+                                  <ProjectList />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager", "Consultant"]}
                             />
-                            <Route
-                              path="/projects/:id"
+                          }
+                        />
+                        <Route
+                          path="/projects/:id"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<ProjectDetail />}
-                                  allowedRoles={[
-                                    "Director",
-                                    "Project Manager",
-                                    "Consultant",
-                                  ]}
-                                />
+                                <Layout>
+                                  <ProjectDetail />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager", "Consultant"]}
                             />
-                            <Route
-                              path="/projects/edit/:id"
+                          }
+                        />
+                        <Route
+                          path="/projects/edit/:id"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<EditProject />}
-                                  allowedRoles={["Director", "Project Manager"]}
-                                />
+                                <Layout>
+                                  <EditProject />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager"]}
                             />
-                            <Route
-                              path="/create-project"
+                          }
+                        />
+                        <Route
+                          path="/create-project"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<CreateProject />}
-                                  allowedRoles={["Director", "Project Manager"]}
-                                />
+                                <Layout>
+                                  <CreateProject />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager"]}
                             />
-                            <Route
-                              exact
-                              path="/settings"
+                          }
+                        />
+                        <Route
+                          path="/settings"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<Settings />}
-                                  allowedRoles={[
-                                    "Director",
-                                    "Project Manager",
-                                    "Consultant",
-                                  ]}
-                                />
+                                <Layout>
+                                  <Settings />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager", "Consultant"]}
                             />
-                            <Route
-                              path="/settings/edit-profile"
+                          }
+                        />
+                        <Route
+                          path="/settings/edit-profile"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<EditProfilePage />}
-                                  allowedRoles={[
-                                    "Director",
-                                    "Project Manager",
-                                    "Consultant",
-                                  ]}
-                                />
+                                <Layout>
+                                  <EditProfilePage />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager", "Consultant"]}
                             />
-                            <Route
-                              path="/settings/reset-password"
+                          }
+                        />
+                        <Route
+                          path="/settings/reset-password"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<ResetPasswordPage />}
-                                  allowedRoles={[
-                                    "Director",
-                                    "Project Manager",
-                                    "Consultant",
-                                  ]}
-                                />
+                                <Layout>
+                                  <ResetPasswordPage />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager", "Consultant"]}
                             />
-                            <Route
-                              path="/tasks"
+                          }
+                        />
+                        <Route
+                          path="/tasks"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<TasksPage />}
-                                  allowedRoles={[
-                                    "Director",
-                                    "Project Manager",
-                                    "Consultant",
-                                  ]}
-                                />
+                                <Layout>
+                                  <TasksPage />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager", "Consultant"]}
                             />
-                            <Route
-                              path="/tasks/:taskId"
+                          }
+                        />
+                        <Route
+                          path="/tasks/:taskId"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<TaskDetail />}
-                                  allowedRoles={[
-                                    "Director",
-                                    "Project Manager",
-                                    "Consultant",
-                                  ]}
-                                />
+                                <Layout>
+                                  <TaskDetail />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager", "Consultant"]}
                             />
-                            <Route
-                              path="/reports"
+                          }
+                        />
+                        <Route
+                          path="/reports"
+                          element={
+                            <ProtectedRoute
                               element={
-                                <ProtectedRoute
-                                  element={<ReportsPage />}
-                                  allowedRoles={[
-                                    "Director",
-                                    "Project Manager",
-                                    "Consultant",
-                                  ]}
-                                />
+                                <Layout>
+                                  <ReportsPage />
+                                </Layout>
                               }
+                              allowedRoles={["Director", "Project Manager", "Consultant"]}
                             />
-                          </Routes>
-                        </UserProvider>
-                      </TaskProvider>
-                    </ProjectProvider>
-                  </div>
-                </div>
+                          }
+                        />
+                      </Routes>
+                    </UserProvider>
+                  </TaskProvider>
+                </ProjectProvider>
               </>
             );
           }}
@@ -214,7 +218,6 @@ const App = () => {
           pauseOnHover
         />
       </Router>
-      <Footer />
     </AuthProvider>
   );
 };

@@ -1,127 +1,77 @@
-import React, { useState } from "react";
+
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
-import {
-  FaBell,
-  FaBars,
-  FaTachometerAlt,
-  FaProjectDiagram,
-  FaTasks,
-  FaPlusCircle,
-  FaChartBar,
-  FaCog,
-  FaSearch,
-  FaUserCircle,
-} from "react-icons/fa";
+import { FaBars, FaSearch, FaUserCircle } from "react-icons/fa";
+import { AuthContext } from "../../contexts/AuthContext"; // Import your authentication context
+import { useTheme } from '../../contexts/ThemeContext';
 
-const NavbarWithSidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+const Navbar = ({ onSidebarToggle }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { user, handleLogout } = useAuth();
-
+  const { user } = useContext(AuthContext); // Replace with actual user data
+  const { isDarkMode } = useTheme();
   const logoUrl =
-    "https://s3.amazonaws.com/company-photo.theladders.com/17064/fec5ed0f-31ae-46f8-b7e1-6b09b01c6714.png";
-
-  // Sidebar items with roles
-  const sidebarItems = [
-    { icon: FaTachometerAlt, text: "Dashboard", link: "/dashboard", roles: ["Consultant", "Project Manager", "Director"] },
-    { icon: FaProjectDiagram, text: "Projects", link: "/projects", roles: ["Consultant", "Project Manager", "Director"] },
-    { icon: FaTasks, text: "Tasks", link: "/tasks", roles: ["Consultant", "Project Manager", "Director"] },
-    { icon: FaPlusCircle, text: "Create Project", link: "/create-project", roles: ["Project Manager", "Director"] }, // Only PMs and Directors
-    { icon: FaChartBar, text: "Reports", link: "/reports", roles: ["Project Manager", "Director", "Consultant"] }, // Only PMs and Directors
-    { icon: FaCog, text: "Settings", link: "/settings", roles: ["Consultant", "Project Manager", "Director"] },
-  ];
-
-  // Filter sidebar items based on the user's role
-  const filteredSidebarItems = sidebarItems.filter(item =>
-    item.roles.includes(user?.role)
-  );
+    "https://s3.amazonaws.com/company-photo.theladders.com/17064/fec5ed0f-31ae-46f8-b7e1-6b09b01c6714.png"; // Deloitte logo placeholder
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div
-        className={`bg-white text-deloitte-dark-green h-full transition-all duration-300 ease-in-out fixed left-0 top-0 ${
-          isCollapsed ? "w-16" : "w-56"
-        } shadow-lg pt-16`}
-      >
-        <div className="flex flex-col h-full">
-          {filteredSidebarItems.map((item, index) => (
-            <Link
-              key={index}
-              to={item.link}
-              className="flex items-center px-4 py-3 text-sm hover:bg-gray-100 transition-colors duration-200"
-            >
-              <item.icon className={`${isCollapsed ? "mx-auto" : "mr-3"}`} />
-              {!isCollapsed && <span>{item.text}</span>}
-            </Link>
-          ))}
+    <nav className="bg-white shadow-md fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-16 px-6">
+      {/* Left Section: Sidebar toggle and Logo */}
+      <div className="flex items-center space-x-4">
+        <button
+          className="p-2 text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none transition-colors duration-200"
+          onClick={onSidebarToggle} // Toggle Sidebar
+        >
+          <FaBars size={20} />
+        </button>
+        <img src={logoUrl} alt="Deloitte Logo" className="h-8" />
+      </div>
+      
+
+      {/* Center Section: Search Bar */}
+      <div className="flex-1 max-w-2xl mx-6">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2 rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-deloitte-cyan"
+          />
+          <FaSearch className="absolute right-4 top-3 text-gray-400" />
         </div>
       </div>
-
-      {/* Main content area */}
-      <div
-        className={`flex-1 ${
-          isCollapsed ? "ml-16" : "ml-56"
-        } transition-all duration-300`}
-      >
-        {/* Navbar */}
-        <nav className="bg-white text-deloitte-dark-green p-4 flex justify-between items-center shadow-md fixed top-0 right-0 left-0 z-10">
-          <div className="flex items-center">
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-            >
-              <FaBars />
-            </button>
-            <img src={logoUrl} alt="Deloitte Logo" className="h-8 ml-4" />
-            <span className="text-lg font-bold ml-4">Dynamo</span>
-          </div>
-
-          <div className="flex-1 max-w-xl mx-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-deloitte-cyan"
-              />
-              <FaSearch className="absolute right-4 top-3 text-gray-400" />
-            </div>
-          </div>
-
-          {user ? (
-            <div className="flex items-center space-x-4">
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
-                <FaBell />
-              </button>
-              <div className="flex items-center">
-                <FaUserCircle className="text-xl mr-2" />
-                <span className="text-sm font-medium">{user.username}</span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="bg-deloitte-dark-green hover:bg-deloitte-cyan text-white px-4 py-2 rounded-full transition-colors duration-200"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <Link
-              to="/login"
-              className="bg-deloitte-dark-green hover:bg-deloitte-cyan text-white px-4 py-2 rounded-full transition-colors duration-200"
-            >
-              Login
-            </Link>
-          )}
-        </nav>
-
-        {/* Page content would go here */}
-        <div className="p-4 mt-16">{/* Your page content */}</div>
-      </div>
+      <div className={`p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-white'}`}>
+      <ul className="flex space-x-4">
+       
+        {/* Add more links as needed */}
+      </ul>
     </div>
+
+      {/* Right Section: User Profile */}
+      <div className="flex items-center space-x-6">
+        {/* User Profile */}
+        {user ? (
+          <div className="flex items-center space-x-2">
+            <FaUserCircle size={28} className="text-gray-600" />
+            <span className="text-gray-600 font-medium">{user.username}</span>
+            <button
+              className="bg-deloitte-green hover:bg-deloitte-cyan text-white px-4 py-2 rounded-full transition-colors duration-200"
+              onClick={() => console.log("Logout")} // Replace with actual logout function
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            className="bg-deloitte-dark-green hover:bg-deloitte-cyan text-white px-4 py-2 rounded-full transition-colors duration-200"
+          >
+            Login
+          </Link>
+        )}
+      </div>
+    </nav>
+     
   );
 };
 
-export default NavbarWithSidebar;
+export default Navbar;
