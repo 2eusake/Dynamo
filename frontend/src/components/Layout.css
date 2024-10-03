@@ -1,0 +1,49 @@
+/* CSS for layout */
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar styling */
+.sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+  }
+.content {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 200px; /* Adjust based on sidebar width */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar {
+    width: 100%;
+    background-color: #fff;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.main-content {
+    margin-top: 60px; /* Adjust based on navbar height */
+    flex-grow: 1;
+    padding: 20px;
+}
+
+/* Footer styling */
+footer {
+    height: auto;
+    background-color: #007a33;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
