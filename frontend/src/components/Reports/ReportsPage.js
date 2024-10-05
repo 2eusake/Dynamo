@@ -1,164 +1,337 @@
-// import React, { useState, useEffect, useContext } from 'react';
-// import { AuthContext } from '../../contexts/AuthContext';
-// import apiClient from '../../utils/apiClient';
-// import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-// import { FileText, PieChart as PieChartIcon, TrendingUp, Download } from 'lucide-react';
-// import { Card, CardContent, CardHeader, CardTitle } from "./UIComponents";
-// import { Alert, AlertDescription} from "./UIComponents";
-// import { Button } from "./UIComponents";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./UIComponents";
+// import React, { useState, useEffect } from 'react';
+
+// // Mock Data (replace with actual data fetched from your backend)
+// const mockProjects = [
+//   {
+//     id: 1,
+//     name: 'Project A',
+//     allocatedHours: 100,
+//     actualHours: 80,
+//     status: 'In Progress',
+//     riskOfOvertime: false,
+//     description: 'This is a detailed description of Project A.',
+//     projectManager: 'John Doe',
+//     startDate: '2024-01-10',
+//     endDate: '2024-06-15',
+//     tasks: [
+//       { id: 1, title: 'Task 1', allocatedHours: 20, actualHours: 18, status: 'Completed' },
+//       { id: 2, title: 'Task 2', allocatedHours: 30, actualHours: 25, status: 'In Progress' },
+//     ],
+//   },
+//   {
+//     id: 2,
+//     name: 'Project B',
+//     allocatedHours: 150,
+//     actualHours: 160,
+//     status: 'Completed',
+//     riskOfOvertime: true,
+//     description: 'This is a detailed description of Project B.',
+//     projectManager: 'Jane Smith',
+//     startDate: '2023-09-05',
+//     endDate: '2024-03-30',
+//     tasks: [
+//       { id: 3, title: 'Task 1', allocatedHours: 50, actualHours: 60, status: 'Completed' },
+//       { id: 4, title: 'Task 2', allocatedHours: 40, actualHours: 50, status: 'Completed' },
+//     ],
+//   },
+//   // More project data...
+// ];
 
 // const Reports = () => {
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const { user } = useContext(AuthContext);
-
-//   const [reportData, setReportData] = useState({
-//     projectCompletion: [],
-//     taskDistribution: [],
-//     timeTracking: []
-//   });
-//   const [selectedTimeframe, setSelectedTimeframe] = useState('week');
+//   const [projects, setProjects] = useState([]);
+//   const [expandedProjectId, setExpandedProjectId] = useState(null); // Track the expanded project
 
 //   useEffect(() => {
-//     const fetchReportData = async () => {
-//       try {
-//         setLoading(true);
-//         const response = await apiClient.get(`/api/reports?timeframe=${selectedTimeframe}`);
-//         setReportData(response.data);
-//       } catch (err) {
-//         setError('Failed to fetch report data. Please try again later.');
-//         console.error('Error fetching report data:', err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
+//     // Fetch the projects and tasks from the backend
+//     setProjects(mockProjects); // Using mock data for now
+//   }, []);
 
-//     fetchReportData();
-//   }, [selectedTimeframe]);
-
-//   const handleTimeframeChange = (value) => {
-//     setSelectedTimeframe(value);
+//   const calculateTimeStatus = (allocated, actual) => {
+//     return actual <= allocated ? 'Within Time' : 'Over Time';
 //   };
 
-//   const handleDownloadReport = () => {
-//     console.log('Downloading report...');
+//   const toggleProjectDetails = (projectId) => {
+//     setExpandedProjectId(expandedProjectId === projectId ? null : projectId); // Toggle expanded state
 //   };
-
-//   if (loading) return <div className="flex justify-center items-center h-screen"><div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div></div>;
-//   if (error) return <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>;
-
-//   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 //   return (
-//     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-//       <header className="mb-6">
-//         <h2 className="text-3xl font-bold text-indigo-800">Reports Dashboard</h2>
-//         <p className="text-gray-600">Welcome, {user?.username}! Here's an overview of your project reports.</p>
-//       </header>
-
-//       <div className="flex justify-between items-center mb-6">
-//         <Select onValueChange={handleTimeframeChange} defaultValue={selectedTimeframe}>
-//           <SelectTrigger className="w-[180px]">
-//             <SelectValue placeholder="Select timeframe" />
-//           </SelectTrigger>
-//           <SelectContent>
-//             <SelectItem value="week">Last Week</SelectItem>
-//             <SelectItem value="month">Last Month</SelectItem>
-//             <SelectItem value="quarter">Last Quarter</SelectItem>
-//             <SelectItem value="year">Last Year</SelectItem>
-//           </SelectContent>
-//         </Select>
-//         <Button onClick={handleDownloadReport} className="flex items-center">
-//           <Download className="mr-2 h-4 w-4" /> Download Report
-//         </Button>
-//       </div>
-
-//       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//         {/* Project Completion Status */}
-//         <Card className="col-span-1 bg-gradient-to-r from-blue-400 to-indigo-500">
-//           <CardHeader>
-//             <CardTitle className="text-white flex items-center">
-//               <PieChartIcon className="mr-2" /> Project Completion Status
-//             </CardTitle>
-//           </CardHeader>
-//           <CardContent>
-//             <ResponsiveContainer width="100%" height={300}>
-//               <PieChart>
-//                 <Pie
-//                   data={reportData.projectCompletion}
-//                   cx="50%"
-//                   cy="50%"
-//                   labelLine={false}
-//                   outerRadius={80}
-//                   fill="#8884d8"
-//                   dataKey="value"
-//                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+//     <div style={{ padding: '20px' }}>
+//       <h1>Project and Task Reports</h1>
+//       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+//         <thead>
+//           <tr>
+//             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Project Name</th>
+//             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Allocated Hours</th>
+//             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actual Hours</th>
+//             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Time Status</th>
+//             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Risk of Overtime</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {projects.map((project) => (
+//             <React.Fragment key={project.id}>
+//               <tr onClick={() => toggleProjectDetails(project.id)} style={{ cursor: 'pointer' }}>
+//                 <td style={{ border: '1px solid #ddd', padding: '8px', fontWeight: 'bold' }}>
+//                   {project.name} {expandedProjectId === project.id ? '▼' : '▶'}
+//                 </td>
+//                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{project.allocatedHours}</td>
+//                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{project.actualHours}</td>
+//                 <td
+//                   style={{
+//                     border: '1px solid #ddd',
+//                     padding: '8px',
+//                     color: project.actualHours > project.allocatedHours ? 'red' : 'green',
+//                   }}
 //                 >
-//                   {reportData.projectCompletion.map((entry, index) => (
-//                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-//                   ))}
-//                 </Pie>
-//                 <Tooltip />
-//               </PieChart>
-//             </ResponsiveContainer>
-//           </CardContent>
-//         </Card>
+//                   {calculateTimeStatus(project.allocatedHours, project.actualHours)}
+//                 </td>
+//                 <td
+//                   style={{
+//                     border: '1px solid #ddd',
+//                     padding: '8px',
+//                     color: project.riskOfOvertime ? 'orange' : 'green',
+//                   }}
+//                 >
+//                   {project.riskOfOvertime ? 'At Risk' : 'On Track'}
+//                 </td>
+//               </tr>
 
-//         {/* Task Distribution */}
-//         <Card className="col-span-1 bg-gradient-to-r from-green-400 to-teal-500">
-//           <CardHeader>
-//             <CardTitle className="text-white flex items-center">
-//               <FileText className="mr-2" /> Task Distribution
-//             </CardTitle>
-//           </CardHeader>
-//           <CardContent>
-//             <ResponsiveContainer width="100%" height={300}>
-//               <BarChart data={reportData.taskDistribution}>
-//                 <XAxis dataKey="name" />
-//                 <YAxis />
-//                 <Tooltip />
-//                 <Legend />
-//                 <Bar dataKey="completed" fill="#8884d8" name="Completed" />
-//                 <Bar dataKey="inProgress" fill="#82ca9d" name="In Progress" />
-//               </BarChart>
-//             </ResponsiveContainer>
-//           </CardContent>
-//         </Card>
-
-//         {/* Time Tracking */}
-//         <Card className="col-span-1 bg-gradient-to-r from-purple-400 to-pink-500">
-//           <CardHeader>
-//             <CardTitle className="text-white flex items-center">
-//               <TrendingUp className="mr-2" /> Time Tracking
-//             </CardTitle>
-//           </CardHeader>
-//           <CardContent>
-//             <ResponsiveContainer width="100%" height={300}>
-//               <LineChart data={reportData.timeTracking}>
-//                 <XAxis dataKey="name" />
-//                 <YAxis />
-//                 <Tooltip />
-//                 <Legend />
-//                 <Line type="monotone" dataKey="actual" stroke="#8884d8" name="Actual Hours" />
-//                 <Line type="monotone" dataKey="estimated" stroke="#82ca9d" name="Estimated Hours" />
-//               </LineChart>
-//             </ResponsiveContainer>
-//           </CardContent>
-//         </Card>
-//       </main>
+//               {/* Project Details and Task Report (conditionally rendered) */}
+//               {expandedProjectId === project.id && (
+//                 <>
+//                   <tr>
+//                     <td colSpan="5" style={{ padding: '10px', backgroundColor: '#f9f9f9' }}>
+//                       <strong>Project Details:</strong>
+//                       <p>{project.description}</p>
+//                       <p>
+//                         <strong>Project Manager:</strong> {project.projectManager}
+//                       </p>
+//                       <p>
+//                         <strong>Start Date:</strong> {project.startDate} | <strong>End Date:</strong> {project.endDate}
+//                       </p>
+//                     </td>
+//                   </tr>
+//                   <tr>
+//                     <td colSpan="5">
+//                       <table style={{ width: '100%', marginTop: '10px', borderCollapse: 'collapse' }}>
+//                         <thead>
+//                           <tr>
+//                             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Task Name</th>
+//                             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Allocated Hours</th>
+//                             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actual Hours</th>
+//                             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Status</th>
+//                           </tr>
+//                         </thead>
+//                         <tbody>
+//                           {project.tasks?.length > 0 ? (
+//                             project.tasks.map((task) => (
+//                               <tr key={task.id}>
+//                                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{task.title}</td>
+//                                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{task.allocatedHours}</td>
+//                                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{task.actualHours}</td>
+//                                 <td
+//                                   style={{
+//                                     border: '1px solid #ddd',
+//                                     padding: '8px',
+//                                     color: task.actualHours > task.allocatedHours ? 'red' : 'green',
+//                                   }}
+//                                 >
+//                                   {calculateTimeStatus(task.allocatedHours, task.actualHours)}
+//                                 </td>
+//                               </tr>
+//                             ))
+//                           ) : (
+//                             <tr>
+//                               <td colSpan="4" style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
+//                                 No tasks available
+//                               </td>
+//                             </tr>
+//                           )}
+//                         </tbody>
+//                       </table>
+//                     </td>
+//                   </tr>
+//                 </>
+//               )}
+//             </React.Fragment>
+//           ))}
+//         </tbody>
+//       </table>
 //     </div>
 //   );
 // };
 
 // export default Reports;
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext'; // Importing AuthContext
+
+// Mock Data (replace with actual data fetched from your backend)
+const mockProjects = [
+  {
+    id: 1,
+    name: 'Project A',
+    allocatedHours: 100,
+    actualHours: 80,
+    status: 'In Progress',
+    riskOfOvertime: false,
+    description: 'This is a detailed description of Project A.',
+    projectManager: 'John Doe',
+    startDate: '2024-01-10',
+    endDate: '2024-06-15',
+    tasks: [
+      { id: 1, title: 'Task 1', allocatedHours: 20, actualHours: 18, status: 'Completed' },
+      { id: 2, title: 'Task 2', allocatedHours: 30, actualHours: 25, status: 'In Progress' },
+    ],
+  },
+  {
+    id: 2,
+    name: 'Project B',
+    allocatedHours: 150,
+    actualHours: 160,
+    status: 'Completed',
+    riskOfOvertime: true,
+    description: 'This is a detailed description of Project B.',
+    projectManager: 'Jane Smith',
+    startDate: '2023-09-05',
+    endDate: '2024-03-30',
+    tasks: [
+      { id: 3, title: 'Task 1', allocatedHours: 50, actualHours: 60, status: 'Completed' },
+      { id: 4, title: 'Task 2', allocatedHours: 40, actualHours: 50, status: 'Completed' },
+    ],
+  },
+];
 
 const Reports = () => {
+  const { user } = useContext(AuthContext); // Access the AuthContext here
+  const [projects, setProjects] = useState([]);
+  const [expandedProjectId, setExpandedProjectId] = useState(null); // Track the expanded project
+
+  useEffect(() => {
+    // Fetch the projects and tasks from the backend
+    setProjects(mockProjects); // Using mock data for now
+  }, []);
+
+  const calculateTimeStatus = (allocated, actual) => {
+    return actual <= allocated ? 'Within Time' : 'Over Time';
+  };
+
+  const toggleProjectDetails = (projectId) => {
+    setExpandedProjectId(expandedProjectId === projectId ? null : projectId); // Toggle expanded state
+  };
+
+  // Authorization logic: Allow only specific roles to access the Reports page
+  if (!user || (user.role !== 'Director' && user.role !== 'Project Manager')) {
+    return (
+      <div>
+        <h2>Access Denied</h2>
+        <p>You do not have permission to view this page.</p>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <h1>Test: Reports Component</h1>
-      {/* Rest of your Reports component code */}
+    <div style={{ padding: '20px' }}>
+      <h1>Project and Task Reports</h1>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Project Name</th>
+            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Allocated Hours</th>
+            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actual Hours</th>
+            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Time Status</th>
+            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Risk of Overtime</th>
+          </tr>
+        </thead>
+        <tbody>
+          {projects.map((project) => (
+            <React.Fragment key={project.id}>
+              <tr onClick={() => toggleProjectDetails(project.id)} style={{ cursor: 'pointer' }}>
+                <td style={{ border: '1px solid #ddd', padding: '8px', fontWeight: 'bold' }}>
+                  {project.name} {expandedProjectId === project.id ? '▼' : '▶'}
+                </td>
+                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{project.allocatedHours}</td>
+                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{project.actualHours}</td>
+                <td
+                  style={{
+                    border: '1px solid #ddd',
+                    padding: '8px',
+                    color: project.actualHours > project.allocatedHours ? 'red' : 'green',
+                  }}
+                >
+                  {calculateTimeStatus(project.allocatedHours, project.actualHours)}
+                </td>
+                <td
+                  style={{
+                    border: '1px solid #ddd',
+                    padding: '8px',
+                    color: project.riskOfOvertime ? 'orange' : 'green',
+                  }}
+                >
+                  {project.riskOfOvertime ? 'At Risk' : 'On Track'}
+                </td>
+              </tr>
+
+              {/* Project Details and Task Report (conditionally rendered) */}
+              {expandedProjectId === project.id && (
+                <>
+                  <tr>
+                    <td colSpan="5" style={{ padding: '10px', backgroundColor: '#f9f9f9' }}>
+                      <strong>Project Details:</strong>
+                      <p>{project.description}</p>
+                      <p>
+                        <strong>Project Manager:</strong> {project.projectManager}
+                      </p>
+                      <p>
+                        <strong>Start Date:</strong> {project.startDate} | <strong>End Date:</strong> {project.endDate}
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan="5">
+                      <table style={{ width: '100%', marginTop: '10px', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr>
+                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Task Name</th>
+                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Allocated Hours</th>
+                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actual Hours</th>
+                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {project.tasks?.length > 0 ? (
+                            project.tasks.map((task) => (
+                              <tr key={task.id}>
+                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{task.title}</td>
+                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{task.allocatedHours}</td>
+                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{task.actualHours}</td>
+                                <td
+                                  style={{
+                                    border: '1px solid #ddd',
+                                    padding: '8px',
+                                    color: task.actualHours > task.allocatedHours ? 'red' : 'green',
+                                  }}
+                                >
+                                  {calculateTimeStatus(task.allocatedHours, task.actualHours)}
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="4" style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
+                                No tasks available
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </>
+              )}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
