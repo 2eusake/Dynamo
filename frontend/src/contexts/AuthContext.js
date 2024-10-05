@@ -1,14 +1,25 @@
-import React, { createContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext,useContext, useState, useEffect, useCallback } from 'react';
 import apiClient from '../utils/apiClient';
 import { logout as logoutUtil, refreshToken } from '../utils/tokenUtils';
 import Spinner from '../components/Common/Spinner';
 
+
+
 const AuthContext = createContext();
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
+
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [accessToken, setAccessToken] = useState(null);
+
+  const updateUser = (newUserData) => {
+    setUser(newUserData); // Update user data
+  };
 
   const loadUser = useCallback(async () => {
     try {
@@ -80,7 +91,7 @@ const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, handleLogout, refreshAccessToken, accessToken }}>
+    <AuthContext.Provider value={{ user,updateUser, login, handleLogout, refreshAccessToken, accessToken }}>
       {children}
     </AuthContext.Provider>
   );

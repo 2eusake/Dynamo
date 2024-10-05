@@ -173,16 +173,19 @@ import {
   FaLinkedinIn,
   FaInstagram,
 } from "react-icons/fa";
+import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
 
 const Footer = () => {
+  const { isDarkMode, toggleDarkMode } = useTheme(); // Use the context
   return (
-    <footer className="bg-deloitte-dark-green text-white py-8 mt-auto flex-shrink-0">
+    <footer className={`max-w-10xl mx-auto p-3 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-deloitte-dark-green text-white'}`}>
+    {/* <footer className="bg-deloitte-dark-green text-white py-8 mt-auto flex-shrink-0"> */}
       {/* Container for footer content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Footer top row */}
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           {/* Left side: Links */}
-          <div className="text-center md:text-left">
+          <div className="text-center md:text-center">
             <p>&copy; 2024 Deloitte ITSA Project Management System</p>
             <nav className="mt-2">
               <ul className="flex justify-center md:justify-start space-x-4">
@@ -245,7 +248,9 @@ const Footer = () => {
           </p>
         </div>
       </div>
+      
     </footer>
+    
   );
 };
 

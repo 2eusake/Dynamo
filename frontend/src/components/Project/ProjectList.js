@@ -66,7 +66,7 @@ const ProjectList = () => {
 
   return (
     <div className={` mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
-    <div className="container mx-auto px-4">
+    <div className={` mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <h3 className="text-2xl font-bold mb-4">
         {user.role === "Director" ? "All Projects" : "Your Projects"}
       </h3>
@@ -77,7 +77,7 @@ const ProjectList = () => {
           {projects.map((project) => (
             <div key={project.id} className="border rounded-lg shadow-sm">
               <div
-                className="flex justify-between items-center p-4 cursor-pointer bg-gray-50 hover:bg-gray-100"
+                className={` flex justify-between items-center p-4 cursor-pointer bg-black hover:bg-gray-600 ${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'}`}
                 onClick={() => toggleProjectExpansion(project.id)}
               >
                 <div>

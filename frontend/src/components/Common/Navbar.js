@@ -40,10 +40,7 @@ const Navbar = ({ onSidebarToggle }) => {
         </div>
       </div>
       <div className={`p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-white'}`}>
-      <ul className="flex space-x-4">
-       
-        {/* Add more links as needed */}
-      </ul>
+     
     </div>
 
       {/* Right Section: User Profile */}
