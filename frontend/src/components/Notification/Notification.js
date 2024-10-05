@@ -1,42 +1,43 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import apiClient from "../../utils/apiClient";
-import { AuthContext } from "../../contexts/AuthContext"; // Assuming you have an AuthContext
 import "./Notification.css";
 
 const NotificationPage = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { user } = useContext(AuthContext); // Get the authenticated user from context
 
   useEffect(() => {
+    // Simulating an API call to fetch notifications
     const fetchNotifications = async () => {
-      // Check if user is authenticated
-      if (!user || !user.id) {
-        setError("User not authenticated");
-        setLoading(false);
-        return;
-      }
-
       try {
         setLoading(true);
-        const response = await apiClient.get(`/notifications/${user.id}/all`);
-        console.log("Response:", response.data);
-        setNotifications(response.data);
+        // Replace this with your actual API call
+        const response = await apiClient.get("/notifications", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const data = await response.json();
+        setNotifications(data);
       } catch (error) {
         console.error("Error fetching notifications:", error);
-        setError("Failed to load notifications");
       } finally {
         setLoading(false);
       }
     };
 
     fetchNotifications();
-  }, [user]); // Depend on user to refetch when user changes
+  }, []);
 
   const handleMarkAsRead = async (id) => {
     try {
-      await apiClient.patch(`/notifications/${id}/read`);
+      // Replace with your actual API endpoint
+      await apiClient.get(`/notifications/${id}/read`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       setNotifications(
         notifications.map((notif) =>
           notif.id === id ? { ...notif, isRead: true } : notif
@@ -49,7 +50,13 @@ const NotificationPage = () => {
 
   const handleDelete = async (id) => {
     try {
-      await apiClient.delete(`/notifications/${id}`);
+      // Replace with your actual API endpoint
+      await apiClient.delete(`/notifications/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       setNotifications(notifications.filter((notif) => notif.id !== id));
     } catch (error) {
       console.error("Error deleting notification:", error);
@@ -71,10 +78,6 @@ const NotificationPage = () => {
 
   if (loading) {
     return <div className="loading">Loading notifications...</div>;
-  }
-
-  if (error) {
-    return <div className="error">{error}</div>;
   }
 
   return (
