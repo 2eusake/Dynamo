@@ -4,7 +4,6 @@ const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
-const processExcelFile = require("./controllers/processExcelFile");
 const reportRoutes = require("./routes/reportRoutes");
 const importRoute = require("./routes/importRoute");
 const notificationRoutes = require("./routes/notificationRoutes");
@@ -30,25 +29,8 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api", uploadRoutes);
 app.use("/api/reports", reportRoutes); // Reports routes
-app.use("/api/notifications", notificationRoutes);
+// app.use("/api/notification", notificationRoutes);
 app.use("/api/excel", importRoute);
-// Import Models
-// const User = require('./models/User');
-// const Project = require('./models/Project');
-// const Task = require('./models/Task');
-
-// Define relationships (currently commented out, uncomment if needed)
-// Project.hasMany(Task, { foreignKey: 'project_id', as: 'tasks' });
-// Task.belongsTo(Project, { foreignKey: 'project_id' });
-
-// User.hasMany(Task, { foreignKey: 'assigned_to_user_id', as: 'tasks' });
-// Task.belongsTo(User, { foreignKey: 'assigned_to_user_id' });
-
-// User.hasMany(Project, { foreignKey: 'userId', as: 'projects' });
-// Project.belongsTo(User, { foreignKey: 'userId' });
-
-// User.hasMany(Project, { foreignKey: 'projectManagerId', as: 'managedProjects' });
-// Project.belongsTo(User, { foreignKey: 'projectManagerId', as: 'projectManager' });
 
 const PORT = process.env.PORT || 5000;
 
