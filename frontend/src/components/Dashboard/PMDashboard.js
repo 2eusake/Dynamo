@@ -500,7 +500,7 @@ const PMDashboard = () => {
   // Handle user profile update
   const handleProfileUpdate = async () => {
     try {
-      const updatedUser = await apiClient.put('/user/profile', formData); // API call to update user profile
+      const updatedUser = await apiClient.put('/users/profile', formData); // API call to update user profile
       updateUser(updatedUser.data); // Update the user in AuthContext
       navigate('/settings'); // Navigate back to settings
     } catch (error) {
