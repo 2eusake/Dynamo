@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -11,6 +10,7 @@ import {
   FaBars,
   FaBell,
 } from "react-icons/fa";
+import { FaRegClock } from "react-icons/fa";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -22,12 +22,13 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Dashboard", icon: FaTachometerAlt, path: "/dashboard" },
-    { name: "Projects", icon: FaProjectDiagram, path: "/projects" },
-    { name: "Tasks", icon: FaTasks, path: "/tasks" },
     { name: "Create Project", icon: FaPlusCircle, path: "/create-project" },
     { name: "Reports", icon: FaChartBar, path: "/reports" },
+    { name: "Projects", icon: FaProjectDiagram, path: "/projects" },
+    { name: "Tasks", icon: FaTasks, path: "/tasks" },
+    { name: "Timesheet", icon: FaRegClock, path: "/timesheet" },
+    { name: "Notification", icon: FaBell, path: "/notification" },
     { name: "Settings", icon: FaCog, path: "/settings" },
-    {name:"Notification", icon: FaBell}
   ];
 
   return (
@@ -90,4 +91,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-

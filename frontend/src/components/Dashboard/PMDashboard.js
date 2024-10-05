@@ -398,12 +398,7 @@ import {
   Briefcase,
   TrendingUp,
 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Button
-} from "./UIComponents";
+import { Card, CardContent, CardHeader, Button } from "./UIComponents";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -442,7 +437,7 @@ const PMDashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         const [projectsResponse, tasksResponse] = await Promise.all([
           apiClient.get("/projects"),
           apiClient.get("/tasks"),
@@ -451,7 +446,7 @@ const PMDashboard = () => {
         setProjects(projectsResponse.data);
         setTasks(tasksResponse.data);
 
-        const projectEvents = projectsResponse.data.map(project => ({
+        const projectEvents = projectsResponse.data.map((project) => ({
           id: `project-${project.id}`,
           title: `Project: ${project.name}`,
           start: new Date(project.startDate),
@@ -460,7 +455,7 @@ const PMDashboard = () => {
           color: colors.primary,
         }));
 
-        const taskEvents = tasksResponse.data.map(task => ({
+        const taskEvents = tasksResponse.data.map((task) => ({
           id: `task-${task.id}`,
           title: `Task: ${task.taskName}`,
           start: new Date(task.start_date),
@@ -487,16 +482,18 @@ const PMDashboard = () => {
       new Date(project.startDate) <= new Date() &&
       new Date(project.endDate) >= new Date()
   );
-  const upcomingProjects = projects.filter((project) => 
-    new Date(project.startDate) > new Date()
+  const upcomingProjects = projects.filter(
+    (project) => new Date(project.startDate) > new Date()
   );
-  const overdueProjects = projects.filter((project) => 
-    new Date(project.endDate) < new Date() && project.progress < 100
+  const overdueProjects = projects.filter(
+    (project) =>
+      new Date(project.endDate) < new Date() && project.progress < 100
   );
-  const agentProjects = projects.filter((project) => 
-    tasks.some(task => 
-      task.projectId === project.id && 
-      (task.actualHours > task.hours || new Date(task.due_date) < new Date())
+  const agentProjects = projects.filter((project) =>
+    tasks.some(
+      (task) =>
+        task.projectId === project.id &&
+        (task.actualHours > task.hours || new Date(task.due_date) < new Date())
     )
   );
 
@@ -525,8 +522,8 @@ const PMDashboard = () => {
 
   const projectPerformanceData = projects.map((project) => ({
     name: project.name,
-    actualTime: project.duration || 0,
-    allocatedTime: project.allocatedTime || 0,
+    actualTime: project.actualHours || 0,
+    allocatedTime: project.duration || 0,
   }));
 
   const projectStatusData = [
@@ -540,17 +537,17 @@ const PMDashboard = () => {
     const selectedDateEvents = events.filter(
       (event) =>
         (event.start <= selectedDate && event.end >= selectedDate) ||
-        moment(event.start).isSame(selectedDate, 'day') ||
-        moment(event.end).isSame(selectedDate, 'day')
+        moment(event.start).isSame(selectedDate, "day") ||
+        moment(event.end).isSame(selectedDate, "day")
     );
 
-    return selectedDateEvents.map(event => ({
+    return selectedDateEvents.map((event) => ({
       title: event.title,
-      status: moment(event.start).isSame(selectedDate, 'day') 
-        ? "Starting" 
-        : moment(event.end).isSame(selectedDate, 'day')
-          ? "Due"
-          : "Ongoing"
+      status: moment(event.start).isSame(selectedDate, "day")
+        ? "Starting"
+        : moment(event.end).isSame(selectedDate, "day")
+        ? "Due"
+        : "Ongoing",
     }));
   };
 
@@ -569,13 +566,33 @@ const PMDashboard = () => {
         {/* Project Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { title: "Current Projects", value: currentProjects.length, icon: Briefcase, color: colors.primary },
-            { title: "Upcoming Projects", value: upcomingProjects.length, icon: Clock, color: colors.secondary },
-            { title: "Overdue Projects", value: overdueProjects.length, icon: AlertTriangle, color: colors.tertiary },
-            { title: "Agent Projects", value: agentProjects.length, icon: TrendingUp, color: colors.quaternary },
+            {
+              title: "Current Projects",
+              value: currentProjects.length,
+              icon: Briefcase,
+              color: colors.primary,
+            },
+            {
+              title: "Upcoming Projects",
+              value: upcomingProjects.length,
+              icon: Clock,
+              color: colors.secondary,
+            },
+            {
+              title: "Overdue Projects",
+              value: overdueProjects.length,
+              icon: AlertTriangle,
+              color: colors.tertiary,
+            },
+            {
+              title: "Agent Projects",
+              value: agentProjects.length,
+              icon: TrendingUp,
+              color: colors.quaternary,
+            },
           ].map((item, index) => (
-            <Card 
-              key={index} 
+            <Card
+              key={index}
               className="cursor-pointer hover:shadow-lg transition-shadow"
               onClick={() => handleCategoryClick(item.title)}
             >
@@ -586,7 +603,10 @@ const PMDashboard = () => {
                 <item.icon className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold" style={{ color: item.color }}>
+                <div
+                  className="text-2xl font-bold"
+                  style={{ color: item.color }}
+                >
                   {item.value}
                 </div>
               </CardContent>
@@ -627,14 +647,21 @@ const PMDashboard = () => {
             </CardHeader>
             <CardContent>
               <h3 className="font-bold mb-2">
-                {moment(selectedDate).format('MMMM D, YYYY')}
+                {moment(selectedDate).format("MMMM D, YYYY")}
               </h3>
               <ul>
                 {getSelectedDateInfo().map((event, index) => (
                   <li key={index} className="mb-2">
                     <span
                       className="inline-block w-3 h-3 rounded-full mr-2"
-                      style={{ backgroundColor: event.status === "Starting" ? colors.primary : event.status === "Due" ? colors.tertiary : colors.secondary }}
+                      style={{
+                        backgroundColor:
+                          event.status === "Starting"
+                            ? colors.primary
+                            : event.status === "Due"
+                            ? colors.tertiary
+                            : colors.secondary,
+                      }}
                     ></span>
                     {event.title} - {event.status}
                   </li>
@@ -657,7 +684,11 @@ const PMDashboard = () => {
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="actualTime" fill="#86BC25" name="Actual Time" />
-                <Bar dataKey="allocatedTime" fill="#00653b" name="Allocated Time" />
+                <Bar
+                  dataKey="allocatedTime"
+                  fill="#00653b"
+                  name="Allocated Time"
+                />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -679,10 +710,15 @@ const PMDashboard = () => {
                   outerRadius={80}
                   fill="#86BC25"
                   dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) =>
+                    `${name} ${(percent * 100).toFixed(0)}%`
+                  }
                 >
                   {projectStatusData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -702,42 +738,51 @@ const PMDashboard = () => {
             <CardContent>
               {selectedCategory === "Agent Projects" ? (
                 <div>
-                  {agentProjects.map(project => (
+                  {agentProjects.map((project) => (
                     <div key={project.id} className="mb-4">
                       <h3 className="font-bold">{project.name}</h3>
                       <ul>
                         {tasks
-                          .filter(task => 
-                            task.projectId === project.id && 
-                            (task.actualHours > task.allocatedHours || new Date(task.dueDate) < new Date())
+                          .filter(
+                            (task) =>
+                              task.projectId === project.id &&
+                              (task.actualHours > task.allocatedHours ||
+                                new Date(task.dueDate) < new Date())
                           )
-                          .map(task => (
+                          .map((task) => (
                             <li key={task.id} className="ml-4">
-                              {task.name} - 
-                              {task.actualHours > task.allocatedHours 
-                                ? `Exceeded allocated time by ${task.actualHours - task.allocatedHours} hours`
-                                : `Overdue by ${Math.ceil((new Date() - new Date(task.dueDate)) / (1000 * 60 * 60 * 24))} days`
-                              }
+                              {task.name} -
+                              {task.actualHours > task.allocatedHours
+                                ? `Exceeded allocated time by ${
+                                    task.actualHours - task.allocatedHours
+                                  } hours`
+                                : `Overdue by ${Math.ceil(
+                                    (new Date() - new Date(task.dueDate)) /
+                                      (1000 * 60 * 60 * 24)
+                                  )} days`}
                             </li>
-                          ))
-                        }
+                          ))}
                       </ul>
                     </div>
                   ))}
                 </div>
               ) : (
                 <ul>
-                  {(selectedCategory === "Current Projects" ? currentProjects :
-                    selectedCategory === "Upcoming Projects" ? upcomingProjects :
-                    selectedCategory === "Overdue Projects" ? overdueProjects : []
-                  ).map(project => (
+                  {(selectedCategory === "Current Projects"
+                    ? currentProjects
+                    : selectedCategory === "Upcoming Projects"
+                    ? upcomingProjects
+                    : selectedCategory === "Overdue Projects"
+                    ? overdueProjects
+                    : []
+                  ).map((project) => (
                     <li key={project.id} className="mb-2">
                       {project.name} - Progress: {project.progress}%
                     </li>
                   ))}
                 </ul>
               )}
-              <Button 
+              <Button
                 className="mt-4"
                 onClick={() => setSelectedCategory(null)}
               >

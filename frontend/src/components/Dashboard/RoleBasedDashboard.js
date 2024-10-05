@@ -6,7 +6,7 @@ import ConsultantDashboard from "./ConsultantDashboard";
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
 
-  if (user.role === "consultant") {
+  if (user.role === "Consultant") {
     return <ConsultantDashboard />;
   } else {
     return <PMDashboard />;

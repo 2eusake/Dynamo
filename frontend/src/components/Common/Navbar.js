@@ -5,9 +5,10 @@ import { FaBars, FaSearch, FaUserCircle } from "react-icons/fa";
 import { AuthContext } from "../../contexts/AuthContext"; // Import your authentication context
 import { useTheme } from '../../contexts/ThemeContext';
 
+
 const Navbar = ({ onSidebarToggle }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { user } = useContext(AuthContext); // Replace with actual user data
+  const { user, handleLogout } = useContext(AuthContext); // Replace with actual user data
   const { isDarkMode } = useTheme();
   const logoUrl =
     "https://s3.amazonaws.com/company-photo.theladders.com/17064/fec5ed0f-31ae-46f8-b7e1-6b09b01c6714.png"; // Deloitte logo placeholder
@@ -51,11 +52,11 @@ const Navbar = ({ onSidebarToggle }) => {
             <FaUserCircle size={28} className="text-gray-600" />
             <span className="text-gray-600 font-medium">{user.username}</span>
             <button
-              className="bg-deloitte-green hover:bg-deloitte-cyan text-white px-4 py-2 rounded-full transition-colors duration-200"
-              onClick={() => console.log("Logout")} // Replace with actual logout function
-            >
-              Logout
-            </button>
+  className="bg-deloitte-green hover:bg-deloitte-cyan text-white px-4 py-2 rounded-full transition-colors duration-200"
+  onClick={handleLogout}
+>
+  Logout
+</button>
           </div>
         ) : (
           <Link

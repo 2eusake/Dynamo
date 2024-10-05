@@ -32,23 +32,39 @@ const createTask = async (req, res) => {
   }
 
   try {
-    const { taskId, name, description, project_id, start_date, due_date } = req.body;
+    // Destructure from the request body
+    const { taskId, taskName, description, project_id, start_date, due_date, hours } = req.body;
+
+    // Ensure task name is provided
+    if (!taskName) {
+      return res.status(400).json({ message: 'Task name is required' });
+    }
+
+    // Create the task
     const task = await Task.create({
       taskId,
-      name,
+      taskName,
       description,
       project_id,
       start_date,
       due_date,
       hours,
       assigned_to_user_id: req.user.id,
-      status: 'notStarted',
+      status: 'pending', // Default status
     });
+
+    console.log('Request body:', req.body); // Add this to log the incoming task data
+
+
+    // Return the created task as a response
     res.status(201).json(task);
+
   } catch (error) {
+    // Return an error if something goes wrong
     res.status(500).json({ message: 'Error creating task', error: error.message });
   }
 };
+
 
 // Get a task by ID (restricted based on role)
 const getTaskById = async (req, res) => {
@@ -71,8 +87,8 @@ const updateTask = async (req, res) => {
       return res.status(404).json({ message: 'Task not found or access denied' });
     }
 
-    const { name, description, status, start_date, due_date } = req.body;
-    await task.update({ name, description, status, start_date, due_date, hours,actualHours });
+    const { taskName, description, status, start_date, due_date } = req.body;
+    await task.update({ taskName, description, status, start_date, due_date, hours,actualHours });
     res.json(task);
   } catch (error) {
     res.status(500).json({ message: 'Error updating task', error: error.message });
