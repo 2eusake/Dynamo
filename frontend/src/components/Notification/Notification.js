@@ -1,88 +1,125 @@
-import React, { useState, useEffect } from "react";
-import Notification from "./Notification";
-import styles from "./NotificationSystem.module.css";
+import React, { useState, useEffect, useContext } from "react";
 import apiClient from "../../utils/apiClient";
+import { AuthContext } from "../../contexts/AuthContext"; // Assuming you have an AuthContext
+import "./Notification.css";
 
-const NotificationSystem = ({ currentUser }) => {
+const NotificationPage = () => {
   const [notifications, setNotifications] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useContext(AuthContext); // Get the authenticated user from context
 
   useEffect(() => {
-    if (currentUser && currentUser.id) {
-      fetchNotifications();
-      const interval = setInterval(fetchNotifications, 300000); // Check every 5 minutes
-      return () => clearInterval(interval);
-    }
-  }, [currentUser]);
-
-  const fetchNotifications = async () => {
-    if (!currentUser || !currentUser.id) {
-      setError("User not authenticated");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = apiClient.get(`/notification/${currentUser.id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setNotifications(data.map((notif, index) => ({ ...notif, id: index })));
-      } else {
-        throw new Error("Failed to fetch notifications");
+    const fetchNotifications = async () => {
+      // Check if user is authenticated
+      if (!user || !user.id) {
+        setError("User not authenticated");
+        setLoading(false);
+        return;
       }
+
+      try {
+        setLoading(true);
+        const response = await apiClient.get(`/notifications/${user.id}/all`);
+        console.log("Response:", response.data);
+        setNotifications(response.data);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+        setError("Failed to load notifications");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, [user]); // Depend on user to refetch when user changes
+
+  const handleMarkAsRead = async (id) => {
+    try {
+      await apiClient.patch(`/notifications/${id}/read`);
+      setNotifications(
+        notifications.map((notif) =>
+          notif.id === id ? { ...notif, isRead: true } : notif
+        )
+      );
     } catch (error) {
-      console.error("Failed to fetch notifications:", error);
-      setError("Failed to load notifications");
-    } finally {
-      setIsLoading(false);
+      console.error("Error marking notification as read:", error);
     }
   };
 
-  const removeNotification = (id) => {
-    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await apiClient.delete(`/notifications/${id}`);
+      setNotifications(notifications.filter((notif) => notif.id !== id));
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+    }
   };
 
-  if (!currentUser || !currentUser.id) {
-    return null; // Or return a message asking the user to log in
+  const getIconForType = (type) => {
+    switch (type) {
+      case "error":
+        return "🔴";
+      case "warning":
+        return "⚠️";
+      case "info":
+        return "ℹ️";
+      default:
+        return "📫";
+    }
+  };
+
+  if (loading) {
+    return <div className="loading">Loading notifications...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
   }
 
   return (
-    <div className={styles.notificationSystem}>
-      <button
-        className={styles.notificationButton}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        Notifications{" "}
-        {notifications.length > 0 && (
-          <span className={styles.badge}>{notifications.length}</span>
-        )}
-      </button>
-      {isOpen && (
-        <div className={styles.notificationContainer}>
-          {isLoading ? (
-            <p className={styles.loadingMessage}>Loading notifications...</p>
-          ) : error ? (
-            <p className={styles.errorMessage}>{error}</p>
-          ) : notifications.length > 0 ? (
-            notifications.map((notif) => (
-              <Notification
-                key={notif.id}
-                message={notif.message}
-                type={notif.type}
-                onClose={() => removeNotification(notif.id)}
-              />
-            ))
-          ) : (
-            <p className={styles.noNotifications}>No notifications</p>
-          )}
+    <div className="notifications-container">
+      <h1>Notifications</h1>
+      {notifications.length === 0 ? (
+        <p className="no-notifications">No notifications</p>
+      ) : (
+        <div className="notifications-list">
+          {notifications.map((notification) => (
+            <div
+              key={notification.id}
+              className={`notification-item ${
+                notification.isRead ? "read" : ""
+              }`}
+            >
+              <span className="notification-icon">
+                {getIconForType(notification.type)}
+              </span>
+              <div className="notification-content">
+                <h3>{notification.title}</h3>
+                <p>{notification.message}</p>
+              </div>
+              <div className="notification-actions">
+                {!notification.isRead && (
+                  <button
+                    onClick={() => handleMarkAsRead(notification.id)}
+                    className="mark-read-btn"
+                  >
+                    Mark as read
+                  </button>
+                )}
+                <button
+                  onClick={() => handleDelete(notification.id)}
+                  className="delete-btn"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
   );
 };
 
-export default NotificationSystem;
+export default NotificationPage;

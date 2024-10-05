@@ -24,7 +24,7 @@ import { UserProvider } from "./contexts/UserContext"; // Ensure correct path
 import Spinner from "./components/Common/Spinner";
 import "./App.css";
 import Layout from "./components/Layout"; // Import the Layout component
-import NotificationSystem from "./components/Notification/Notification";
+import NotificationsPage from "./components/Notification/Notification";
 import ExcelImport from "./components/Timesheet.js/ImportExcel";
 
 const App = () => {
@@ -234,7 +234,7 @@ const App = () => {
                             <ProtectedRoute
                               element={
                                 <Layout>
-                                  <NotificationSystem />
+                                  <NotificationsPage />
                                 </Layout>
                               }
                               allowedRoles={[

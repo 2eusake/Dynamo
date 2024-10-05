@@ -22,13 +22,13 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Dashboard", icon: FaTachometerAlt, path: "/dashboard" },
-    { name: "Projects", icon: FaProjectDiagram, path: "/projects" },
-    { name: "Tasks", icon: FaTasks, path: "/tasks" },
     { name: "Create Project", icon: FaPlusCircle, path: "/create-project" },
     { name: "Reports", icon: FaChartBar, path: "/reports" },
-    { name: "Settings", icon: FaCog, path: "/settings" },
-    { name: "Notification", icon: FaBell, path: "/notification" },
+    { name: "Projects", icon: FaProjectDiagram, path: "/projects" },
+    { name: "Tasks", icon: FaTasks, path: "/tasks" },
     { name: "Timesheet", icon: FaRegClock, path: "/timesheet" },
+    { name: "Notification", icon: FaBell, path: "/notification" },
+    { name: "Settings", icon: FaCog, path: "/settings" },
   ];
 
   return (

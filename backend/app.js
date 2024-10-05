@@ -7,7 +7,7 @@ const uploadRoutes = require("./routes/uploadRoutes");
 const processExcelFile = require("./controllers/processExcelFile");
 const reportRoutes = require("./routes/reportRoutes");
 const importRoute = require("./routes/importRoute");
-//const notificationRoutes = require("./routes/notificationRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
@@ -30,7 +30,7 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api", uploadRoutes);
 app.use("/api/reports", reportRoutes); // Reports routes
-// app.use("/api/notification", notificationRoutes);
+app.use("/api/notifications", notificationRoutes);
 app.use("/api/excel", importRoute);
 // Import Models
 // const User = require('./models/User');

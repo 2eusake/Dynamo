@@ -1,26 +1,29 @@
 const express = require("express");
 const router = express.Router();
-const NotificationService = require("../controllers/NotificationService");
-const roleMiddleware = require("../middlewares/roleMiddleware"); // JWT middleware
-const { authMiddleware } = require("../middlewares/authMiddleware");
-
-// Protected route to generate notifications
+const NotificationController = require("../controllers/notificationController");
+const isAuthenticated = require("../middlewares/isAuthenticated");
 router.get(
-  "/notifications",
-  authMiddleware,
-  roleMiddleware,
-  async (req, res) => {
-    try {
-      const userId = req.user.id; // Extract logged-in user's ID from req.user
-      const notifications = await NotificationService.generateNotifications(
-        userId
-      );
-      res.json(notifications);
-    } catch (error) {
-      console.error("Error generating notifications:", error);
-      res.status(500).json({ error: "Failed to generate notifications" });
-    }
-  }
+  "/:userId",
+  isAuthenticated,
+  NotificationController.generateNotifications
+);
+
+router.patch(
+  "/:notificationId/read",
+  isAuthenticated,
+  NotificationController.markAsRead
+);
+
+router.delete(
+  "/:notificationId",
+  isAuthenticated,
+  NotificationController.deleteNotification
+);
+
+router.get(
+  "/:userId/all",
+  isAuthenticated,
+  NotificationController.getAllNotifications
 );
 
 module.exports = router;
