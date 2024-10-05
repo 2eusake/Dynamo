@@ -16,7 +16,7 @@ const CreateProject = () => {
     directorId: '',
     duration: '',
     wbsElement: '',
-    tasks: [{ taskId: '', taskName: '', description: '', start_date: '', due_date: '', assigned_to_user_id: '', hours: '' }],
+    tasks: [],
   });
   const { isDarkMode, toggleDarkMode } = useTheme(); // Use the context
 
@@ -92,34 +92,45 @@ const CreateProject = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Validate that all required project fields are filled
+    if (!formData.name.trim()) {
+      toast.error('Project name is required.');
+      return;
+    }
+    if (!formData.startDate || !formData.endDate) {
+      toast.error('Start date and end date are required.');
+      return;
+    }
+    if (!formData.projectManagerId) {
+      toast.error('Project manager is required.');
+      return;
+    }
+    if (!formData.directorId) {
+      toast.error('Director is required.');
+      return;
+    }
+  
+    // Filter out tasks that don't have a taskName
+    const validTasks = formData.tasks.filter(task => task.taskName && task.taskName.trim() !== '');
+  
+    // Check if there are valid tasks
+    if (validTasks.length === 0) {
+      toast.error('Please add at least one task with a task name.');
+      return;
+    }
+  
+    // Prepare data to send
+    const dataToSend = {
+      ...formData,
+      tasks: validTasks,
+    };
+  
     try {
-      // Post the project first
-      const projectResponse = await apiClient.post('/projects', formData);
-      const projectId = projectResponse.data.id; // Retrieve created project ID
+      // Post the project along with valid tasks
+      await apiClient.post('/projects', dataToSend);
   
-      // Assign the projectId to each task
-      const tasksWithProjectId = formData.tasks.map(task => ({
-        ...task,
-        projectId,
-      }));
-
-      console.log('Tasks with projectId:', tasksWithProjectId);
-  
-      
-      
-      const validateTasks = (tasks) => {
-        return tasks.every(task => task.taskName && task.projectId);
-      };
-      
-      if (!validateTasks(tasksWithProjectId)) {
-        toast.error('All tasks must have a task name and a project ID.');
-        return;
-      }
-      
-      
-      // Post the tasks associated with the project
-      await apiClient.post(`/projects/${projectId}/tasks`, tasksWithProjectId);
-
+      // Reset form data
       setFormData({
         name: '',
         startDate: '',
@@ -128,16 +139,17 @@ const CreateProject = () => {
         directorId: '',
         duration: '',
         wbsElement: '',
-        tasks: [{ taskId: '', taskName: '', description: '', start_date: '', due_date: '', assigned_to_user_id: '', hours: '' }],
+        tasks: [],
       });
       setProjectDurationWeeks(0);
+      toast.success('Project and tasks created successfully!');
     } catch (error) {
-      // Provide error feedback
-      console.error('Error creating project and tasks:', error);
+      console.error('Error creating project and tasks:', error.response ? error.response.data : error.message);
       setNotification('Failed to create project.');
       toast.error('Failed to create project.');
     }
   };
+  
   
 
   const handleFileUpload = async (e) => {

@@ -1,11 +1,13 @@
 const express = require('express');
 const multer = require('multer');
 const { processExcelFile } = require('../controllers/processExcelFile');
+const { authMiddleware } = require('../middlewares/authMiddleware');
+const { roleMiddleware } = require('../middlewares/roleMiddleware');
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post('/upload', authMiddleware, roleMiddleware(['Director', 'Project Manager']), upload.single('file'), async (req, res) => {
     try {
         const file = req.file;
         if (!file) {
