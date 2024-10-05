@@ -46,5 +46,11 @@ const User = sequelize.define(
     timestamps: true,
   }
 );
+User.associate = (models) => {
+  User.hasMany(models.Task, {
+    foreignKey: "assigned_to_user_id",
+    as: "assignedTasks",
+  });
+};
 
 module.exports = User;

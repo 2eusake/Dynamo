@@ -1,9 +1,5 @@
 import React, { useContext, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom"; // Correct import
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Correct import
 import { AuthProvider, AuthContext } from "./contexts/AuthContext"; // AuthProvider
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
@@ -27,13 +23,12 @@ import ResetPasswordPage from "./components/Settings/ResetPasswordPage";
 import { UserProvider } from "./contexts/UserContext"; // Ensure correct path
 import Spinner from "./components/Common/Spinner";
 import "./App.css";
-import Layout from './components/Layout'; // Import the Layout component
-
-
+import Layout from "./components/Layout"; // Import the Layout component
+import NotificationSystem from "./components/Notification/Notification";
+import ExcelImport from "./components/Timesheet.js/ImportExcel";
 
 const App = () => {
   return (
-    
     <AuthProvider>
       <Router>
         <AuthContext.Consumer>
@@ -63,7 +58,11 @@ const App = () => {
                                   <Dashboard />
                                 </Layout>
                               }
-                              allowedRoles={["Director", "Project Manager", "Consultant"]}
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
                             />
                           }
                         />
@@ -76,7 +75,11 @@ const App = () => {
                                   <ProjectList />
                                 </Layout>
                               }
-                              allowedRoles={["Director", "Project Manager", "Consultant"]}
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
                             />
                           }
                         />
@@ -89,7 +92,11 @@ const App = () => {
                                   <ProjectDetail />
                                 </Layout>
                               }
-                              allowedRoles={["Director", "Project Manager", "Consultant"]}
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
                             />
                           }
                         />
@@ -128,7 +135,11 @@ const App = () => {
                                   <Settings />
                                 </Layout>
                               }
-                              allowedRoles={["Director", "Project Manager", "Consultant"]}
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
                             />
                           }
                         />
@@ -141,7 +152,11 @@ const App = () => {
                                   <EditProfilePage />
                                 </Layout>
                               }
-                              allowedRoles={["Director", "Project Manager", "Consultant"]}
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
                             />
                           }
                         />
@@ -154,7 +169,11 @@ const App = () => {
                                   <ResetPasswordPage />
                                 </Layout>
                               }
-                              allowedRoles={["Director", "Project Manager", "Consultant"]}
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
                             />
                           }
                         />
@@ -167,7 +186,11 @@ const App = () => {
                                   <TasksPage />
                                 </Layout>
                               }
-                              allowedRoles={["Director", "Project Manager", "Consultant"]}
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
                             />
                           }
                         />
@@ -180,7 +203,11 @@ const App = () => {
                                   <TaskDetail />
                                 </Layout>
                               }
-                              allowedRoles={["Director", "Project Manager", "Consultant"]}
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
                             />
                           }
                         />
@@ -193,7 +220,45 @@ const App = () => {
                                   <ReportsPage />
                                 </Layout>
                               }
-                              allowedRoles={["Director", "Project Manager", "Consultant"]}
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
+                            />
+                          }
+                        />
+                        <Route
+                          path="/notification"
+                          element={
+                            <ProtectedRoute
+                              element={
+                                <Layout>
+                                  <NotificationSystem />
+                                </Layout>
+                              }
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
+                            />
+                          }
+                        />
+                        <Route
+                          path="/timesheet"
+                          element={
+                            <ProtectedRoute
+                              element={
+                                <Layout>
+                                  <ExcelImport />
+                                </Layout>
+                              }
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
                             />
                           }
                         />
