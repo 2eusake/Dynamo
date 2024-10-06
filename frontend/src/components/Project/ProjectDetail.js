@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import apiClient from "../../utils/apiClient";
-import { Calendar, Clock, Users, BarChart2, User } from "lucide-react";
+import { Calendar, Clock, User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ProjectDetails = () => {
   const [project, setProject] = useState(null);
+  const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { id } = useParams();
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.get(`/projects/:id`);
+        const response = await apiClient.get(`/projects/${id}`);
         setProject(response.data);
         setError(null);
       } catch (err) {
@@ -27,6 +28,16 @@ const ProjectDetails = () => {
     fetchProjectDetails();
   }, [id]);
 
+  // Calculate progress
+  let progress = 0;
+  if (project && project.tasks && project.tasks.length > 0) {
+    const totalTasks = project.tasks.length;
+    const completedTasks = project.tasks.filter(
+      (task) => task.status.toLowerCase() === "completed"
+    ).length;
+    progress = Math.round((completedTasks / totalTasks) * 100);
+  }
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-screen">
@@ -39,6 +50,7 @@ const ProjectDetails = () => {
     return <div className="text-center py-4">No project found.</div>;
 
   const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -51,6 +63,7 @@ const ProjectDetails = () => {
       <h1 className="text-3xl font-bold mb-6">{project.name}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Project Overview */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Project Overview</h2>
           <div className="space-y-3">
@@ -61,9 +74,9 @@ const ProjectDetails = () => {
               <strong>Status:</strong>{" "}
               <span
                 className={`font-semibold ${
-                  project.status === "completed"
+                  project.status.toLowerCase() === "completed"
                     ? "text-green-600"
-                    : project.status === "in progress"
+                    : project.status.toLowerCase() === "in progress"
                     ? "text-blue-600"
                     : "text-yellow-600"
                 }`}
@@ -72,17 +85,18 @@ const ProjectDetails = () => {
               </span>
             </p>
             <p>
-              <strong>Progress:</strong> {project.progress}%
+              <strong>Progress:</strong> {progress}%
             </p>
             <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
               <div
                 className="bg-blue-600 h-2.5 rounded-full"
-                style={{ width: `${project.progress}%` }}
+                style={{ width: `${progress}%` }}
               ></div>
             </div>
           </div>
         </div>
 
+        {/* Timeline */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Timeline</h2>
           <div className="space-y-3">
@@ -107,6 +121,7 @@ const ProjectDetails = () => {
           </div>
         </div>
 
+        {/* Project Team */}
         <div className="bg-white rounded-lg shadow-md p-6 md:col-span-2">
           <h2 className="text-xl font-semibold mb-4">Project Team</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -116,7 +131,7 @@ const ProjectDetails = () => {
                 <p className="font-semibold">Project Manager</p>
                 <p>
                   {project.projectManager
-                    ? project.projectManager.name
+                    ? project.projectManager.username
                     : "Not assigned"}
                 </p>
               </div>
@@ -126,13 +141,16 @@ const ProjectDetails = () => {
               <div>
                 <p className="font-semibold">Director</p>
                 <p>
-                  {project.director ? project.director.name : "Not assigned"}
+                  {project.projectDirector
+                    ? project.projectDirector.username
+                    : "Not assigned"}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
+        {/* Tasks */}
         {project.tasks && project.tasks.length > 0 && (
           <div className="bg-white rounded-lg shadow-md p-6 md:col-span-2">
             <h2 className="text-xl font-semibold mb-4">Tasks</h2>
@@ -158,14 +176,19 @@ const ProjectDetails = () => {
                   {project.tasks.map((task) => (
                     <tr key={task.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {task.name}
+                        <Link
+                          to={`/tasks/${task.id}`}
+                          className="text-blue-500 hover:underline"
+                        >
+                          {task.taskName || task.name}
+                        </Link>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            task.status === "completed"
+                            task.status.toLowerCase() === "completed"
                               ? "bg-green-100 text-green-800"
-                              : task.status === "in progress"
+                              : task.status.toLowerCase() === "in progress"
                               ? "bg-blue-100 text-blue-800"
                               : "bg-yellow-100 text-yellow-800"
                           }`}
@@ -174,10 +197,12 @@ const ProjectDetails = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {task.assignedTo}
+                        {task.assignedToUser
+                          ? task.assignedToUser.username
+                          : "Unassigned"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {formatDate(task.dueDate)}
+                        {formatDate(task.due_date)}
                       </td>
                     </tr>
                   ))}
