@@ -1,5 +1,7 @@
-import React, { createContext, useState, useEffect, useCallback } from "react";
-import apiClient from "../utils/apiClient";
+import React, { createContext,useContext, useState, useEffect, useCallback } from 'react';
+import apiClient from '../utils/apiClient';
+import { logout as logoutUtil} from '../utils/tokenUtils';
+import Spinner from '../components/Common/Spinner';
 import {
   getStoredAccessToken,
   setStoredAccessToken,
@@ -7,14 +9,33 @@ import {
   logout,
   setApiClientToken,
 } from "../utils/tokenUtils";
-import Spinner from "../components/Common/Spinner";
+
 
 const AuthContext = createContext();
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
+
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [accessToken, setAccessToken] = useState(getStoredAccessToken());
+
+  const updateUser = async (newUserData) => {
+    try {
+      const response = await apiClient.put('/users/profile', newUserData); // Assuming this is the correct API route
+      const updatedUser = response.data.user;
+
+      // Update the local user state with the updated user info from the server
+      setUser(updatedUser);
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating profile:', error.response || error);
+      throw new Error('Failed to update user profile');
+    }
+  };
 
   const loadUser = useCallback(async () => {
     try {
@@ -96,9 +117,7 @@ const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider
-      value={{ user, login, handleLogout, refreshToken, accessToken }}
-    >
+    <AuthContext.Provider value={{ user,updateUser, login, handleLogout, refreshToken, accessToken }}>
       {children}
     </AuthContext.Provider>
   );

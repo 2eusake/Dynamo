@@ -92,10 +92,12 @@ import { TaskContext } from '../../contexts/TaskContext';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, Button } from './UIComp';
 import './TasksPage.css';  // Import your new CSS file for layout
+import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
 
 const TasksPage = () => {
   const { tasks, fetchTasks } = useContext(TaskContext);
   const [notificationShown, setNotificationShown] = useState(false);
+  const { isDarkMode, toggleDarkMode } = useTheme(); // Use the context
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -137,62 +139,75 @@ const TasksPage = () => {
         </div>
 
         {/* Main content starts here */}
-        <div className="main-content p-6 bg-gray-100 min-h-screen">
+        <div className={`mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
+        
           <h1 className="text-3xl font-bold mb-6">Tasks</h1>
           <ToastContainer />
           {Object.keys(groupedTasks).length > 0 ? (
-            Object.values(groupedTasks).map((projectGroup) => (
-              <Card key={projectGroup.project_id} className="mb-6">
-                <CardHeader>
-                  <CardTitle>Project ID: {projectGroup.project_id}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {projectGroup.tasks.length > 0 ? (
-                    projectGroup.tasks.map((task) => (
-                      <div key={task.id} className="mb-4 p-4 bg-white rounded-lg shadow">
-                        <div className="flex justify-between items-center">
-                          <h3 className="text-lg font-semibold">{task.taskName || 'Unnamed Task'}</h3>
-                          <h3 className="text-lg font-semibold">{task.taskId || 'Unnamed Task'}</h3>
-                          <span
-                            className={`px-2 py-1 rounded text-sm ${
-                              task.status === 'Completed'
-                                ? 'bg-green-200 text-green-800'
-                                : task.status === 'In Progress'
-                                ? 'bg-yellow-200 text-yellow-800'
-                                : 'bg-gray-200 text-gray-800'
-                            }`}
-                          >
-                            {task.status || 'Unknown'}
-                          </span>
-                        </div>
-                        <p className="text-gray-600 mt-2">
-                          Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'N/A'}
-                        </p>
-                        {task.id ? (
-                          <Link to={`/tasks/${task.id}`}>
-                            <Button variant="outline" className="mt-2">
-                              View Details
+            Object.values(groupedTasks).map((projectGroup) => {
+              return (
+                <Card key={projectGroup.project_id} className="mb-6">
+                 
+                  <CardHeader>
+                 
+                    <CardTitle>
+                    <div
+                    className={` p-4 cursor-pointer bg-black shadow-sm 4  ${isDarkMode ? 'bg-gray-800  text-white' : 'bg-white text-black'}`}>
+                    Project ID: {projectGroup.project_id }</div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                  
+                    {projectGroup.tasks.length > 0 ? (
+                      projectGroup.tasks.map((task) => (
+                        <div key={task.id} className="mb-4 p-4 bg-white rounded-lg shadow">
+                          <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">{task.taskName || 'Unnamed Task'}</h3>
+                            <h3 className="text-lg font-semibold">{task.taskId || 'Unnamed Task'}</h3>
+                            <span
+                              className={`px-2 py-1 rounded text-sm ${task.status === 'Completed'
+                                  ? 'bg-green-200 text-green-800'
+                                  : task.status === 'In Progress'
+                                    ? 'bg-yellow-200 text-yellow-800'
+                                    : 'bg-gray-200 text-gray-800'}`}
+                            >
+                              {task.status || 'Unknown'}
+                            </span>
+                          </div>
+                          <p className="text-gray-600 mt-2">
+                            Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'N/A'}
+                          </p>
+                          {task.id ? (
+                            <Link to={`/tasks/${task.id}`}>
+                              <Button variant="outline" className="mt-2">
+                                View Details
+                              </Button>
+                            </Link>
+                          ) : (
+                            <Button variant="outline" className="mt-2" disabled>
+                              Details Unavailable
                             </Button>
-                          </Link>
-                        ) : (
-                          <Button variant="outline" className="mt-2" disabled>
-                            Details Unavailable
-                          </Button>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <p>No tasks available for this project.</p>
-                  )}
-                </CardContent>
-              </Card>
-            ))
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <p>No tasks available for this project.</p>
+                    )}
+                    
+                  </CardContent>
+                 
+                </Card>
+                
+              );
+            })
           ) : (
             <p>No tasks available.</p>
           )}
         </div>
       </div>
-    </div>
+      </div> 
+    
+    
   );
 };
 
