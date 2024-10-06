@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { Button } from "../Task/UIComp";
 import { ProjectContext } from "../../contexts/ProjectContext";
 import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
+import './Projects.css';
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);

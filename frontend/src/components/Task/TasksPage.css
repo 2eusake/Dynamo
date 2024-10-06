@@ -1,288 +1,89 @@
-/* src/components/TasksPage/TasksPage.css 
+/* src/components/TasksPage/TasksPage.css */
 
 .tasks-page {
-    padding: 20px;
-    font-family: 'Deloitte', sans-serif;
-  }
-  
-  .projects-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .project-tasks {
-    background-color: #f4f4f4;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .project-tasks h2 {
-    font-size: 1.5rem;
-    color: #002776;
-  }
-  
-  .tasks-container {
-    margin-top: 10px;
-  }
-  
-  .task-tile {
-    background-color: #ffffff;
-    border-radius: 4px;
-    padding: 8px;
-    margin-bottom: 5px;
-    transition: transform 0.3s;
-  }
-  
-  .task-tile:hover {
-    transform: translateY(-5px);
-  }
-  
-  .task-tile h3 {
-    font-size: 1.2rem;
-    color: #007a33;
-  }
-  
-  .task-tile p {
-    font-size: 0.9rem;
-    color: #333;
-  }
-  
-  .notification {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-  }
-  */
-  /* Overall layout of the page */
-  /* /* (03/10/2024)
-.layout {
-  display: flex;
-  min-height: 100vh; /* Ensure full height /
-  background-color: #f7f9fc; /* Light background similar to login /
+  padding: 20px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+  background-color: #f9f9f9;
+  min-height: 100vh;
 }
 
-
-
-/* Main content needs to be pushed down below the navbar /
-.main-content {
-  margin-top: 60px; 
-  padding: 20px; 
-  background-color: #f4f4f4; 
-}
-/* Main content box /
-.main-content {
-  background-color: #ffffff;
-  padding: 32px;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Match the login-box shadow /
-  min-height: calc(100vh - 60px); /* Full height minus navbar /
-  border: 1px solid #e1e1e1;
-}
-
-/* Task title /
 h1 {
-  color:#000000; /* Deloitte green /
-  font-size: 24px;
-  font-weight: 600;
-  text-align: center;
-}
-
-/* Task card styling /
-.task-card {
-  background-color: #ffffff;
-  border: 1px solid #e1e1e1;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-}
-
-/* Task headings /
-.task-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #000000; /* Deloitte black /
-}
-
-/* Status badge styling /
-.task-status {
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-/* Completed status /
-.task-status.completed {
-  background-color: #006747; /* Deloitte green /
-  color: #ffffff;
-}
-
-/* In Progress status /
-.task-status.in-progress {
-  background-color: #ffcc00; /* Yellow //
-  color: #000000;
-}
-
-/* No status available //
-.task-status.unknown {
-  background-color: #d9d9d9; /* Light gray //
-  color: #000000;
-}
-
-/* Buttons //
-button {
-  background-color: #006747;
-  color: #ffffff;
-  padding: 12px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-button:hover {
-  background-color: #004b8d; /* Deloitte dark blue /
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-button:disabled:hover {
-  background-color: #cccccc;
-} */
-.layout {
-  display: flex;
-}
-
-.sidebar {
-  
-  padding: 20px;
-  position: fixed;
-  left: 0;
-  top: 60px; /* Adjust based on your top navbar height */
-  bottom: 0;
-  width: 60px; /* Adjust as needed */
-}
-
-.sidebar ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.sidebar ul li {
-  margin: 10px 0;
-}
-
-.content {
-  margin-left: 60px; /* Adjust based on your sidebar width */
-  margin-top: 60px; /* Adjust based on your top navbar height */
-  padding: 20px;
-  height: calc(100vh - 60px); /* Adjust based on your top navbar height */
-  overflow-y: auto;
-  flex: 1;
-  
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  font-size: 28px;
+  color: #1A1A1A;
+  font-weight: 700;
+  padding-bottom: 10px;
   margin-bottom: 20px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px; /* Adjust as needed */
-}
-
-.topbar h1 {
-  font-size: 24px;
-}
-
-.task-controls button {
-  margin-right: 10px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  background-color: #e2e8f0;
-  cursor: pointer;
-}
-
-.btn-new-task {
-  background-color: #3b82f6;
-  color: white;
-  display: flex;
-  align-items: center;
-}
-
-.kanban-board {
-  display: flex;
-  gap: 20px;
-  justify-content: space-between;
-}
-
-.kanban-column {
-  background-color: #f9fafb;
-  width: 30%;
-  border-radius: 10px;
-  padding: 20px;
-}
-
-.kanban-column h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-.kanban-column-content {
-  min-height: 200px;
 }
 
 .task-card {
-  background-color: white;
-  border-radius: 8px;
-  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: background-color 0.3s;
+}
+
+.task-card:hover {
+  background-color: #f1f1f1;
+}
+
+.task-card h3 {
+  font-size: 18px;
+  color: #1A1A1A;
   margin-bottom: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.task-header {
-  display: flex;
-  justify-content: space-between;
+.task-card p {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 15px;
 }
 
-.task-tags .tag {
-  background-color: #e5e7eb;
+.task-status {
+  display: inline-block;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
-  margin-right: 5px;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
-.task-footer {
-  display: flex;
-  position: relative;
-  justify-content: space-between;
+.task-status.completed {
+  background-color: #007A33; /* Deloitte green */
+  color: #ffffff;
+}
+
+.task-status.in-progress {
+  background-color: #ffcc00; /* Yellow */
+  color: #000000;
+}
+
+.task-status.not-started {
+  background-color: #d9d9d9; /* Light gray */
+  color: #000000;
+}
+
+.task-due-date {
+  font-size: 12px;
+  color: #555;
   margin-top: 10px;
 }
 
-.task-users svg {
-  margin-right: 5px;
+.task-details-button {
+  margin-top: 10px;
+  padding: 8px 15px;
+  font-size: 14px;
+  background-color: #007A33; /* Deloitte green */
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.3s;
 }
 
-.task-date {
-  font-size: 12px;
-  color: #6b7280;
+.task-details-button:hover {
+  background-color: #005a24; /* Darker shade of Deloitte green */
 }
-
-
-
-

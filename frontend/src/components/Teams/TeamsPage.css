@@ -80,18 +80,4 @@ label {
     background-color: #f1f1f1;
 }
 
-button {
-    background-color: #007A33;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #005a24;
-}
 
