@@ -4,7 +4,16 @@ const Task = require('../models/Task');
 const getTasks = async (req, res) => {
   try {
     const condition = req.user.role === 'Director' ? {} : { assigned_to_user_id: req.user.id };
-    const tasks = await Task.findAll({ where: condition });
+    const tasks = await Task.findAll({
+      where: condition,
+      include: [
+        {
+          model: User,
+          as: 'assignedToUser',
+          attributes: ['id', 'username'], // Adjust attributes as needed
+        },
+      ],
+    });
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching tasks', error: error.message });
@@ -15,15 +24,25 @@ const getTasks = async (req, res) => {
 const getTasksByProject = async (req, res) => {
   try {
     const { projectId } = req.params;
-    const tasks = await Task.findAll({ where: { project_id: projectId } });
+    let tasks = await Task.findAll({
+      where: { project_id: projectId },
+      include: [
+        {
+          model: User,
+          as: 'assignedToUser',
+          attributes: ['id', 'username'],
+        },
+      ],
+    });
     if (req.user.role !== 'Director') {
       tasks = tasks.filter(task => task.assigned_to_user_id === req.user.id);
     }
     res.json(tasks);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching tasks for the project', error: error.message });
+    res.status(500).json({ message: 'Error fetching tasks for the project', error: error.message });
   }
 };
+
 
 // Create a new task (only accessible to project managers and directors)
 const createTask = async (req, res) => {
@@ -69,7 +88,15 @@ const createTask = async (req, res) => {
 // Get a task by ID (restricted based on role)
 const getTaskById = async (req, res) => {
   try {
-    const task = await Task.findByPk(req.params.id);
+    const task = await Task.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          as: 'assignedToUser',
+          attributes: ['id', 'username'],
+        },
+      ],
+    });
     if (!task || (req.user.role !== 'Director' && task.assigned_to_user_id !== req.user.id)) {
       return res.status(404).json({ message: 'Task not found or access denied' });
     }
