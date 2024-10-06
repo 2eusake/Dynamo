@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Upload } from "lucide-react";
 import apiClient from "../../utils/apiClient";
+import './Timesheet.css';
 
 const ExcelImport = () => {
   const [file, setFile] = useState(null);
@@ -18,7 +19,7 @@ const ExcelImport = () => {
     }
 
     const formData = new FormData();
-    formData.append("file", file); // Use "file" as the key, as expected by the backend
+    formData.append("file", file);
 
     try {
       const response = await apiClient.post("/upload", formData, {
@@ -49,40 +50,38 @@ const ExcelImport = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Excel Import</h1>
+    <div className="page-container">
+      <div className="timesheet-container">
+        <div className="timesheet-content">
+          <h1 className="timesheet-title">Excel Import</h1>
 
-      {alert && (
-        <div
-          className={`p-4 mb-4 rounded ${
-            alert.type === "error"
-              ? "bg-red-100 text-red-700"
-              : "bg-green-100 text-green-700"
-          }`}
-        >
-          <p className="font-bold">
-            {alert.type === "error" ? "Error" : "Success"}
-          </p>
-          <p>{alert.message}</p>
-        </div>
-      )}
+          {alert && (
+            <div className={`timesheet-alert ${alert.type}`}>
+              <p className="alert-title">
+                {alert.type === "error" ? "Error" : "Success"}
+              </p>
+              <p>{alert.message}</p>
+            </div>
+          )}
 
-      <form onSubmit={handleSubmit} className="mb-8">
-        <div className="flex items-center space-x-4">
-          <input
-            type="file"
-            onChange={handleFileChange}
-            accept=".xlsx, .xls"
-            className="border p-2 rounded"
-          />
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded flex items-center"
-          >
-            <Upload className="mr-2 h-4 w-4" /> Import Excel
-          </button>
+          <form onSubmit={handleSubmit} className="timesheet-form">
+            <div className="timesheet-input-group">
+              <input
+                type="file"
+                onChange={handleFileChange}
+                accept=".xlsx, .xls"
+                className="timesheet-file-input"
+              />
+              <button
+                type="submit"
+                className="timesheet-submit-button"
+              >
+                <Upload className="timesheet-icon" /> Import Excel
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

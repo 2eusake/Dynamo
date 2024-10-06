@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
 
 const generateTokens = (user) => {
   const accessToken = jwt.sign(
@@ -230,97 +231,51 @@ const getUserProfile = async (req, res) => {
 };
 
 // Update user profile (open to the logged-in user)
-const updateUserProfile = async (req, res) => {
+const updateUserProfile = async (newUserData) => {
   try {
-    const { username, email } = req.body;
-    const user = await User.findByPk(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    user.username = username || user.username;
-    user.email = email || user.email;
-    await user.save();
-
-    res.json({ message: "User profile updated", user });
+    const token = localStorage.getItem("authToken");
+    const response = await apiClient.put("/users/profile", newUserData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setUser(response.data.user); // Update the user state with the new data
+    return response.data.user;
   } catch (error) {
     res
       .status(500)
       .json({ message: "Error updating profile", error: error.message });
   }
 };
-const getAllProjectManagers = async (req, res) => {
-  try {
-    const projectManagers = await User.findAll({
-      where: { role: "Project Manager" },
-      attributes: ["id", "username", "email"],
-      order: [["username", "ASC"]],
-    });
-    res.json(projectManagers);
-  } catch (error) {
-    console.error("Error fetching project managers:", error);
-    res
-      .status(500)
-      .json({
-        message: "Error fetching project managers",
-        error: error.message,
-      });
-  }
-};
 
-// New function to get all consultants
-const getAllConsultants = async (req, res) => {
-  try {
-    const consultants = await User.findAll({
-      where: { role: "Consultant" },
-      attributes: ["id", "username", "email"],
-      order: [["username", "ASC"]],
-    });
-    res.json(consultants);
-  } catch (error) {
-    console.error("Error fetching consultants:", error);
-    res
-      .status(500)
-      .json({ message: "Error fetching consultants", error: error.message });
+const resetPassword = async (req, res) => {
+  // Handle validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-};
 
-// New function to get a specific project manager
-const getProjectManager = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
   try {
-    const projectManager = await User.findOne({
-      where: { id: req.params.id, role: "Project Manager" },
-      attributes: ["id", "username", "email"],
-    });
-    if (!projectManager) {
-      return res.status(404).json({ message: "Project manager not found" });
+    const user = req.user;
+
+    // Verify Current Password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
     }
-    res.json(projectManager);
-  } catch (error) {
-    console.error("Error fetching project manager:", error);
-    res
-      .status(500)
-      .json({
-        message: "Error fetching project manager",
-        error: error.message,
-      });
-  }
-};
 
-// New function to get a specific consultant
-const getConsultant = async (req, res) => {
-  try {
-    const consultant = await User.findOne({
-      where: { id: req.params.id, role: "Consultant" },
-      attributes: ["id", "username", "email"],
-    });
-    if (!consultant) {
-      return res.status(404).json({ message: "Consultant not found" });
-    }
-    res.json(consultant);
+    // Hash New Password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update Password in Database
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
   } catch (error) {
-    console.error("Error fetching consultant:", error);
-    res
-      .status(500)
-      .json({ message: "Error fetching consultant", error: error.message });
+    console.error("Error resetting password:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -337,4 +292,5 @@ module.exports = {
   getAllConsultants,
   getProjectManager,
   getConsultant,
+  resetPassword,
 };
