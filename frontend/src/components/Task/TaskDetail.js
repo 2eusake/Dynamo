@@ -25,8 +25,9 @@ import {
 const TaskDetailsPage = () => {
   const { taskId } = useParams();
   const [task, setTask] = useState(null);
+  const [project, setProject] = useState(null); // State to hold project data
   const [assignedUser, setAssignedUser] = useState(null);
-  const [consultants, setConsultants] = useState([]); // Add consultants state
+  const [consultants, setConsultants] = useState([]); // Consultants state
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState(null);
   const [comment, setComment] = useState("");
@@ -40,6 +41,14 @@ const TaskDetailsPage = () => {
         setTask(fetchedTask);
         setEditedTask(fetchedTask);
         setAssignedUser(fetchedTask.assignedToUser);
+        
+        // Fetch associated project to get WBS Element
+        if (fetchedTask.project_id) {
+          const projectResponse = await apiClient.get(`/projects/${fetchedTask.project_id}`);
+          setProject(projectResponse.data);
+        } else {
+          setProject(null);
+        }
       } catch (error) {
         console.error("Error fetching task details:", error);
       }
@@ -102,13 +111,17 @@ const TaskDetailsPage = () => {
 
   const handleSave = async () => {
     try {
-      const response = await apiClient.put(`/tasks/${taskId}`, editedTask);
+      const updateData = {
+        ...editedTask,
+        status: editedTask.status, // Ensure status is included
+      };
+      const response = await apiClient.put(`/tasks/${taskId}`, updateData);
       setTask(response.data);
       setAssignedUser(response.data.assignedToUser);
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating task:", error);
-      // Optionally, you can set an error state here to display to the user
+      // Optionally, set an error state here to display to the user
     }
   };
 
@@ -117,14 +130,9 @@ const TaskDetailsPage = () => {
     setEditedTask({ ...editedTask, [name]: value });
   };
 
-  const handleStatusChange = async (newStatus) => {
-    try {
-      const updatedTask = { ...task, status: newStatus };
-      const response = await apiClient.put(`/tasks/${taskId}`, updatedTask);
-      setTask(response.data);
-    } catch (error) {
-      console.error("Error updating task status:", error);
-    }
+  const handleStatusChange = (e) => {
+    const newStatus = e.target.value;
+    setEditedTask({ ...editedTask, status: newStatus });
   };
 
   const handleCommentSubmit = () => {
@@ -147,6 +155,7 @@ const TaskDetailsPage = () => {
 
   return (
     <div className="container mx-auto p-4">
+      {/* Back to Tasks Link */}
       <Link
         to="/tasks"
         className="text-blue-500 hover:underline mb-4 inline-block"
@@ -228,7 +237,9 @@ const TaskDetailsPage = () => {
                     type="date"
                     name="due_date"
                     value={editedTask.due_date ? editedTask.due_date.split('T')[0] : ""}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setEditedTask({ ...editedTask, due_date: e.target.value })
+                    }
                     className="ml-2"
                   />
                 ) : (
@@ -292,7 +303,12 @@ const TaskDetailsPage = () => {
                   <select
                     name="assigned_to_user_id"
                     value={editedTask.assigned_to_user_id || ""}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setEditedTask({
+                        ...editedTask,
+                        assigned_to_user_id: e.target.value,
+                      })
+                    }
                     className="ml-2 border rounded px-2 py-1"
                   >
                     <option value="">Unassigned</option>
@@ -308,11 +324,11 @@ const TaskDetailsPage = () => {
                   </span>
                 )}
               </div>
-              {/* Project ID */}
+              {/* WBS Element */}
               <div className="flex items-center">
                 <Briefcase className="mr-2 text-gray-500" />
-                <span className="font-semibold">Project ID:</span>
-                <span className="ml-2">{task.project_id || "Unassigned"}</span>
+                <span className="font-semibold">WBS Element:</span>
+                <span className="ml-2">{project ? project.wbsElement : "Unassigned"}</span>
               </div>
               {/* Progress */}
               <div className="mt-4">
@@ -337,29 +353,36 @@ const TaskDetailsPage = () => {
                   Task completed! Great job!
                 </div>
               )}
-              {/* Status Change Buttons */}
-              {!isEditing && (
+              {/* Status Editing */}
+              {isEditing && (
                 <div className="mt-4">
-                  <span className="font-semibold">Change Status:</span>
-                  <div className="flex mt-2 space-x-2">
-                    {Object.keys(statusColors).map((status) => (
-                      <Button
-                        key={status}
-                        onClick={() => handleStatusChange(status)}
-                        className={`${statusColors[status]} text-white`}
-                        size="sm"
-                      >
-                        {status}
-                      </Button>
-                    ))}
-                  </div>
+                  <span className="font-semibold">Status:</span>
+                  <select
+                    name="status"
+                    value={editedTask.status || ""}
+                    onChange={handleStatusChange}
+                    className="ml-2 border rounded px-2 py-1"
+                  >
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                  </select>
                 </div>
               )}
             </div>
           </div>
-          {/* Save Button */}
+          {/* Save and Cancel Buttons */}
           {isEditing && (
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex justify-end space-x-2">
+              <Button
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditedTask(task); // Reset edits
+                }}
+                variant="outline"
+              >
+                Cancel
+              </Button>
               <Button onClick={handleSave} className="bg-green-500 text-white">
                 Save Changes
               </Button>
