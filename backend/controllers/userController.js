@@ -187,21 +187,35 @@ const getUserProfile = async (req, res) => {
 };
 
 // Update user profile (open to the logged-in user)
-const updateUserProfile = async (req, res) => {
+const updateUserProfile = async (newUserData) => {
   try {
-    const { username, email } = req.body;
-    const user = await User.findByPk(req.user.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
-    user.username = username || user.username;
-    user.email = email || user.email;
-    await user.save();
-
-    res.json({ message: 'User profile updated', user });
+    const token = localStorage.getItem('authToken');
+    const response = await apiClient.put('/users/profile', newUserData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setUser(response.data.user); // Update the user state with the new data
+    return response.data.user;
   } catch (error) {
-    res.status(500).json({ message: 'Error updating profile', error: error.message });
+    console.error('Error updating profile:', error);
+    throw new Error('Failed to update user profile');
   }
 };
+
+// const updateUserProfile = async (req, res) => {
+//   try {
+//     const { username, email } = req.body;
+//     const user = await User.findByPk(req.user.id);
+//     if (!user) return res.status(404).json({ message: 'User not found' });
+
+//     user.username = username || user.username;
+//     user.email = email || user.email;
+//     await user.save();
+
+//     res.json({ message: 'User profile updated', user });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error updating profile', error: error.message });
+//   }
+// };
 
 module.exports = {
   registerUser,
