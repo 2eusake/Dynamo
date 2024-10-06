@@ -18,6 +18,9 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+      validate: {
+        isEmail: true,
+      }
     },
     password: {
       type: DataTypes.STRING,
@@ -27,6 +30,11 @@ const User = sequelize.define(
       type: DataTypes.ENUM("Consultant", "Project Manager", "Director"),
       allowNull: false,
       defaultValue: "Consultant",
+    },
+    groupName: { // New 'group' field
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "General", // Default group
     },
     refreshToken: {
       type: DataTypes.STRING,
