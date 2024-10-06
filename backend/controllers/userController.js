@@ -406,9 +406,5 @@ module.exports = {
   getUsersByRole,
   getUserProfile,
   updateUserProfile,
-  getAllProjectManagers,
-  getAllConsultants,
-  getProjectManager,
-  getConsultant,
   resetPassword,
 };
