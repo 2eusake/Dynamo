@@ -42,12 +42,7 @@ const Sidebar = () => {
       path: "/projects",
       allowedRoles: ["Project Manager", "Director"],
     },
-    {
-      name: "Reports",
-      icon: FaChartBar,
-      path: "/reports",
-      allowedRoles: ["Consultant", "Project Manager", "Director"],
-    },
+
     {
       name: "Tasks",
       icon: FaTasks,
@@ -61,10 +56,16 @@ const Sidebar = () => {
       allowedRoles: ["Project Manager", "Director"],
     },
     {
-      name: "Teams",  // New Teams page
+      name: "Reports",
+      icon: FaChartBar,
+      path: "/reports",
+      allowedRoles: ["Project Manager", "Director"],
+    },
+    {
+      name: "Teams", // New Teams page
       icon: FaUsers,
       path: "/teams",
-      allowedRoles: ["Consultant", "Project Manager", "Director"], // Set allowed roles as per your requirement
+      allowedRoles: ["Project Manager", "Director"], // Set allowed roles as per your requirement
     },
     {
       name: "Notification",
