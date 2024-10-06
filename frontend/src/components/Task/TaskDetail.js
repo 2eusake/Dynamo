@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import apiClient from "../../utils/apiClient";
+import { useTheme } from '../../contexts/ThemeContext';
 import {
   Card,
   CardHeader,
@@ -32,6 +33,7 @@ const TaskDetailsPage = () => {
   const [editedTask, setEditedTask] = useState(null);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   useEffect(() => {
     const fetchTaskDetails = async () => {
@@ -164,7 +166,7 @@ const TaskDetailsPage = () => {
       </Link>
       <Card className="mt-4">
         <CardHeader className="flex justify-between items-center">
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className={`text-2xl font-bold ${isDarkMode ? ' text-white' : ' text-black'}`}>
             {isEditing ? (
               <Input
                 name="taskName"
@@ -390,7 +392,7 @@ const TaskDetailsPage = () => {
           )}
           {/* Comments Section */}
           <div className="mt-8">
-            <h3 className="text-xl font-semibold mb-4">Comments</h3>
+            <h3 className={`text-xl font-semibold mb-4  ${isDarkMode ? ' text-white' : ' text-black'}`}>Comments</h3>
             <div className="space-y-4">
               {comments.map((c) => (
                 <div key={c.id} className="bg-gray-100 p-3 rounded">

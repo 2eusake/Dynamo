@@ -71,7 +71,7 @@ const TasksPage = () => {
 
         {/* Main Content */}
         <div className={`mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
-          <h1 className="text-3xl font-bold mb-6 underline-green">Tasks</h1>
+          <h1 className={`text-3xl font-bold mb-6  underline-green ${isDarkMode ? ' text-white' : ' text-black'}`}>Tasks</h1>
           <ToastContainer />
           
           {Object.keys(groupedTasks).length > 0 ? (
@@ -91,7 +91,7 @@ const TasksPage = () => {
                     wbsGroup.tasks.map((task) => (
                       <div key={task.id} className="mb-4 p-4 bg-white rounded-lg shadow">
                         <div className="flex justify-between items-center">
-                          <h3 className="text-lg font-semibold">{task.taskName || 'Unnamed Task'}</h3>
+                          <h3 className={`text-lg font-semibold ${isDarkMode ? ' text-white' : ' text-black'}`}>{task.taskName || 'Unnamed Task'}</h3>
                           <span
                             className={`px-2 py-1 rounded text-sm ${
                               task.status === 'Completed'
