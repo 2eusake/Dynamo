@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import apiClient from "../../utils/apiClient";
+import { useTheme } from '../../contexts/ThemeContext';
 import { Calendar, Clock, User, Edit } from "lucide-react";
 import {
   Button,
@@ -19,12 +20,14 @@ const ProjectDetails = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   // New state variables for editing
   const [isEditing, setIsEditing] = useState(false);
   const [editedProject, setEditedProject] = useState(null);
   const [projectManagers, setProjectManagers] = useState([]);
   const [directors, setDirectors] = useState([]);
+  
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -146,7 +149,7 @@ const ProjectDetails = () => {
             className="text-3xl font-bold"
           />
         ) : (
-          <h1 className="text-3xl font-bold">{project.name}</h1>
+          <h1 className={`text-3xl font-bold ${isDarkMode ? ' text-white' : ' text-black'}`}>{project.name}</h1>
         )}
         {!isEditing && (
           <Button onClick={() => setIsEditing(true)} variant="outline">
@@ -159,7 +162,7 @@ const ProjectDetails = () => {
         {/* Project Overview */}
         <Card>
           <CardHeader>
-            <CardTitle>Project Overview</CardTitle>
+            <CardTitle className={`text-3xl font-bold mb-6  ${isDarkMode ? ' text-white' : ' text-black'}`}>Project Overview</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -220,7 +223,7 @@ const ProjectDetails = () => {
         {/* Timeline */}
         <Card>
           <CardHeader>
-            <CardTitle>Timeline</CardTitle>
+            <CardTitle className={`text-3xl font-bold mb-6  ${isDarkMode ? ' text-white' : ' text-black'}`}>Timeline</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -280,7 +283,7 @@ const ProjectDetails = () => {
         {/* Project Team */}
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Project Team</CardTitle>
+            <CardTitle className={`text-3xl font-bold mb-6  ${isDarkMode ? ' text-white' : ' text-black'}`}>Project Team</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -288,7 +291,7 @@ const ProjectDetails = () => {
               <div className="flex items-center bg-gray-100 p-3 rounded-lg">
                 <User className="mr-3" size={24} />
                 <div>
-                  <p className="font-semibold">Project Manager</p>
+                  <p className={` font-semibold  ${isDarkMode ? ' text-gray-600' : ' text-black'}`}>Project Manager</p>
                   {isEditing ? (
                     <select
                       value={editedProject.projectManagerId || ""}
@@ -320,7 +323,7 @@ const ProjectDetails = () => {
               <div className="flex items-center bg-gray-100 p-3 rounded-lg">
                 <User className="mr-3" size={24} />
                 <div>
-                  <p className="font-semibold">Director</p>
+                  <p className={` font-semibold  ${isDarkMode ? ' text-gray-600' : ' text-black'}`}>Director</p>
                   {isEditing ? (
                     <select
                       value={editedProject.directorId || ""}
@@ -374,23 +377,23 @@ const ProjectDetails = () => {
         {project.tasks && project.tasks.length > 0 && (
           <Card className="md:col-span-2">
             <CardHeader>
-              <CardTitle>Tasks</CardTitle>
+              <CardTitle className={`text-3xl font-bold mb-6  ${isDarkMode ? ' text-white' : ' text-black'}`}>Tasks</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className= "bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className={` px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider ${isDarkMode ? ' text-gray-800' : ' text-gray-500'}`}>
                         Name
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className= {` px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider ${isDarkMode ? ' text-gray-800' : ' text-gray-500'}`}>
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className= {` px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider ${isDarkMode ? ' text-gray-800' : ' text-gray-500'}`}>
                         Assigned To
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className= {` px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider ${isDarkMode ? ' text-gray-800' : ' text-gray-500'}`}>
                         Due Date
                       </th>
                     </tr>

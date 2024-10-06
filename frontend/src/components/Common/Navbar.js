@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FaBars, FaSearch, FaUserCircle } from "react-icons/fa";
 import { AuthContext } from "../../contexts/AuthContext"; // Import your authentication context
 import { useTheme } from '../../contexts/ThemeContext';
+import { Heading1 } from "lucide-react";
 
 
 const Navbar = ({ onSidebarToggle }) => {
@@ -27,22 +28,7 @@ const Navbar = ({ onSidebarToggle }) => {
       </div>
       
 
-      {/* Center Section: Search Bar */}
-      <div className="flex-1 max-w-2xl mx-6">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-deloitte-cyan"
-          />
-          <FaSearch className="absolute right-4 top-3 text-gray-400" />
-        </div>
-      </div>
-      <div className={`p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-white'}`}>
-     
-    </div>
+    
 
       {/* Right Section: User Profile */}
       <div className="flex items-center space-x-6">
