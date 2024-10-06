@@ -1,140 +1,163 @@
-// import React from 'react';
+// UIComponents.js
 
-// export const Card = ({ children, className, ...props }) => (
-//   <div className={`bg-white shadow-md rounded-lg ${className}`} {...props}>{children}</div>
-// );
+import React from "react";
 
-// export const CardHeader = ({ children, className, ...props }) => (
-//   <div className={`p-4 border-b ${className}`} {...props}>{children}</div>
-// );
-
-// export const CardContent = ({ children, className, ...props }) => (
-//   <div className={`p-4 ${className}`} {...props}>{children}</div>
-// );
-
-// export const Table = ({ children, ...props }) => (
-//   <table className="min-w-full divide-y divide-gray-200" {...props}>{children}</table>
-// );
-
-// export const TableHeader = ({ children, ...props }) => (
-//   <thead className="bg-gray-50" {...props}>{children}</thead>
-// );
-
-// export const TableBody = ({ children, ...props }) => (
-//   <tbody className="bg-white divide-y divide-gray-200" {...props}>{children}</tbody>
-// );
-
-// export const TableRow = ({ children, ...props }) => (
-//   <tr {...props}>{children}</tr>
-// );
-
-// export const TableHead = ({ children, ...props }) => (
-//   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" {...props}>{children}</th>
-// );
-
-// export const TableCell = ({ children, ...props }) => (
-//   <td className="px-6 py-4 whitespace-nowrap" {...props}>{children}</td>
-// );
-
-// export const Select = ({ children, ...props }) => (
-//   <select className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" {...props}>{children}</select>
-// );
-
-// export const SelectTrigger = Select;
-// export const SelectContent = ({ children }) => children;
-// export const SelectItem = ({ children, ...props }) => (
-//   <option {...props}>{children}</option>
-// );
-// export const SelectValue = ({ children }) => children;
-import React from 'react';
-
-// Updated Card Component with Deloitte colors and styles
-export const Card = ({ children, className, ...props }) => (
-  <div className={`bg-white shadow-sm rounded-lg p-4 border border-gray-200 ${className}`} {...props}>
-    {children}
-  </div>
-);
-
-// Updated CardHeader with Deloitte colors
-export const CardHeader = ({ children, className, ...props }) => (
-  <div className={`p-4 border-b border-gray-300 ${className}`} {...props}>
-    {children}
-  </div>
-);
-
-// Updated CardContent
-export const CardContent = ({ children, className, ...props }) => (
-  <div className={`p-4 ${className}`} {...props}>
-    {children}
-  </div>
-);
-
-// Table component with Deloitte color scheme
-export const Table = ({ children, ...props }) => (
-  <table className="min-w-full table-auto divide-y divide-gray-200 bg-white rounded-lg shadow-sm" {...props}>
-    {children}
-  </table>
-);
-
-// Table Header with Deloitte's green and gray
-export const TableHeader = ({ children, ...props }) => (
-  <thead className="bg-lightGray text-darkGray uppercase text-sm font-semibold tracking-wider" {...props}>
-    {children}
-  </thead>
-);
-
-// Table Body
-export const TableBody = ({ children, ...props }) => (
-  <tbody className="bg-white divide-y divide-gray-200" {...props}>
-    {children}
-  </tbody>
-);
-
-// TableRow with hover effect using Deloitte's light gray
-export const TableRow = ({ children, ...props }) => (
-  <tr className="hover:bg-lightGray" {...props}>
-    {children}
-  </tr>
-);
-
-// TableHead with Deloitte colors for text
-export const TableHead = ({ children, ...props }) => (
-  <th className="px-6 py-3 text-left text-xs font-medium text-darkGray tracking-wider" {...props}>
-    {children}
-  </th>
-);
-
-// TableCell with padding and Deloitte's text colors
-export const TableCell = ({ children, ...props }) => (
-  <td className="px-6 py-4 whitespace-nowrap text-darkGray" {...props}>
-    {children}
-  </td>
-);
-
-
-// Select component with Deloitte green accents
-export const Select = ({ children, ...props }) => (
-  <select
-    className="block w-full pl-3 pr-10 py-2 bg-white border-gray-300 focus:outline-none focus:ring-darkGreen focus:border-darkGreen sm:text-sm rounded-md"
+// Card Components
+export const Card = ({
+  children,
+  className = "",
+  isDarkMode = false,
+  ...props
+}) => (
+  <div
+    className={`${
+      isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+    } rounded-lg shadow-lg ${className}`}
     {...props}
   >
     {children}
-  </select>
+  </div>
 );
 
-// Reuse Select component for triggers
-export const SelectTrigger = Select;
-
-// Container for Select options
-export const SelectContent = ({ children }) => children;
-
-// Option element in select with Deloitte text colors
-export const SelectItem = ({ children, ...props }) => (
-  <option className="text-darkGray" {...props}>
+export const CardHeader = ({
+  children,
+  className = "",
+  isDarkMode = false,
+  ...props
+}) => (
+  <div
+    className={`px-6 py-4 border-b ${
+      isDarkMode ? "border-gray-700" : "border-gray-200"
+    } ${className}`}
+    {...props}
+  >
     {children}
-  </option>
+  </div>
+);
+export const CardTitle = ({ children, className = "", ...props }) => (
+  <h3
+    className={`text-xl font-semibold text-gray-800 dark:text-white ${className}`}
+    {...props}
+  >
+    {children}
+  </h3>
 );
 
-// Selected value for the select input
-export const SelectValue = ({ children }) => children;
-export const Button= ({ children }) => children;
+export const CardContent = ({ children, className = "", ...props }) => (
+  <div className={`px-6 py-4 ${className}`} {...props}>
+    {children}
+  </div>
+);
+
+// Accordion Components
+export const Accordion = ({
+  children,
+  type = "single",
+  className = "",
+  ...props
+}) => (
+  <div
+    className={`divide-y divide-gray-200 dark:divide-gray-700 ${className}`}
+    {...props}
+  >
+    {children}
+  </div>
+);
+
+export const AccordionItem = ({ children, className = "", ...props }) => (
+  <div className={`py-2 ${className}`} {...props}>
+    {children}
+  </div>
+);
+
+export const AccordionTrigger = ({
+  children,
+  onClick,
+  className = "",
+  ...props
+}) => (
+  <button
+    onClick={onClick}
+    className={`w-full text-left py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-700 
+                rounded transition-colors duration-200 flex justify-between items-center
+                ${className}`}
+    {...props}
+  >
+    {children}
+  </button>
+);
+
+export const AccordionContent = ({ children, className = "", ...props }) => (
+  <div className={`py-2 px-4 ${className}`} {...props}>
+    {children}
+  </div>
+);
+
+// Badge Component
+export const Badge = ({
+  children,
+  variant = "default",
+  isDarkMode = false,
+  className = "",
+  ...props
+}) => {
+  const variantStyles = {
+    default: isDarkMode
+      ? "bg-gray-700 text-gray-200"
+      : "bg-gray-100 text-gray-800",
+    success: isDarkMode
+      ? "bg-green-700 text-green-200"
+      : "bg-green-100 text-green-800",
+    warning: isDarkMode
+      ? "bg-yellow-700 text-yellow-200"
+      : "bg-yellow-100 text-yellow-800",
+    destructive: isDarkMode
+      ? "bg-red-700 text-red-200"
+      : "bg-red-100 text-red-800",
+    outline: isDarkMode
+      ? "border-gray-700 text-gray-200"
+      : "border-gray-200 text-gray-800",
+    secondary: isDarkMode
+      ? "bg-gray-600 text-gray-200"
+      : "bg-gray-200 text-gray-800",
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium
+                ${variantStyles[variant]} ${className}`}
+      {...props}
+    >
+      {children}
+    </span>
+  );
+};
+
+// Modal Components
+export const Modal = ({
+  isOpen,
+  onClose,
+  children,
+  className = "",
+  ...props
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        onClick={onClose}
+      ></div>
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div
+          className={`relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 
+                    text-left shadow-xl transition-all sm:w-full sm:max-w-lg ${className}`}
+          {...props}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};

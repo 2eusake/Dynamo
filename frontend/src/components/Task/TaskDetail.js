@@ -1,70 +1,45 @@
-/*import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { ProjectContext } from '../../contexts/ProjectContext';
-
-const TaskDetail = () => {
-  const { id } = useParams();
-  const { projects } = useContext(ProjectContext);
-  const [task, setTask] = useState(null);
-
-  useEffect(() => {
-    if (!projects || projects.length === 0) return;
-
-    projects.forEach(project => {
-      const foundTask = project.tasks.find(task => task.id === parseInt(id, 10));
-      if (foundTask) setTask(foundTask);
-    });
-  }, [id, projects]);
-
-  if (!task) {
-    return <p className="text-deloitte-black">Loading task details...</p>;
-  }
-
-  return (
-    <div className="container mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-4xl font-bold mb-4 text-deloitte-blue">Task: {task.name}</h2>
-      <p className="text-xl text-deloitte-black mb-6">
-        {task.description || 'No description available'}
-      </p>
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xl font-semibold text-deloitte-black">Progress</span>
-          <span className="text-xl font-semibold text-deloitte-black">{task.progress || 0}%</span>
-        </div>
-        <div className="w-full bg-gray-300 rounded-full h-4">
-          <div
-            className="bg-deloitte-green h-4 rounded-full"
-            style={{ width: `${task.progress || 0}%` }}
-          ></div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default TaskDetail;*/
-
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { TaskContext } from "../../contexts/TaskContext";
-import { UserContext } from "../../contexts/UserContext"; // Assume we have a UserContext
-import { Card, CardHeader, CardTitle, CardContent, Button } from "./UIComp";
-import { UserCircle, Calendar, Clock, FileText, Briefcase } from "lucide-react";
+import { UserContext } from "../../contexts/UserContext";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Button,
+  Input,
+  Textarea,
+} from "./UIComp";
+import {
+  UserCircle,
+  Calendar,
+  Clock,
+  FileText,
+  Briefcase,
+  Edit,
+  MessageSquare,
+} from "lucide-react";
 
 const TaskDetailsPage = () => {
   const { taskId } = useParams();
-  const { tasks } = useContext(TaskContext);
-  const { getUser } = useContext(UserContext); // Assume we have a getUser function in UserContext
+  const { tasks, updateTask } = useContext(TaskContext);
+  const { getUser } = useContext(UserContext);
   const [task, setTask] = useState(null);
   const [assignedUser, setAssignedUser] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTask, setEditedTask] = useState(null);
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const foundTask = tasks.find((t) => t.id && t.id.toString() === taskId);
     setTask(foundTask);
+    setEditedTask(foundTask);
 
     if (foundTask && foundTask.assigned_to_user_id) {
-      getUser(foundTask.assigned_to_user_id).then((users) =>
-        setAssignedUser(users)
+      getUser(foundTask.assigned_to_user_id).then((user) =>
+        setAssignedUser(user)
       );
     }
   }, [taskId, tasks, getUser]);
@@ -101,6 +76,43 @@ const TaskDetailsPage = () => {
 
   const statusColor = statusColors[task.status] || statusColors.default;
 
+  const daysUntilDue = task.due_date
+    ? Math.ceil((new Date(task.due_date) - new Date()) / (1000 * 60 * 60 * 24))
+    : null;
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    updateTask(editedTask);
+    setTask(editedTask);
+    setIsEditing(false);
+  };
+
+  const handleChange = (e) => {
+    setEditedTask({ ...editedTask, [e.target.name]: e.target.value });
+  };
+
+  const handleStatusChange = (newStatus) => {
+    const updatedTask = { ...task, status: newStatus };
+    updateTask(updatedTask);
+    setTask(updatedTask);
+  };
+
+  const handleCommentSubmit = () => {
+    if (comment.trim()) {
+      const newComment = {
+        id: Date.now(),
+        text: comment,
+        user: "Current User", // Replace with actual user name
+        timestamp: new Date().toISOString(),
+      };
+      setComments([...comments, newComment]);
+      setComment("");
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <Link
@@ -112,48 +124,133 @@ const TaskDetailsPage = () => {
       <Card className="mt-4">
         <CardHeader className="flex justify-between items-center">
           <CardTitle className="text-2xl font-bold">
-            {task.taskName || "Unnamed Task"}
+            {isEditing ? (
+              <Input
+                name="taskName"
+                value={editedTask.taskName}
+                onChange={handleChange}
+                className="text-2xl font-bold"
+              />
+            ) : (
+              task.taskName || "Unnamed Task"
+            )}
           </CardTitle>
-          <div
-            className={`${statusColor} text-white px-3 py-1 rounded-full text-sm`}
-          >
-            {task.status || "Unknown"}
+          <div className="flex items-center">
+            <div
+              className={`${statusColor} text-white px-3 py-1 rounded-full text-sm mr-2`}
+            >
+              {task.status || "Unknown"}
+            </div>
+            {!isEditing && (
+              <Button onClick={handleEdit} variant="outline" size="sm">
+                <Edit className="w-4 h-4 mr-2" /> Edit
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-4">
-              <div className="flex items-center">
-                <FileText className="mr-2 text-gray-500" />
-                <span className="font-semibold">Description:</span>
-                <p className="ml-2">
-                  {task.description || "No description available"}
-                </p>
+              <div className="flex items-start">
+                <FileText className="mr-2 text-gray-500 mt-1" />
+                <div>
+                  <span className="font-semibold">Description:</span>
+                  {isEditing ? (
+                    <Textarea
+                      name="description"
+                      value={editedTask.description}
+                      onChange={handleChange}
+                      className="mt-1"
+                    />
+                  ) : (
+                    <p className="ml-2">
+                      {task.description || "No description available"}
+                    </p>
+                  )}
+                </div>
               </div>
               <div className="flex items-center">
                 <Calendar className="mr-2 text-gray-500" />
                 <span className="font-semibold">Start Date:</span>
-                <span className="ml-2">{task.start_date || "N/A"}</span>
+                {isEditing ? (
+                  <Input
+                    type="date"
+                    name="start_date"
+                    value={editedTask.start_date}
+                    onChange={handleChange}
+                    className="ml-2"
+                  />
+                ) : (
+                  <span className="ml-2">{task.start_date || "N/A"}</span>
+                )}
               </div>
               <div className="flex items-center">
                 <Calendar className="mr-2 text-gray-500" />
                 <span className="font-semibold">Due Date:</span>
-                <span className="ml-2">
-                  {task.due_date
-                    ? new Date(task.due_date).toLocaleDateString()
-                    : "N/A"}
-                </span>
+                {isEditing ? (
+                  <Input
+                    type="date"
+                    name="due_date"
+                    value={editedTask.due_date}
+                    onChange={handleChange}
+                    className="ml-2"
+                  />
+                ) : (
+                  <span className="ml-2">
+                    {task.due_date
+                      ? new Date(task.due_date).toLocaleDateString()
+                      : "N/A"}
+                  </span>
+                )}
               </div>
+              {daysUntilDue !== null && (
+                <div className="text-sm italic">
+                  {daysUntilDue > 0
+                    ? `${daysUntilDue} day${
+                        daysUntilDue !== 1 ? "s" : ""
+                      } left until due date`
+                    : daysUntilDue === 0
+                    ? "Due today!"
+                    : `Overdue by ${Math.abs(daysUntilDue)} day${
+                        Math.abs(daysUntilDue) !== 1 ? "s" : ""
+                      }`}
+                </div>
+              )}
               <div className="flex items-center">
                 <Clock className="mr-2 text-gray-500" />
                 <span className="font-semibold">Hours Allocated:</span>
-                <span className="ml-2">{task.hours || "N/A"}</span>
+                {isEditing ? (
+                  <Input
+                    type="number"
+                    name="hours"
+                    value={editedTask.hours}
+                    onChange={handleChange}
+                    className="ml-2 w-20"
+                  />
+                ) : (
+                  <span className="ml-2">{task.hours || "N/A"}</span>
+                )}
               </div>
               <div className="flex items-center">
                 <Clock className="mr-2 text-gray-500" />
                 <span className="font-semibold">Actual Hours Spent:</span>
-                <span className="ml-2">{task.actualHours || "N/A"}</span>
+                {isEditing ? (
+                  <Input
+                    type="number"
+                    name="actualHours"
+                    value={editedTask.actualHours}
+                    onChange={handleChange}
+                    className="ml-2 w-20"
+                  />
+                ) : (
+                  <span className="ml-2">{task.actualHours || "N/A"}</span>
+                )}
               </div>
+              {task.actualHours > task.hours && (
+                <div className="text-red-500 text-sm italic">
+                  Warning: Actual hours exceed allocated hours!
+                </div>
+              )}
             </div>
             <div className="space-y-4">
               <div className="flex items-center">
@@ -180,6 +277,65 @@ const TaskDetailsPage = () => {
                   {progress}% Complete
                 </span>
               </div>
+              {progress >= 50 && progress < 100 && (
+                <div className="text-yellow-600 text-sm italic">
+                  You're halfway there! Keep up the good work!
+                </div>
+              )}
+              {progress === 100 && (
+                <div className="text-green-600 text-sm italic">
+                  Task completed! Great job!
+                </div>
+              )}
+              {!isEditing && (
+                <div className="mt-4">
+                  <span className="font-semibold">Change Status:</span>
+                  <div className="flex mt-2 space-x-2">
+                    {Object.keys(statusColors).map((status) => (
+                      <Button
+                        key={status}
+                        onClick={() => handleStatusChange(status)}
+                        className={`${statusColors[status]} text-white`}
+                        size="sm"
+                      >
+                        {status}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          {isEditing && (
+            <div className="mt-4 flex justify-end">
+              <Button onClick={handleSave} className="bg-green-500 text-white">
+                Save Changes
+              </Button>
+            </div>
+          )}
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold mb-4">Comments</h3>
+            <div className="space-y-4">
+              {comments.map((c) => (
+                <div key={c.id} className="bg-gray-100 p-3 rounded">
+                  <p className="font-semibold">{c.user}</p>
+                  <p>{c.text}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(c.timestamp).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex">
+              <Input
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Add a comment..."
+                className="flex-grow mr-2"
+              />
+              <Button onClick={handleCommentSubmit}>
+                <MessageSquare className="w-4 h-4 mr-2" /> Comment
+              </Button>
             </div>
           </div>
         </CardContent>
