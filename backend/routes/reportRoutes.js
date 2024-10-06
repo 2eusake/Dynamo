@@ -1,7 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { getReports } = require('../controllers/reportController');
+const reportController = require("../controllers/reportController");
+const { authMiddleware } = require("../middlewares/authMiddleware");
 
-// Route to get reports data
-router.get('/data', getReports);
+router.get(
+  "/consultant-performance",
+  authMiddleware,
+  reportController.getConsultantPerformance
+);
+
 module.exports = router;
