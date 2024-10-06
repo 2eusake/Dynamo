@@ -10,6 +10,7 @@ import {
   FaCog,
   FaBars,
   FaBell,
+  FaUsers,
 } from "react-icons/fa";
 import { FaRegClock } from "react-icons/fa";
 
