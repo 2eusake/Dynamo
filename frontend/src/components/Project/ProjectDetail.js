@@ -28,6 +28,15 @@ const ProjectDetails = () => {
     fetchProjectDetails();
   }, [id]);
 
+  const calculateDuration = (startDate, endDate) => {
+    if (!startDate || !endDate) return 'N/A';
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = end - start;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays >= 0 ? diffDays : 'Invalid dates';
+  };
+
   // Calculate progress
   let progress = 0;
   if (project && project.tasks && project.tasks.length > 0) {
@@ -115,7 +124,7 @@ const ProjectDetails = () => {
             <div className="flex items-center">
               <Clock className="mr-2" size={20} />
               <p>
-                <strong>Duration:</strong> {project.duration} days
+                <strong>Duration:</strong> {calculateDuration(project.startDate, project.endDate)} days
               </p>
             </div>
           </div>
