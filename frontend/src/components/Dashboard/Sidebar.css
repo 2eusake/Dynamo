@@ -1,0 +1,37 @@
+/* Existing styles remain the same */
+
+/* Target the menu icon and its container more specifically */
+.sidebar-header .menu-icon-container,
+.sidebar-header .menu-icon-button,
+.sidebar-header .fa-bars,
+.sidebar-header [aria-label="menu"],
+.sidebar-header button {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure the icon itself has no background */
+.sidebar-header .fa-bars,
+.sidebar-header .menu-icon {
+  color: #ffffff; /* Adjust color as needed */
+}
+
+/* Add some padding and hover effect to improve usability */
+.sidebar-header .menu-icon-container,
+.sidebar-header .menu-icon-button,
+.sidebar-header [aria-label="menu"],
+.sidebar-header button {
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-header .menu-icon-container:hover,
+.sidebar-header .menu-icon-button:hover,
+.sidebar-header [aria-label="menu"]:hover,
+.sidebar-header button:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle highlight on hover */
+}
+
+/* Rest of the existing styles */
