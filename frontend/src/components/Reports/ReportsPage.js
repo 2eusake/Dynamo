@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
 
 import {
@@ -23,6 +25,7 @@ import {
   SelectValue,
 } from "./UIComponents";
 import { Progress } from "./UIComponents";
+import apiClient from "../../utils/apiClient";
 
 // Deloitte colors
 const colors = {
@@ -34,139 +37,87 @@ const colors = {
   white: "#FFFFFF",
 };
 
-// Mock data - replace with actual data fetching logic
-const mockProjects = [
-  {
-    id: 1,
-    name: "Project A",
-    allocatedHours: 100,
-    actualHours: 90,
-    status: "completed",
-    dueDate: "2024-05-01",
-    projectManagerId: 1,
-  },
-  {
-    id: 2,
-    name: "Project B",
-    allocatedHours: 200,
-    actualHours: 220,
-    status: "in progress",
-    dueDate: "2024-06-15",
-    projectManagerId: 1,
-  },
-  {
-    id: 3,
-    name: "Project C",
-    allocatedHours: 150,
-    actualHours: 140,
-    status: "not started",
-    dueDate: "2024-07-30",
-    projectManagerId: 2,
-  },
-  {
-    id: 4,
-    name: "Project D",
-    allocatedHours: 180,
-    actualHours: 200,
-    status: "completed",
-    dueDate: "2024-04-30",
-    projectManagerId: 2,
-  },
-  {
-    id: 5,
-    name: "Project E",
-    allocatedHours: 120,
-    actualHours: 110,
-    status: "at risk",
-    dueDate: "2024-08-15",
-    projectManagerId: 1,
-  },
-];
-
-const mockTasks = [
-  {
-    id: 1,
-    projectId: 1,
-    name: "Task 1",
-    allocatedHours: 20,
-    actualHours: 18,
-    status: "completed",
-    consultantId: 1,
-  },
-  {
-    id: 2,
-    projectId: 1,
-    name: "Task 2",
-    allocatedHours: 30,
-    actualHours: 35,
-    status: "completed",
-    consultantId: 2,
-  },
-  {
-    id: 3,
-    projectId: 2,
-    name: "Task 3",
-    allocatedHours: 40,
-    actualHours: 45,
-    status: "in progress",
-    consultantId: 1,
-  },
-  {
-    id: 4,
-    projectId: 2,
-    name: "Task 4",
-    allocatedHours: 50,
-    actualHours: 40,
-    status: "in progress",
-    consultantId: 3,
-  },
-  {
-    id: 5,
-    projectId: 3,
-    name: "Task 5",
-    allocatedHours: 25,
-    actualHours: 0,
-    status: "not started",
-    consultantId: 2,
-  },
-  {
-    id: 6,
-    projectId: 4,
-    name: "Task 6",
-    allocatedHours: 60,
-    actualHours: 70,
-    status: "completed",
-    consultantId: 3,
-  },
-  {
-    id: 7,
-    projectId: 5,
-    name: "Task 7",
-    allocatedHours: 35,
-    actualHours: 40,
-    status: "at risk",
-    consultantId: 1,
-  },
-];
-
-const mockConsultants = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Smith" },
-  { id: 3, name: "Alice Johnson" },
-];
-
-const mockProjectManagers = [
-  { id: 1, name: "Bob Williams" },
-  { id: 2, name: "Carol Brown" },
-];
-
 const ProjectReportDashboard = () => {
+  const [projects, setProjects] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [consultants, setConsultants] = useState([]);
+  const [projectManagers, setProjectManagers] = useState([]);
   const { isDarkMode } = useTheme(); // Access dark mode state
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedConsultant, setSelectedConsultant] = useState(null);
   const [selectedProjectManager, setSelectedProjectManager] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { id } = useParams();
 
-  const overallPerformance = mockProjects.reduce(
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [projectsRes, tasksRes, usersRes] = await Promise.all([
+          apiClient.get(`/projects`),
+          apiClient.get(`/tasks`),
+          apiClient.get(`/users`),
+        ]);
+        console.log("Projects data:", projectsRes.data);
+        console.log("Tasks data:", tasksRes.data);
+        console.log("Users data:", usersRes.data);
+        if (!Array.isArray(projectsRes.data) || !Array.isArray(tasksRes.data)) {
+          throw new Error(
+            "Projects or Tasks data is not in the expected format"
+          );
+        }
+
+        const projectsWithHours = projectsRes.data.map((project) => {
+          const projectTasks = tasksRes.data.filter(
+            (task) => task.projectId === project.id
+          );
+          const allocatedHours = projectTasks.reduce(
+            (sum, task) => sum + (task.hours || 0),
+            0
+          );
+          const actualHours = projectTasks.reduce(
+            (sum, task) => sum + (task.actualHours || 0),
+            0
+          );
+          return { ...project, allocatedHours, actualHours };
+        });
+
+        let consultants = [];
+        let projectManagers = [];
+
+        if (Array.isArray(usersRes.data)) {
+          consultants = usersRes.data.filter(
+            (user) => user.role === "Consultant"
+          );
+          projectManagers = usersRes.data.filter(
+            (user) => user.role === "Project Manager"
+          );
+        } else if (typeof usersRes.data === "object") {
+          // If the data is an object, it might be structured differently
+          consultants = usersRes.data.consultants || [];
+          projectManagers = usersRes.data.projectManagers || [];
+        } else {
+          console.error("Unexpected users data format:", usersRes.data);
+        }
+
+        setProjects(projectsWithHours);
+        setTasks(tasksRes.data);
+        setConsultants(consultants);
+        setProjectManagers(projectManagers);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(`Failed to fetch data: ${err.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const overallPerformance = projects.reduce(
     (acc, project) => {
       acc.allocatedHours += project.allocatedHours;
       acc.actualHours += project.actualHours;
@@ -175,7 +126,7 @@ const ProjectReportDashboard = () => {
     { allocatedHours: 0, actualHours: 0 }
   );
 
-  const projectStatus = mockProjects.reduce((acc, project) => {
+  const projectStatus = projects.reduce((acc, project) => {
     acc[project.status] = (acc[project.status] || 0) + 1;
     return acc;
   }, {});
@@ -187,36 +138,36 @@ const ProjectReportDashboard = () => {
     })
   );
 
-  const completedProjects = mockProjects.filter(
+  const completedProjects = projects.filter(
     (p) => p.status === "completed"
   ).length;
-  const overdueProjects = mockProjects.filter(
-    (p) => new Date(p.dueDate) < new Date() && p.status !== "completed"
+  const overdueProjects = projects.filter(
+    (p) => new Date(p.endDate) < new Date() && p.status !== "completed"
   ).length;
-  const overbudgetProjects = mockProjects.filter(
+  const overbudgetProjects = projects.filter(
     (p) => p.actualHours > p.allocatedHours
   ).length;
 
   const getConsultantTasks = (consultantId) => {
-    return mockTasks.filter((task) => task.consultantId === consultantId);
+    return tasks.filter((task) => task.assigned_to_user_id === consultantId);
   };
 
   const getProjectManagerProjects = (projectManagerId) => {
-    return mockProjects.filter(
+    return projects.filter(
       (project) => project.projectManagerId === projectManagerId
     );
   };
 
   const getProjectTasks = (projectId) => {
-    return mockTasks.filter((task) => task.projectId === projectId);
+    return tasks.filter((task) => task.projectId === projectId);
   };
 
   const getProjectConsultants = (projectId) => {
     const projectTasks = getProjectTasks(projectId);
     const consultantIds = [
-      ...new Set(projectTasks.map((task) => task.consultantId)),
+      ...new Set(projectTasks.map((task) => task.assigned_to_user_id)),
     ];
-    return mockConsultants.filter((consultant) =>
+    return consultants.filter((consultant) =>
       consultantIds.includes(consultant.id)
     );
   };
@@ -227,6 +178,14 @@ const ProjectReportDashboard = () => {
       return acc;
     }, {});
   };
+
+  if (loading) {
+    return <div>Loading dashboard data...</div>;
+  }
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
 
   return (
     
@@ -330,7 +289,7 @@ const ProjectReportDashboard = () => {
               <Select
                 onValueChange={(value) =>
                   setSelectedProject(
-                    mockProjects.find((p) => p.id === parseInt(value))
+                    projects.find((p) => p.id === parseInt(value))
                   )
                 }
               >
@@ -338,7 +297,7 @@ const ProjectReportDashboard = () => {
                   <SelectValue placeholder="Select a project" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockProjects.map((project) => (
+                  {projects.map((project) => (
                     <SelectItem key={project.id} value={project.id.toString()}>
                       {project.name}
                     </SelectItem>
@@ -355,9 +314,9 @@ const ProjectReportDashboard = () => {
                   <p>Actual Hours: {selectedProject.actualHours}</p>
                   <p>Due Date: {selectedProject.dueDate}</p>
                   <p>
-                    Project Manager:{" "}
+                    Project Manager:{projectManagers.username}
                     {
-                      mockProjectManagers.find(
+                      projectManagers.find(
                         (pm) => pm.id === selectedProject.projectManagerId
                       )?.name
                     }
@@ -425,7 +384,7 @@ const ProjectReportDashboard = () => {
               <Select
                 onValueChange={(value) =>
                   setSelectedConsultant(
-                    mockConsultants.find((c) => c.id === parseInt(value))
+                    consultants.find((c) => c.id === parseInt(value))
                   )
                 }
               >
@@ -433,12 +392,12 @@ const ProjectReportDashboard = () => {
                   <SelectValue placeholder="Select a consultant" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockConsultants.map((consultant) => (
+                  {consultants.map((consultant) => (
                     <SelectItem
                       key={consultant.id}
                       value={consultant.id.toString()}
                     >
-                      {consultant.name}
+                      {consultant.username}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -451,16 +410,15 @@ const ProjectReportDashboard = () => {
                   {getConsultantTasks(selectedConsultant.id).map((task) => (
                     <div key={task.id} className="mt-2">
                       <p>
-                        {task.name} (Project:{" "}
-                        {mockProjects.find((p) => p.id === task.projectId).name}
-                        )
+                        {task.taskName} (Project:{projectStatusData.name}
+                        {projects.find((p) => p.id === task.projectId).name})
                       </p>
                       <p>
-                        Allocated Hours: {task.allocatedHours}, Actual Hours:{" "}
+                        Allocated Hours: {task.hours}, Actual Hours:
                         {task.actualHours}
                       </p>
                       <Progress
-                        value={(task.actualHours / task.allocatedHours) * 100}
+                        value={(task.actualHours / task.hours) * 100}
                         className="mt-2"
                       />
                     </div>
@@ -480,7 +438,7 @@ const ProjectReportDashboard = () => {
               <Select
                 onValueChange={(value) =>
                   setSelectedProjectManager(
-                    mockProjectManagers.find((pm) => pm.id === parseInt(value))
+                    projectManagers.find((pm) => pm.id === parseInt(value))
                   )
                 }
               >
@@ -488,9 +446,9 @@ const ProjectReportDashboard = () => {
                   <SelectValue placeholder="Select a project manager" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockProjectManagers.map((manager) => (
+                  {projectManagers.map((manager) => (
                     <SelectItem key={manager.id} value={manager.id.toString()}>
-                      {manager.name}
+                      {manager.username}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -579,6 +537,18 @@ const ProjectReportDashboard = () => {
                       }
                     </p>
                     <p>
+                      Completed Projects (Overtime):{" "}
+                      {
+                        getProjectManagerProjects(
+                          selectedProjectManager.id
+                        ).filter(
+                          (p) =>
+                            p.status === "completed" &&
+                            p.actualHours > p.allocatedHours
+                        ).length
+                      }
+                    </p>
+                    <p>
                       Overdue Projects:{" "}
                       {
                         getProjectManagerProjects(
@@ -617,25 +587,25 @@ const ProjectReportDashboard = () => {
             performance across the organization:
           </p>
           <ul className="list-disc list-inside mt-2">
-            <li>Total Projects: {mockProjects.length}</li>
+            <li>Total Projects: {projects.length}</li>
             <li>Completed Projects: {completedProjects}</li>
             <li>Overdue Projects: {overdueProjects}</li>
             <li>Over-budget Projects: {overbudgetProjects}</li>
-            <li>Total Consultants: {mockConsultants.length}</li>
-            <li>Total Project Managers: {mockProjectManagers.length}</li>
+            <li>Total Consultants: {consultants.length}</li>
+            <li>Total Project Managers: {projectManagers.length}</li>
           </ul>
           <p className="mt-4">Key Observations:</p>
           <ul className="list-disc list-inside mt-2">
             <li>
               Overall project completion rate:{" "}
-              {((completedProjects / mockProjects.length) * 100).toFixed(2)}%
+              {((completedProjects / projects.length) * 100).toFixed(2)}%
             </li>
             <li>
               Projects at risk or overdue:{" "}
               {(
                 ((overdueProjects +
-                  mockProjects.filter((p) => p.status === "at risk").length) /
-                  mockProjects.length) *
+                  projects.filter((p) => p.status === "in progress").length) /
+                  projects.length) *
                 100
               ).toFixed(2)}
               %
@@ -650,10 +620,16 @@ const ProjectReportDashboard = () => {
               %
             </li>
           </ul>
+          <p className="mt-4">
+            This dashboard allows for detailed analysis of project performance,
+            consultant productivity, and project manager effectiveness. Use the
+            tabs to dive deeper into specific areas and identify trends,
+            challenges, and opportunities for improvement in project management
+            practices.
+          </p>
         </CardContent>
       </Card>
     </div>
   );
 };
-
 export default ProjectReportDashboard;
