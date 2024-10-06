@@ -240,7 +240,55 @@ const Alert = ({ type = "info", children, className, ...props }) => {
     </div>
   );
 };
+const Badge = React.forwardRef(
+  (
+    { className, variant = "default", size = "default", status, ...props },
+    ref
+  ) => {
+    const baseStyles =
+      "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
 
+    const variants = {
+      default: "bg-blue-500 text-white",
+      secondary: "bg-gray-500 text-white",
+      destructive: "bg-red-500 text-white",
+      outline: "border border-gray-300 bg-white text-gray-700",
+      success: "bg-green-500 text-white",
+      warning: "bg-yellow-500 text-white",
+      info: "bg-blue-400 text-white",
+    };
+
+    const sizes = {
+      default: "px-2.5 py-0.5 text-xs",
+      sm: "px-2 py-0.5 text-xs",
+      lg: "px-3 py-1 text-sm",
+    };
+
+    const statusColors = {
+      online: "bg-green-500",
+      offline: "bg-gray-500",
+      away: "bg-yellow-500",
+      busy: "bg-red-500",
+    };
+
+    return (
+      <div
+        ref={ref}
+        className={cn(baseStyles, variants[variant], sizes[size], className)}
+        {...props}
+      >
+        {status && (
+          <span
+            className={cn("mr-1 h-2 w-2 rounded-full", statusColors[status])}
+          />
+        )}
+        {props.children}
+      </div>
+    );
+  }
+);
+
+Badge.displayName = "Badge";
 // Export all components
 export {
   Tabs,
@@ -267,4 +315,5 @@ export {
   Alert,
   AlertDescription,
   Button,
+  Badge,
 };
