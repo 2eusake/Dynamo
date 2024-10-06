@@ -13,13 +13,13 @@ const TeamsPage = () => {
     const [filteredRole, setFilteredRole] = useState('');
     const [employees, setEmployees] = useState(teamMembers);
 
-    // Filter team members based on the selected role
+   
     const handleFilterChange = (event) => {
         const role = event.target.value;
         setFilteredRole(role);
 
         if (role === '') {
-            setEmployees(teamMembers); // Show all employees if no filter is selected
+            setEmployees(teamMembers); 
         } else {
             setEmployees(teamMembers.filter(member => member.role === role));
         }
