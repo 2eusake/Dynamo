@@ -644,13 +644,6 @@ const ProjectReportDashboard = () => {
               %
             </li>
           </ul>
-          <p className="mt-4">
-            This dashboard allows for detailed analysis of project performance,
-            consultant productivity, and project manager effectiveness. Use the
-            tabs to dive deeper into specific areas and identify trends,
-            challenges, and opportunities for improvement in project management
-            practices.
-          </p>
         </CardContent>
       </Card>
     </div>

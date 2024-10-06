@@ -1,0 +1,106 @@
+.projects-page {
+  padding: 20px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+h3 {
+  font-size: 28px;
+  color: #1A1A1A;
+  font-weight: 700;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.project-count {
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #555;
+}
+
+.project-list {
+  margin-top: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.project-list-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #fff;
+}
+
+.project-list-item:hover {
+  background-color: #f1f1f1;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.project-header h4 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.project-header p {
+  font-size: 14px;
+  color: #666;
+}
+
+.project-status {
+  font-weight: bold;
+  color: #007A33; /* Deloitte green */
+}
+
+.project-tasks {
+  margin-top: 20px;
+}
+
+.task-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.task-list-item {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.task-list-item:hover {
+  background-color: #f1f1f1;
+}
+
+.task-list-item p {
+  font-size: 14px;
+  color: #333;
+}
+
+.task-status {
+  font-weight: bold;
+  color: #007A33; /* Deloitte green */
+}
+
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  padding: 10px;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 10px;
+}

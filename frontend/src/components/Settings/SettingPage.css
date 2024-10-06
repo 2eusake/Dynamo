@@ -27,7 +27,7 @@ body {
   padding: 20px;
   background-color: var(--bg-color);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* No border-bottom */
 }
 
 h1 {
@@ -56,7 +56,7 @@ h1 {
   bottom: 0;
   background-color: var(--toggle-bg);
   transition: .4s;
-  border-radius: 34px;
+  border-radius: 34px; /* No border-bottom */
 }
 
 .slider:before {
@@ -68,7 +68,7 @@ h1 {
   bottom: 4px;
   background-color: var(--toggle-dot);
   transition: .4s;
-  border-radius: 50%;
+  border-radius: 50%; /* No border-bottom */
 }
 
 input:checked + .slider {
@@ -83,7 +83,7 @@ input:checked + .slider:before {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 20px; /* No border-bottom */
 }
 
 .setting-label {
@@ -96,7 +96,3 @@ body.dark-mode {
   background-color: #1a202c; /* Dark background */
   color: #f7fafc; /* Light text */
 }
-
-
-  
-  

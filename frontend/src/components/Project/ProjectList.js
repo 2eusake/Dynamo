@@ -6,7 +6,9 @@ import apiClient from "../../utils/apiClient";
 import { AuthContext } from "../../contexts/AuthContext";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "../UIComp";
-import { useTheme } from "../../contexts/ThemeContext"; // Import the theme context
+import { ProjectContext } from "../../contexts/ProjectContext";
+import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
+import './Projects.css';
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
