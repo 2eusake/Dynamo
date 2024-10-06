@@ -1,79 +1,103 @@
-const Project = require('../models/Project');
-const Task = require('../models/Task');
-const { Op } = require('sequelize');
+const { User, Task, Project } = require("../models");
+const { Op } = require("sequelize");
+const sequelize = require("../config/database");
 
-exports.getReports = async (req, res) => {
-  try {
-    // Fetch all projects with related task data
-    const projects = await Project.findAll({
-      include: [{
-        model: Task,
-        as: 'tasks',
-        attributes: ['id', 'name', 'status', 'due_date', 'projectId'],  // Ensure due_date and status are included
-      }],
-      attributes: ['id', 'name', 'wbsElement', 'startDate', 'endDate', 'progress', 'status'],
-    });
+const reportController = {
+  async getConsultantPerformance(req, res) {
+    try {
+      const consultants = await User.findAll({
+        where: { role: "Consultant" },
+        attributes: ["id", "username"],
+        include: [
+          {
+            model: Task,
+            as: "assignedTasks",
+            attributes: [
+              [
+                sequelize.fn("COUNT", sequelize.col("assignedTasks.id")),
+                "totalTasks",
+              ],
+              [
+                sequelize.fn("SUM", sequelize.col("assignedTasks.hours")),
+                "totalHoursAllocated",
+              ],
+              [
+                sequelize.fn("SUM", sequelize.col("assignedTasks.actualHours")),
+                "totalActualHours",
+              ],
+              [
+                sequelize.fn(
+                  "AVG",
+                  sequelize.literal(
+                    'CASE WHEN assignedTasks.status = "completed" THEN 1 ELSE 0 END'
+                  )
+                ),
+                "completionRate",
+              ],
+            ],
+            group: ["assignedTasks.assigned_to_user_id"],
+          },
+        ],
+      });
 
-    // Generate summary for reports
-    const totalProjects = projects.length;
-    const activeProjects = projects.filter(project => project.status === 'in progress').length;
+      const consultantStats = await Promise.all(
+        consultants.map(async (consultant) => {
+          const tasksByMonth = await Task.findAll({
+            where: {
+              assigned_to_user_id: consultant.id,
+              createdAt: {
+                [Op.gte]: new Date(
+                  new Date().setMonth(new Date().getMonth() - 6)
+                ),
+              },
+            },
+            attributes: [
+              [
+                sequelize.fn(
+                  "DATE_FORMAT",
+                  sequelize.col("created_at"),
+                  "%Y-%m"
+                ),
+                "month",
+              ],
+              [sequelize.fn("COUNT", sequelize.col("id")), "count"],
+              [
+                sequelize.fn(
+                  "SUM",
+                  sequelize.literal(
+                    'CASE WHEN status = "completed" THEN 1 ELSE 0 END'
+                  )
+                ),
+                "completed",
+              ],
+            ],
+            group: [
+              sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y-%m"),
+            ],
+          });
 
-    // Calculate completed tasks and overdue tasks
-    const completedTasks = projects.reduce((sum, project) =>
-      sum + project.tasks.filter(task => task.status === 'completed').length, 0);
+          return {
+            id: consultant.id,
+            username: consultant.username,
+            performanceMetrics: consultant.assignedTasks[0] || {
+              totalTasks: 0,
+              totalHoursAllocated: 0,
+              totalActualHours: 0,
+              completionRate: 0,
+            },
+            monthlyPerformance: tasksByMonth,
+          };
+        })
+      );
 
-    const overdueTasks = projects.reduce((sum, project) =>
-      sum + project.tasks.filter(task =>
-        task.due_date && new Date(task.due_date) < new Date() && task.status !== 'completed'
-      ).length, 0);
-
-    // Generate progress data for the last 7 days
-    const progressData = generateProgressData(projects);
-
-    // Send report data to the frontend
-    res.status(200).json({
-      stats: {
-        totalProjects,
-        activeProjects,
-        completedTasks,
-        overdueTasks,
-      },
-      projects,
-      progressData,
-    });
-  } catch (error) {
-    console.error('Error generating reports:', error);
-    res.status(500).json({ message: 'Failed to generate reports' });
-  }
+      res.json(consultantStats);
+    } catch (error) {
+      console.error("Error fetching consultant performance:", error);
+      res
+        .status(500)
+        .json({ message: "Error fetching consultant performance data" });
+    }
+  },
 };
 
-// Helper function to generate progress data
-function generateProgressData(projects) {
-  const data = [];
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);  // Ensure we work with 00:00 for date comparison
-
-  // Loop through the last 7 days
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
-    const dateString = date.toISOString().split('T')[0]; // Get date as YYYY-MM-DD
-
-    // Filter projects active during this date range
-    const relevantProjects = projects.filter(project => 
-      new Date(project.startDate) <= date && new Date(project.endDate) >= date
-    );
-
-    // Sum the progress of relevant projects
-    const totalProgress = relevantProjects.reduce((sum, project) => sum + (project.progress || 0), 0);
-    const averageProgress = relevantProjects.length > 0 ? totalProgress / relevantProjects.length : 0;
-
-    // Add data point for this day
-    data.push({
-      date: dateString,
-      progress: parseFloat(averageProgress.toFixed(2)),
-    });
-  }
-
-  return data;
-}
+module.exports = reportController;

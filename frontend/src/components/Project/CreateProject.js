@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import apiClient from '../../utils/apiClient'; 
-//import { UserContext } from '../../contexts/UserContext';
+import apiClient from '../../utils/apiClient';
 import { Plus, Minus, Upload, Calendar } from 'lucide-react';
-import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
-
-
+import { useTheme } from '../../contexts/ThemeContext';
+import './CreateProject.css';
 const CreateProject = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -18,12 +16,8 @@ const CreateProject = () => {
     wbsElement: '',
     tasks: [],
   });
-  const { isDarkMode, toggleDarkMode } = useTheme(); // Use the context
+  const { isDarkMode } = useTheme();
 
-  
-  // const [consultants, setConsultants] = useState([]);
-  // const [projectManagers, setProjectManagers] = useState([]);
-  // const [directors, setDirectors] = useState([]);
   const [users, setUsers] = useState({
     consultants: [],
     projectManagers: [],
@@ -31,19 +25,18 @@ const CreateProject = () => {
   });
   const [notification, setNotification] = useState('');
   const [projectDurationWeeks, setProjectDurationWeeks] = useState(0);
-  // const {getUser} = useContext(UserContext);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await apiClient.get('/users');
-        const { consultants, projectManagers, directors } = response.data;  // Ensure response is structured this way
+        const { consultants, projectManagers, directors } = response.data;
         setUsers({ consultants, projectManagers, directors });
       } catch (error) {
         console.error('Error fetching users:', error);
       }
     };
-  
+
     fetchUsers();
   }, []);
 
@@ -76,8 +69,6 @@ const CreateProject = () => {
     setFormData({ ...formData, tasks: newTasks });
   };
 
-  
-
   const addTask = () => {
     setFormData({
       ...formData,
@@ -92,8 +83,6 @@ const CreateProject = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Validate that all required project fields are filled
     if (!formData.name.trim()) {
       toast.error('Project name is required.');
       return;
@@ -110,27 +99,22 @@ const CreateProject = () => {
       toast.error('Director is required.');
       return;
     }
-  
-    // Filter out tasks that don't have a taskName
+
     const validTasks = formData.tasks.filter(task => task.taskName && task.taskName.trim() !== '');
-  
-    // Check if there are valid tasks
+
     if (validTasks.length === 0) {
       toast.error('Please add at least one task with a task name.');
       return;
     }
-  
-    // Prepare data to send
+
     const dataToSend = {
       ...formData,
       tasks: validTasks,
     };
-  
+
     try {
-      // Post the project along with valid tasks
       await apiClient.post('/projects', dataToSend);
-  
-      // Reset form data
+
       setFormData({
         name: '',
         startDate: '',
@@ -149,8 +133,6 @@ const CreateProject = () => {
       toast.error('Failed to create project.');
     }
   };
-  
-  
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -173,24 +155,16 @@ const CreateProject = () => {
   };
 
   return (
-    <div className={` mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
-    
-    <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-8"> 
-        <h2 className="text-3xl font-bold mb-8 text-black-600 text-center">Create New Project</h2>
-        {notification && (
-          <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-md">
-            {notification}
-          </div>
-        )}
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className={`create-project-page ${isDarkMode ? 'dark-mode' : ''}`}>
+      <div className="create-project-container">
+        <h2>Create New Project</h2>
+        {notification && <div className="notification">{notification}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="input-grid">
             <div>
-              <label htmlFor="wbsElement" className="block text-sm font-medium text-gray-700 mb-2">
-                WBS Element
-              </label>
+              <label htmlFor="wbsElement">WBS Element</label>
               <input
                 id="wbsElement"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 type="text"
                 name="wbsElement"
                 value={formData.wbsElement}
@@ -199,122 +173,96 @@ const CreateProject = () => {
               />
             </div>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                Project Name
-              </label>
+              <label htmlFor="name">Project Name</label>
               <input
                 id="name"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required
               />
-              </div>
-            </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <label htmlFor="project-manager" className="block text-sm font-medium text-gray-700 mb-2">
-                Project Manager
-              </label>
-              <select
-            name="projectManagerId"
-            value={formData.projectManagerId}
-            onChange={handleInputChange}
-            className="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            <option value="">Select Project Manager</option>
-            {users.projectManagers.map(pm => (
-              <option key={pm.id} value={pm.id}>
-                {pm.username}
-              </option>
-            ))}
-          </select>
-            </div>
-            <div>
-              <label htmlFor="director" className="block text-sm font-medium text-gray-700 mb-2">
-                Director
-              </label>
-              <select
-            name="directorId"
-            value={formData.directorId}
-            onChange={handleInputChange}
-            className="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            <option value="">Select Director</option>
-            {users.directors.map(director => (
-              <option key={director.id} value={director.id}>
-                {director.username}
-              </option>
-            ))}
-          </select>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="input-grid">
             <div>
-              <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">
-                Start Date
-              </label>
-              <div className="relative">
-                <input
-                  id="startDate"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
-                  type="date"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleInputChange}
-                  required
-                />
-                <Calendar className="absolute left-3 top-3 text-gray-400" size={20} />
-              </div>
+              <label htmlFor="projectManagerId">Project Manager</label>
+              <select
+                name="projectManagerId"
+                value={formData.projectManagerId}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Project Manager</option>
+                {users.projectManagers.map(pm => (
+                  <option key={pm.id} value={pm.id}>
+                    {pm.username}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
-              <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">
-                End Date
-              </label>
-              <div className="relative">
-                <input
-                  id="endDate"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
-                  type="date"
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleInputChange}
-                  required
-                />
-                <Calendar className="absolute left-3 top-3 text-gray-400" size={20} />
-              </div>
+              <label htmlFor="directorId">Director</label>
+              <select
+                name="directorId"
+                value={formData.directorId}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Director</option>
+                {users.directors.map(director => (
+                  <option key={director.id} value={director.id}>
+                    {director.username}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="input-grid">
+            <div>
+              <label htmlFor="startDate">Start Date</label>
+              <input
+                id="startDate"
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <div>
-              <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
-                Project Duration (Weeks)
-              </label>
+              <label htmlFor="endDate">End Date</label>
+              <input
+                id="endDate"
+                type="date"
+                name="endDate"
+                value={formData.endDate}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="duration">Project Duration (Weeks)</label>
               <input
                 id="duration"
-                className="w-full p-3 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
                 type="number"
                 value={projectDurationWeeks}
                 readOnly
               />
             </div>
           </div>
-          
 
-          <div className="mt-10">
-            <h3 className="text-2xl font-semibold mb-6 text-black-600 text-center">Tasks</h3>
+          <div className="task-section">
+            
             {formData.tasks.map((task, index) => (
-              <div key={index} className= {`  p-6 rounded-md mb-6 shadow-sm 4 ${isDarkMode ? 'bg-black-600 text-white' : 'bg-gray-50 text-gray-700'}`}>
-                <div className= "grid grid-cols-1 md:grid-cols-2 gap-6 mb"> 
+              <div key={index} className="task-card">
+                <div className="input-grid">
                   <div>
-                    <label htmlFor={`taskId-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
-                      Task ID
-                    </label>
+                    <label htmlFor={`taskId-${index}`}>Task ID</label>
                     <input
                       id={`taskId-${index}`}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       type="text"
                       value={task.taskId}
                       onChange={(e) => handleTaskChange(index, 'taskId', e.target.value)}
@@ -322,12 +270,9 @@ const CreateProject = () => {
                     />
                   </div>
                   <div>
-                    <label htmlFor={`taskName-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
-                      Task Name
-                    </label>
+                    <label htmlFor={`taskName-${index}`}>Task Name</label>
                     <input
                       id={`taskName-${index}`}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       type="text"
                       value={task.taskName}
                       onChange={(e) => handleTaskChange(index, 'taskName', e.target.value)}
@@ -335,79 +280,58 @@ const CreateProject = () => {
                     />
                   </div>
                 </div>
-                <div className="mb-4">
-                  <label htmlFor={`description-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
-                    Description
-                  </label>
+                <div>
+                  <label htmlFor={`description-${index}`}>Description</label>
                   <textarea
                     id={`description-${index}`}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={task.description}
                     onChange={(e) => handleTaskChange(index, 'description', e.target.value)}
                     rows="3"
                     required
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <div className="input-grid">
                   <div>
-                    <label htmlFor={`startDate-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
-                      Start Date
-                    </label>
-                    <div className="relative">
-                      <input
-                        id={`startDate-${index}`}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
-                        type="date"
-                        value={task.start_date}
-                        onChange={(e) => handleTaskChange(index, 'start_date', e.target.value)}
-                        required
-                      />
-                      <Calendar className="absolute left-3 top-3 text-gray-400" size={20} />
-                    </div>
+                    <label htmlFor={`startDate-${index}`}>Start Date</label>
+                    <input
+                      id={`startDate-${index}`}
+                      type="date"
+                      value={task.start_date}
+                      onChange={(e) => handleTaskChange(index, 'start_date', e.target.value)}
+                      required
+                    />
                   </div>
                   <div>
-                    <label htmlFor={`dueDate-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
-                      Due Date
-                    </label>
-                    <div className="relative">
-                      <input
-                        id={`dueDate-${index}`}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
-                        type="date"
-                        value={task.due_date}
-                        onChange={(e) => handleTaskChange(index, 'due_date', e.target.value)}
-                        required
-                      />
-                      <Calendar className="absolute left-3 top-3 text-gray-400" size={20} />
-                    </div>
+                    <label htmlFor={`dueDate-${index}`}>Due Date</label>
+                    <input
+                      id={`dueDate-${index}`}
+                      type="date"
+                      value={task.due_date}
+                      onChange={(e) => handleTaskChange(index, 'due_date', e.target.value)}
+                      required
+                    />
                   </div>
                 </div>
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <div className="input-grid">
                   <div>
-                    <label htmlFor={`consultant-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
-                      Assigned Consultant
-                    </label>
-                    <select 
-                    name="consultantId"
-                    value={task.assigned_to_user_id}
-                    onChange={(e) => handleTaskChange(index, 'assigned_to_user_id', e.target.value)}
-                    className="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    <label htmlFor={`consultant-${index}`}>Assigned Consultant</label>
+                    <select
+                      name="consultantId"
+                      value={task.assigned_to_user_id}
+                      onChange={(e) => handleTaskChange(index, 'assigned_to_user_id', e.target.value)}
                     >
-        <option value="">Select Consultant</option>
-        {users.consultants.map(consultant => (
-          <option key={consultant.id} value={consultant.id}>
-            {consultant.username}
-          </option>
-        ))}
-      </select>
+                      <option value="">Select Consultant</option>
+                      {users.consultants.map(consultant => (
+                        <option key={consultant.id} value={consultant.id}>
+                          {consultant.username}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
-                    <label htmlFor={`hours-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
-                      Allocated Hours
-                    </label>
+                    <label htmlFor={`hours-${index}`}>Allocated Hours</label>
                     <input
                       id={`hours-${index}`}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       type="number"
                       value={task.hours}
                       onChange={(e) => handleTaskChange(index, 'hours', e.target.value)}
@@ -417,52 +341,25 @@ const CreateProject = () => {
                 </div>
                 <button
                   type="button"
-                  className="mt-2 p-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300 flex items-center"
+                  className="remove-task-button"
                   onClick={() => removeTask(index)}
                 >
-                  <Minus size={20} className="mr-2" />
-                  Remove Task
+                  <Minus size={20} /> Remove Task
                 </button>
               </div>
             ))}
-            <button
-              type="button"
-              className="mb-6 p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300 flex items-center"
-              onClick={addTask}
-            >
-              <Plus size={20} className="mr-2" />
-              Add Task
-            </button>
+            
           </div>
 
-          <div className="flex justify-between items-center">
-            <button
-              type="submit"
-              className="px-8 py-4 bg-green-500 text-white rounded-md hover:bg-dark-green-600 transition duration-300 text-lg font-semibold"
-            >
-              Create Project
+          <div className="form-footer">
+          <button type="button" className="add-task-button" onClick={addTask}>
+              <Plus size={20} /> Add Task
             </button>
-            <div className="relative">
-              <input
-                type="file"
-                accept=".csv,.xlsx"
-                onChange={handleFileUpload}
-                className="hidden"
-                id="file-upload"
-              />
-              <label
-                htmlFor="file-upload"
-                className="cursor-pointer flex items-center px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-gray-600 transition duration-300"
-              >
-                <Upload size={20} className="mr-2" />
-                Upload File
-              </label>
-            </div>
+            <button type="submit" className="submit-button">Create Project</button>
           </div>
         </form>
       </div>
     </div>
-    
   );
 };
 

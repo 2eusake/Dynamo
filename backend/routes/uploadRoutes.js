@@ -1,27 +1,31 @@
+// routes/uploadRoutes.js
+
 const express = require('express');
+const router = express.Router();
 const multer = require('multer');
-const { processExcelFile } = require('../controllers/processExcelFile');
+const uploadController = require('../controllers/uploadController');
 const { authMiddleware } = require('../middlewares/authMiddleware');
 const { roleMiddleware } = require('../middlewares/roleMiddleware');
 
-const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
-
-router.post('/upload', authMiddleware, roleMiddleware(['Director', 'Project Manager']), upload.single('file'), async (req, res) => {
-    try {
-        const file = req.file;
-        if (!file) {
-            return res.status(400).send('No file uploaded.');
-        }
-
-        // Call processExcelFile to handle the uploaded file
-        await processExcelFile(file.path);
-
-        res.status(200).send('File uploaded and data saved successfully.');
-    } catch (error) {
-        console.error('Error uploading file:', error);
-        res.status(500).send('Server error');
-    }
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Ensure this directory exists
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
 });
+
+const upload = multer({ storage: storage });
+
+// Define the upload route
+router.post(
+  '/upload',
+  authMiddleware,
+  roleMiddleware(['Project Manager', 'Director']), // Adjust roles as needed
+  upload.single('file'),
+  uploadController.processUpload
+);
 
 module.exports = router;

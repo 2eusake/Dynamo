@@ -7,17 +7,16 @@ const NotificationPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulating an API call to fetch notifications
     const fetchNotifications = async () => {
       try {
         setLoading(true);
-        // Replace this with your actual API call
-        const response = await apiClient.get("/notifications", {
+        const userId = localStorage.getItem("userId"); // Ensure you have userId stored
+        const response = await apiClient.get(`/notifications/${userId}/all`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        const data = await response.json();
+        const data = response.data; // Assuming apiClient handles JSON parsing
         setNotifications(data);
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -31,9 +30,7 @@ const NotificationPage = () => {
 
   const handleMarkAsRead = async (id) => {
     try {
-      // Replace with your actual API endpoint
-      await apiClient.get(`/notifications/${id}/read`, {
-        method: "PATCH",
+      await apiClient.patch(`/notifications/${id}/read`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -50,9 +47,7 @@ const NotificationPage = () => {
 
   const handleDelete = async (id) => {
     try {
-      // Replace with your actual API endpoint
       await apiClient.delete(`/notifications/${id}`, {
-        method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -98,7 +93,7 @@ const NotificationPage = () => {
                 {getIconForType(notification.type)}
               </span>
               <div className="notification-content">
-                <h3>{notification.title}</h3>
+                <h3>{getIconForType(notification.type)}</h3>
                 <p>{notification.message}</p>
               </div>
               <div className="notification-actions">

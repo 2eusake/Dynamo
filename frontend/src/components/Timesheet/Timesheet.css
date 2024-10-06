@@ -1,0 +1,157 @@
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.breadcrumb {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.breadcrumb a {
+    color: #007a33; /* Deloitte green */
+    text-decoration: none;
+    transition: text-decoration 0.2s ease;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    font-size: 28px;
+    color: #000000; /* Deloitte black */
+    margin-bottom: 30px;
+    /* Removed the bottom border */
+    padding-bottom: 15px;
+    margin-top: 50px;
+}
+
+.assignment-info {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 30px; /* Increased space between sections */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Enhanced shadow for better depth */
+}
+
+.assignment-info h2 {
+    font-size: 20px; /* Slightly larger for importance */
+    color: #007a33; /* Deloitte green */
+    margin-bottom: 20px;
+}
+
+.assignment-info p {
+    margin-bottom: 15px; /* More spacing between paragraphs */
+}
+
+.instructions {
+    background-color: #f0f0f0;
+    border-left: 4px solid #007a33; /* Deloitte green */
+    padding: 20px; /* Increased padding for breathing room */
+    margin-bottom: 30px;
+}
+
+.instructions h3 {
+    color: #000000; /* Deloitte black */
+    margin-bottom: 15px;
+}
+
+.deadline {
+    font-weight: bold;
+    color: #007a33; /* Deloitte green */
+}
+
+.button-group {
+    margin-top: 30px; /* Increased margin to separate buttons from content */
+    display: flex;
+    flex-wrap: wrap; /* Ensure buttons wrap on smaller screens */
+    gap: 10px; /* Consistent gap between buttons */
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.button-primary {
+    background-color: #007a33; /* Deloitte green */
+    color: #ffffff;
+}
+
+.button-primary:hover {
+    background-color: #005a24; /* Darker Deloitte green */
+}
+
+.button-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    margin-left: 10px;
+}
+
+.button-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+.hide-info {
+    color: #007a33; /* Deloitte green */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.hide-info::before {
+    content: '▼';
+    margin-right: 5px;
+    transition: transform 0.3s;
+}
+
+.hide-info.collapsed::before {
+    transform: rotate(-90deg);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 10px;
+    }
+    
+    h1 {
+        font-size: 24px;
+        margin-top: 30px;
+    }
+    
+    .assignment-info {
+        padding: 15px;
+    }
+    
+    .instructions {
+        padding: 15px;
+    }
+    
+    .button {
+        width: 100%; /* Full-width buttons on smaller screens */
+        margin-bottom: 10px;
+    }
+}
+

@@ -136,92 +136,110 @@ const createProject = async (req, res) => {
 
 const getProjectById = async (req, res) => {
   try {
-    const project = await Project.findOne({
-      where: { id: req.params.id, userId: req.user.id },
+    const project = await Project.findByPk(req.params.id, {
       include: [
         {
           model: Task,
           as: 'tasks',
+          include: [
+            {
+              model: User,
+              as: 'assignedToUser',
+              attributes: ['id', 'username'],
+            },
+          ],
         },
         {
           model: User,
-          as: 'projectManager',  // Alias for project manager
-          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
+          as: 'projectManager',
+          attributes: ['id', 'username'],
         },
         {
           model: User,
-          as: 'projectDirector',  // Alias for director
-          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
-        }
+          as: 'projectDirector',
+          attributes: ['id', 'username'],
+        },
       ],
     });
-    if (!project) return res.status(404).json({ message: "Project not found" });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found.' });
+    }
+
     res.json(project);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching project", error: error.message });
+    console.error('Error fetching project:', error);
+    res.status(500).json({ message: 'Error fetching project.' });
   }
 };
+
 
 const updateProject = async (req, res) => {
   const {
     wbsElement,
     name,
-    description,
     startDate,
     endDate,
-    duration,
     status,
     projectManagerId,
     directorId,
-    tasks,
   } = req.body;
   const transaction = await sequelize.transaction();
   try {
-    const project = await Project.findOne({
-      where: { id: req.params.id, userId: req.user.id },
-    });
+    const project = await Project.findByPk(req.params.id);
     if (!project) return res.status(404).json({ message: "Project not found" });
 
     project.wbsElement = wbsElement || project.wbsElement;
     project.name = name || project.name;
-    project.description = description || project.description;
     project.startDate = startDate || project.startDate;
     project.endDate = endDate || project.endDate;
-    project.duration = duration || project.duration;
     project.status = status || project.status;
     project.projectManagerId = projectManagerId || project.projectManagerId;
     project.directorId = directorId || project.directorId;
-    await project.save({ transaction });
 
-    if (tasks && tasks.length) {
-      await Task.destroy({ where: { project_id: project.id }, transaction });
-      const taskPromises = tasks.map((task) =>
-        Task.create(
-          {
-            taskId: task.taskId,
-            taskName: task.taskName,
-            description: task.description,
-            start_date: task.start_date,
-            due_date: task.due_date,
-            hours: task.hours,
-            assigned_to_user_id: task.assigned_to_user_id,
-            project_id: project.id,
-          },
-          { transaction }
-        )
-      );
-      await Promise.all(taskPromises);
+    // Recalculate duration if dates changed
+    if (startDate || endDate) {
+      if (project.startDate && project.endDate) {
+        const duration = calculateDuration(project.startDate, project.endDate);
+        project.duration = duration;
+      }
     }
 
+    await project.save({ transaction });
+
     await transaction.commit();
-    res.json(project);
+
+    // Fetch the updated project with associations
+    const updatedProject = await Project.findByPk(req.params.id, {
+      include: [
+        {
+          model: Task,
+          as: 'tasks',
+          include: [
+            {
+              model: User,
+              as: 'assignedToUser',
+              attributes: ['id', 'username'],
+            },
+          ],
+        },
+        {
+          model: User,
+          as: 'projectManager',
+          attributes: ['id', 'username'],
+        },
+        {
+          model: User,
+          as: 'projectDirector',
+          attributes: ['id', 'username'],
+        },
+      ],
+    });
+
+    res.json(updatedProject);
   } catch (error) {
     await transaction.rollback();
-    res
-      .status(500)
-      .json({ message: "Error updating project", error: error.message });
+    res.status(500).json({ message: "Error updating project", error: error.message });
   }
 };
 
@@ -239,6 +257,13 @@ const deleteProject = async (req, res) => {
       .json({ message: "Error deleting project", error: error.message });
   }
 };
+const calculateDuration = (startDate, endDate) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const diffTime = end - start;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays >= 0 ? diffDays : null;
+};
 
 module.exports = {
   getProjects,
@@ -247,4 +272,5 @@ module.exports = {
   getProjectById,
   updateProject,
   deleteProject,
+  calculateDuration,
 };

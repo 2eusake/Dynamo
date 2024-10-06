@@ -1,6 +1,7 @@
+
 import React, { useContext, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Correct import
-import { AuthProvider, AuthContext } from "./contexts/AuthContext"; // AuthProvider
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider, AuthContext } from "./contexts/AuthContext";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 import Dashboard from "./components/Dashboard/RoleBasedDashboard";
@@ -20,12 +21,13 @@ import "./tailwind.css";
 import Settings from "./components/Settings/SettingsPage";
 import EditProfilePage from "./components/Settings/EditProfilePage";
 import ResetPasswordPage from "./components/Settings/ResetPasswordPage";
-import { UserProvider } from "./contexts/UserContext"; // Ensure correct path
+import { UserProvider } from "./contexts/UserContext"; 
 import Spinner from "./components/Common/Spinner";
 import "./App.css";
-import Layout from "./components/Layout"; // Import the Layout component
+import Layout from "./components/Layout";
 import NotificationsPage from "./components/Notification/Notification";
-import ExcelImport from "./components/Timesheet.js/ImportExcel";
+import Timesheet from "./components/Timesheet/Timesheet";
+import TeamsPage from "./components/Teams/TeamsPage"; // Import the TeamsPage component
 
 const App = () => {
   return (
@@ -251,7 +253,25 @@ const App = () => {
                             <ProtectedRoute
                               element={
                                 <Layout>
-                                  <ExcelImport />
+                                  <Timesheet />
+                                </Layout>
+                              }
+                              allowedRoles={[
+                                "Director",
+                                "Project Manager",
+                                "Consultant",
+                              ]}
+                            />
+                          }
+                        />
+                        
+                        <Route
+                          path="/teams"
+                          element={
+                            <ProtectedRoute
+                              element={
+                                <Layout>
+                                  <TeamsPage />
                                 </Layout>
                               }
                               allowedRoles={[
