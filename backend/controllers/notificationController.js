@@ -64,6 +64,15 @@ const generateNotifications = async (req, res) => {
     });
 
     tasks.forEach((task) => {
+      // Task assigned notification for consultants
+      if (task.assigned_to_user_id && task.assigned_to_user_id === userId) {
+        notifications.push({
+          userId: task.assigned_to_user_id, // Consultant's userId
+          type: "info",
+          message: `You have been assigned the task "${task.taskName}" in project "${task.Project.name}".`,
+        });
+      }
+
       if (task.start_date && daysUntil(task.start_date) === 0) {
         notifications.push({
           userId,
@@ -101,7 +110,7 @@ const generateNotifications = async (req, res) => {
       }
     });
 
-    // Save notifications to database
+    // Save notifications to the database
     await Notification.bulkCreate(notifications);
 
     res.json(notifications);
