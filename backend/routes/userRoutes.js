@@ -1,6 +1,6 @@
-const express = require('express');
-const { resetPasswordLimiter } = require('../middlewares/rateLimiter');
-const { body } = require('express-validator');
+const express = require("express");
+const { resetPasswordLimiter } = require("../middlewares/rateLimiter");
+const { body } = require("express-validator");
 const {
   registerUser,
   loginUser,
@@ -12,9 +12,13 @@ const {
   filterUsers,
   resetPassword,
   updateUserProfile,
-} = require('../controllers/userController');
-const { authMiddleware } = require('../middlewares/authMiddleware');
-const { roleMiddleware } = require('../middlewares/roleMiddleware');
+  getAllProjectManagers,
+  getAllConsultants,
+  getProjectManager,
+  getConsultant,
+} = require("../controllers/userController");
+const { authMiddleware } = require("../middlewares/authMiddleware");
+const { roleMiddleware } = require("../middlewares/roleMiddleware");
 const router = express.Router();
 
 router.post('/register', registerUser);
@@ -26,21 +30,23 @@ router.get('/role/:role', authMiddleware, roleMiddleware(['Project Manager', 'Di
 router.get('/filter', authMiddleware, filterUsers);
 router.put('/password', authMiddleware, resetPassword);
 router.put(
-  '/password',
+  "/password",
   resetPasswordLimiter,
   authMiddleware,
   [
-    body('currentPassword').notEmpty().withMessage('Current password is required'),
-    body('newPassword')
+    body("currentPassword")
+      .notEmpty()
+      .withMessage("Current password is required"),
+    body("newPassword")
       .isLength({ min: 8 })
-      .withMessage('New password must be at least 8 characters long'),
-    body('confirmPassword')
+      .withMessage("New password must be at least 8 characters long"),
+    body("confirmPassword")
       .custom((value, { req }) => value === req.body.newPassword)
-      .withMessage('Passwords do not match'),
+      .withMessage("Passwords do not match"),
   ],
   resetPassword
 );
-router.post('/refresh', refreshToken);
-router.post('/logout', logoutUser);
+router.post("/refresh", refreshToken);
+router.post("/logout", logoutUser);
 
 module.exports = router;
