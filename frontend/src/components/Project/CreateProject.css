@@ -1,0 +1,120 @@
+.create-project-page {
+    padding: 20px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+  }
+  
+  h2 {
+    font-size: 28px;
+    color: #1A1A1A;
+    font-weight: 700;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  
+  label {
+    font-weight: bold;
+    color: #1A1A1A; /* Deloitte green */
+  }
+  
+  input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-bottom: 15px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  input:focus, select:focus, textarea:focus {
+    border-color: #007A33; /* Deloitte green */
+  }
+  
+  textarea {
+    resize: vertical;
+  }
+  
+  .notification {
+    margin-bottom: 20px;
+    color: #28a745;
+    background-color: #d4edda;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .task-section {
+    margin-top: 30px;
+  }
+  
+  .task-card {
+    background-color: #fff;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .task-card:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .add-task-button, .remove-task-button, .submit-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #007A33; /* Deloitte green */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .remove-task-button {
+    background-color: #dc3545;
+  }
+  
+  .add-task-button:hover, .remove-task-button:hover, .submit-button:hover {
+    background-color: #005a24; /* Darker Deloitte green */
+  }
+  
+  .form-footer {
+    display: flex;
+    justify-content: space-between; /* Aligns the button to the right */
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  
+  .file-upload-wrapper {
+    position: relative;
+  }
+  
+  .file-input {
+    display: none;
+  }
+  
+  .file-upload-label {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #007A33; /* Deloitte green */
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .file-upload-label:hover {
+    background-color: #005a24;
+  }
+  

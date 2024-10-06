@@ -1,0 +1,161 @@
+/* General page styling */
+.reports-page {
+  padding: 20px;
+  font-family: 'Deloitte', sans-serif; /* Matching the font from the login page */
+  background-color: #f9f9f9; /* Light background */
+  min-height: 100vh; /* Full page height */
+}
+
+/* Reports header */
+.reports-h1 {
+  color: #007a33;
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  font-weight: bold;
+  font-family: 'Deloitte', sans-serif; /* Font from login page */
+}
+
+.reports-h2 {
+  color: #000000;
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  font-weight: bold;
+  font-family: 'Deloitte', sans-serif; /* Font from login page */
+}
+
+/* Link styling */
+.reports-link, a {
+  text-decoration: none;
+  color: inherit;
+  font-family: 'Deloitte', sans-serif; /* Font from login page */
+}
+
+/* Summary tiles layout */
+.summary-tiles {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* Individual summary tile styling */
+.summary-tile {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  flex: 1;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Deloitte', sans-serif; /* Font from login page */
+}
+
+.summary-tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.summary-tile h2 {
+  font-size: 1.4rem;
+  color: #002776;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.summary-tile p {
+  font-size: 2rem;
+  color: #007a33;
+  font-weight: bold;
+}
+
+/* Container for multiple tiles */
+.tiles-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between; /* Distribute tiles evenly */
+}
+
+/* Tile styling for detailed cards */
+.tile {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  width: calc(33% - 20px); /* Flexible width to fit multiple tiles per row */
+  font-family: 'Deloitte', sans-serif; /* Font from login page */
+}
+
+.tile:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.tile p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Progress bar container */
+.progress-bar {
+  background-color: #e6e6e6;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 20px;
+  margin-top: 10px;
+}
+
+.progress {
+  background-color: #007a33; /* Deloitte green */
+  height: 100%;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  transition: width 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+/* Notifications */
+.notification {
+  background-color: #ffe066;
+  color: #333;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-family: 'Deloitte', sans-serif; /* Font from login page */
+}
+
+/* Task tile for detailed tasks */
+.task-tile {
+  background-color: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Deloitte', sans-serif; /* Font from login page */
+}
+
+.task-tile h3 {
+  font-size: 1.2rem;
+  color: #007a33;
+  margin-bottom: 10px;
+}
+
+.task-tile p {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* Small text styling */
+.small-text {
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 5px;
+  text-align: right;
+  font-family: 'Deloitte', sans-serif; /* Font from login page */
+}

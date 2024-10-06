@@ -1,46 +1,181 @@
-const Task = require('../models/Task');
+const { Task, User } = require('../models');
 
+
+// Get all tasks assigned to the user (or all tasks if director)
 const getTasks = async (req, res) => {
-    const tasks = await Task.find({ consultantId: req.user.id });
+  try {
+    const condition = req.user.role === 'Director' ? {} : { assigned_to_user_id: req.user.id };
+    const tasks = await Task.findAll({
+      where: condition,
+      include: [
+        {
+          model: User,
+          as: 'assignedToUser',
+          attributes: ['id', 'username'], // Adjust attributes as needed
+        },
+      ],
+    });
     res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching tasks', error: error.message });
+  }
 };
 
+// Get all tasks for a specific project (restricted based on role)
+const getTasksByProject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    let tasks = await Task.findAll({
+      where: { project_id: projectId },
+      include: [
+        {
+          model: User,
+          as: 'assignedToUser',
+          attributes: ['id', 'username'],
+        },
+      ],
+    });
+    if (req.user.role !== 'Director') {
+      tasks = tasks.filter(task => task.assigned_to_user_id === req.user.id);
+    }
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching tasks for the project', error: error.message });
+  }
+};
+
+
+// Create a new task (only accessible to project managers and directors)
 const createTask = async (req, res) => {
-    const { name, description, projectId } = req.body;
-    const task = new Task({ name, description, projectId, consultantId: req.user.id });
-    await task.save();
+  if (req.user.role !== 'Project Manager' && req.user.role !== 'Director') {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  try {
+    // Destructure from the request body
+    const { taskId, taskName, description, project_id, start_date, due_date, hours } = req.body;
+
+    // Ensure task name is provided
+    if (!taskName) {
+      return res.status(400).json({ message: 'Task name is required' });
+    }
+
+    // Create the task
+    const task = await Task.create({
+      taskId,
+      taskName,
+      description,
+      project_id,
+      start_date,
+      due_date,
+      hours,
+      assigned_to_user_id: req.user.id,
+      status: 'pending', // Default status
+    });
+
+    console.log('Request body:', req.body); // Add this to log the incoming task data
+
+
+    // Return the created task as a response
     res.status(201).json(task);
+
+  } catch (error) {
+    // Return an error if something goes wrong
+    res.status(500).json({ message: 'Error creating task', error: error.message });
+  }
 };
 
+
+// Get a task by ID (restricted based on role)
 const getTaskById = async (req, res) => {
-    const task = await Task.findById(req.params.id);
-    if (!task) return res.status(404).json({ message: 'Task not found' });
+  try {
+    const task = await Task.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          as: 'assignedToUser',
+          attributes: ['id', 'username'],
+        },
+      ],
+    });
+    if (!task || (req.user.role !== 'Director' && task.assigned_to_user_id !== req.user.id)) {
+      return res.status(404).json({ message: 'Task not found or access denied' });
+    }
     res.json(task);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching task', error: error.message });
+  }
 };
 
+// Update a task (restricted to task assignee, project manager, or director)
 const updateTask = async (req, res) => {
-    const { name, description } = req.body;
-    const task = await Task.findById(req.params.id);
-    if (!task) return res.status(404).json({ message: 'Task not found' });
-    
-    task.name = name || task.name;
-    task.description = description || task.description;
-    await task.save();
-    res.json(task);
+  try {
+    const task = await Task.findByPk(req.params.id);
+    if (!task || (req.user.role !== 'Director' && task.assigned_to_user_id !== req.user.id)) {
+      return res.status(404).json({ message: 'Task not found or access denied' });
+    }
+
+    const {
+      taskName,
+      description,
+      status,
+      start_date,
+      due_date,
+      hours,
+      actualHours,
+      assigned_to_user_id,
+    } = req.body;
+
+    await task.update({
+      taskName,
+      description,
+      status,
+      start_date,
+      due_date,
+      hours,
+      actualHours,
+      assigned_to_user_id,
+    });
+
+    // Include the assigned user in the response
+    const updatedTask = await Task.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          as: 'assignedToUser',
+          attributes: ['id', 'username'],
+        },
+      ],
+    });
+
+    res.json(updatedTask);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating task', error: error.message });
+  }
 };
 
+
+// Delete a task (restricted to project manager or director)
 const deleteTask = async (req, res) => {
-    const task = await Task.findById(req.params.id);
+  if (req.user.role !== 'Project Manager' && req.user.role !== 'Director') {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  try {
+    const task = await Task.findByPk(req.params.id);
     if (!task) return res.status(404).json({ message: 'Task not found' });
-    
-    await task.remove();
-    res.json({ message: 'Task removed' });
+    await task.destroy();
+    res.json({ message: 'Task removed successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting task', error: error.message });
+  }
 };
 
 module.exports = {
-    getTasks,
-    createTask,
-    getTaskById,
-    updateTask,
-    deleteTask,
+  getTasks,
+  createTask,
+  getTaskById,
+  updateTask,
+  deleteTask,
+  getTasksByProject,
 };

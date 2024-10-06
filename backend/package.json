@@ -10,15 +10,28 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@radix-ui/react-progress": "^1.1.0",
+    "@radix-ui/react-select": "^2.1.2",
+    "@radix-ui/react-tabs": "^1.1.1",
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
+    "bufferlist": "^0.1.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.4.1",
+    "express-validator": "^7.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.4",
-    "mysql2": "^3.10.2",
-    "sequelize": "^6.37.3"
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.11.3",
+    "nodemailer": "^6.9.15",
+    "readable-stream": "^4.5.2",
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2",
+    "xlsx": "^0.18.5"
   },
-  "devDependencies": {},
   "description": ""
 }
