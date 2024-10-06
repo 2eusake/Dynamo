@@ -9,6 +9,7 @@ const {
   getUserProfile,
   refreshToken,
   logoutUser,
+  filterUsers,
   resetPassword,
   updateUserProfile,
   getAllProjectManagers,
@@ -20,23 +21,14 @@ const { authMiddleware } = require("../middlewares/authMiddleware");
 const { roleMiddleware } = require("../middlewares/roleMiddleware");
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.get("/profile", authMiddleware, getUserProfile);
-router.put("/profile", authMiddleware, updateUserProfile);
-router.get(
-  "/",
-  authMiddleware,
-  roleMiddleware(["Project Manager", "Director"]),
-  getAllUsers
-);
-router.get(
-  "/role/:role",
-  authMiddleware,
-  roleMiddleware(["Project Manager", "Director"]),
-  getUsersByRole
-);
-router.put("/password", authMiddleware, resetPassword);
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.get('/profile', authMiddleware, getUserProfile);
+router.put('/profile', authMiddleware, updateUserProfile);
+router.get('/', authMiddleware, roleMiddleware(['Project Manager', 'Director']), getAllUsers);
+router.get('/role/:role', authMiddleware, roleMiddleware(['Project Manager', 'Director']), getUsersByRole);
+router.get('/filter', authMiddleware, filterUsers);
+router.put('/password', authMiddleware, resetPassword);
 router.put(
   "/password",
   resetPasswordLimiter,
