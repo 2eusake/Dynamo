@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { TbRuler2Off } = require('react-icons/tb');
+
 
 
 const generateTokens = (user) => {
@@ -175,6 +175,21 @@ const getAllUsers = async (req, res) => {
 //   }
 // };
 
+const getUsersByRole = async (req, res) => {
+  const { role } = req.params;
+  try {
+    const users = await User.findAll({
+      where: { role },
+      attributes: ['id', 'username'],
+      order: [['username', 'ASC']],
+    });
+    res.json(users);
+  } catch (error) {
+    console.error(`Error fetching users with role ${role}:`, error);
+    res.status(500).json({ message: `Error fetching users with role ${role}`, error: error.message });
+  }
+};
+
 // Get user profile (open to the logged-in user)
 const getUserProfile = async (req, res) => {
   try {
@@ -209,6 +224,7 @@ module.exports = {
   refreshToken,
   logoutUser,
   getAllUsers,
+  getUsersByRole,
   getUserProfile,
   updateUserProfile,
 };

@@ -4,7 +4,7 @@ import apiClient from "../../utils/apiClient";
 import { AuthContext } from "../../contexts/AuthContext";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Button } from "../Task/UIComp";
+import { Button } from "../UIComp";
 import { ProjectContext } from "../../contexts/ProjectContext";
 import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
 

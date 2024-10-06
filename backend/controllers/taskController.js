@@ -1,4 +1,5 @@
-const Task = require('../models/Task');
+const { Task, User } = require('../models');
+
 
 // Get all tasks assigned to the user (or all tasks if director)
 const getTasks = async (req, res) => {
@@ -114,13 +115,45 @@ const updateTask = async (req, res) => {
       return res.status(404).json({ message: 'Task not found or access denied' });
     }
 
-    const { taskName, description, status, start_date, due_date } = req.body;
-    await task.update({ taskName, description, status, start_date, due_date, hours,actualHours });
-    res.json(task);
+    const {
+      taskName,
+      description,
+      status,
+      start_date,
+      due_date,
+      hours,
+      actualHours,
+      assigned_to_user_id,
+    } = req.body;
+
+    await task.update({
+      taskName,
+      description,
+      status,
+      start_date,
+      due_date,
+      hours,
+      actualHours,
+      assigned_to_user_id,
+    });
+
+    // Include the assigned user in the response
+    const updatedTask = await Task.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          as: 'assignedToUser',
+          attributes: ['id', 'username'],
+        },
+      ],
+    });
+
+    res.json(updatedTask);
   } catch (error) {
     res.status(500).json({ message: 'Error updating task', error: error.message });
   }
 };
+
 
 // Delete a task (restricted to project manager or director)
 const deleteTask = async (req, res) => {

@@ -4,7 +4,7 @@ import { UserCircle } from 'lucide-react';
 import 'react-toastify/dist/ReactToastify.css';
 import { TaskContext } from '../../contexts/TaskContext';
 import { Link } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardContent, Button } from './UIComp';
+import { Card, CardHeader, CardTitle, CardContent, Button } from '../UIComp';
 import './TasksPage.css';  
 import { useTheme } from '../../contexts/ThemeContext';
 
