@@ -37,6 +37,12 @@ h1 {
     margin-top: 50px;
 }
 
+.underline-green {
+    border-bottom: 3px solid #007A33; /* Green underline */
+    padding-bottom: 5px;
+    display: inline-block; /* Ensure underline only affects the text */
+  }
+  
 .assignment-info {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;

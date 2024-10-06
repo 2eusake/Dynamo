@@ -44,15 +44,7 @@ const SettingsPage = () => {
     { icon: Settings, title: 'Edit profile', description: 'Change your avatar, email, and username', section: 'Profile', path: '/settings/edit-profile' },
     { icon: Key, title: 'Reset password', description: 'Change your password', section: 'Account', path: '/settings/reset-password' },
     { icon: Sun, title: 'Appearance', description: `Turn ${isDarkMode ? 'off' : 'on'} dark mode`, section: 'Account', onClick: toggleDarkMode },
-    {
-      icon: Bell,
-      title: 'Notifications',
-      description: `${notificationsEnabled ? 'Disable' : 'Enable'} notifications`,
-      section: 'Account',
-      onClick: handleNotificationsToggle,
-      toggle: true,
-      isToggled: notificationsEnabled,
-    },
+   
   ];
 
   const SettingsOption = ({ icon: Icon, title, description, onClick, path, toggle, isToggled }) => (
@@ -86,7 +78,7 @@ const SettingsPage = () => {
   return (
     <div className={`max-w-2xl mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <header className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Settings</h1>
+        <h1 className="text-2xl font-bold mb-6 underline-green">Settings</h1>
       </header>
 
       {/* Display loading spinner if preferences are being updated */}

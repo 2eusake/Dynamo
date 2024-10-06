@@ -25,7 +25,6 @@ import { UserProvider } from "./contexts/UserContext";
 import Spinner from "./components/Common/Spinner";
 import "./App.css";
 import Layout from "./components/Layout";
-import NotificationsPage from "./components/Notification/Notification";
 import Timesheet from "./components/Timesheet/Timesheet";
 import TeamsPage from "./components/Teams/TeamsPage"; // Import the TeamsPage component
 
@@ -230,23 +229,7 @@ const App = () => {
                             />
                           }
                         />
-                        <Route
-                          path="/notification"
-                          element={
-                            <ProtectedRoute
-                              element={
-                                <Layout>
-                                  <NotificationsPage />
-                                </Layout>
-                              }
-                              allowedRoles={[
-                                "Director",
-                                "Project Manager",
-                                "Consultant",
-                              ]}
-                            />
-                          }
-                        />
+                        
                         <Route
                           path="/timesheet"
                           element={

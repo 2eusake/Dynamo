@@ -139,8 +139,45 @@ const TeamsPage = () => {
                     )}
                 </CardContent>
             </Card>
+        {/* <div className="teams-page">
+            <h1 className="text-3xl font-bold mb-6 underline-green">Teams</h1>
+            <div className="controls">
+                <label htmlFor="role-filter">Filter by Role: </label>
+                <select id="role-filter" value={filteredRole} onChange={handleFilterChange}>
+                    <option value="">All</option>
+                    <option value="Project Manager">Project Manager</option>
+                    <option value="Consultant">Consultant</option>
+                    <option value="Director">Director</option>
+                </select>
+            </div>
+
+            <div className="employee-count">
+                <strong>Total Employees: {employee.length}</strong>
+            </div>
+
+            <table className="team-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {employee.map((employee) => (
+                        <tr key={employee.id}>
+                            <td>{employee.name}</td>
+                            <td>{employee.email}</td>
+                            <td>{employee.role}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+        </div> */}
         </div>
     );
 };
+
 
 export default TeamsPage;
