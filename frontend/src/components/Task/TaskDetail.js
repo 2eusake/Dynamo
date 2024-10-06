@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+// src/components/TaskDetailsPage.js
+
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { TaskContext } from "../../contexts/TaskContext";
-import { UserContext } from "../../contexts/UserContext";
+import apiClient from "../../utils/apiClient";
 import {
   Card,
   CardHeader,
@@ -10,7 +11,7 @@ import {
   Button,
   Input,
   Textarea,
-} from "./UIComp";
+} from "../UIComp";
 import {
   UserCircle,
   Calendar,
@@ -23,26 +24,48 @@ import {
 
 const TaskDetailsPage = () => {
   const { taskId } = useParams();
-  const { tasks, updateTask } = useContext(TaskContext);
-  const { getUser } = useContext(UserContext);
   const [task, setTask] = useState(null);
+  const [project, setProject] = useState(null); // State to hold project data
   const [assignedUser, setAssignedUser] = useState(null);
+  const [consultants, setConsultants] = useState([]); // Consultants state
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState(null);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    const foundTask = tasks.find((t) => t.id && t.id.toString() === taskId);
-    setTask(foundTask);
-    setEditedTask(foundTask);
+    const fetchTaskDetails = async () => {
+      try {
+        const response = await apiClient.get(`/tasks/${taskId}`);
+        const fetchedTask = response.data;
+        setTask(fetchedTask);
+        setEditedTask(fetchedTask);
+        setAssignedUser(fetchedTask.assignedToUser);
+        
+        // Fetch associated project to get WBS Element
+        if (fetchedTask.project_id) {
+          const projectResponse = await apiClient.get(`/projects/${fetchedTask.project_id}`);
+          setProject(projectResponse.data);
+        } else {
+          setProject(null);
+        }
+      } catch (error) {
+        console.error("Error fetching task details:", error);
+      }
+    };
 
-    if (foundTask && foundTask.assigned_to_user_id) {
-      getUser(foundTask.assigned_to_user_id).then((user) =>
-        setAssignedUser(user)
-      );
-    }
-  }, [taskId, tasks, getUser]);
+    const fetchConsultants = async () => {
+      try {
+        const response = await apiClient.get(`/users/role/Consultant`);
+        setConsultants(response.data);
+      } catch (error) {
+        console.error("Error fetching consultants:", error);
+      }
+    };
+
+    fetchTaskDetails();
+    fetchConsultants();
+  }, [taskId]);
 
   if (!task) {
     return (
@@ -62,6 +85,7 @@ const TaskDetailsPage = () => {
     );
   }
 
+  // Calculate progress
   const progress =
     task.actualHours && task.hours
       ? Math.min(100, Math.round((task.actualHours / task.hours) * 100))
@@ -71,6 +95,7 @@ const TaskDetailsPage = () => {
     "In Progress": "bg-yellow-500",
     Completed: "bg-green-500",
     "Not Started": "bg-red-500",
+    Pending: "bg-orange-500",
     default: "bg-gray-500",
   };
 
@@ -84,20 +109,30 @@ const TaskDetailsPage = () => {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
-    updateTask(editedTask);
-    setTask(editedTask);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      const updateData = {
+        ...editedTask,
+        status: editedTask.status, // Ensure status is included
+      };
+      const response = await apiClient.put(`/tasks/${taskId}`, updateData);
+      setTask(response.data);
+      setAssignedUser(response.data.assignedToUser);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating task:", error);
+      // Optionally, set an error state here to display to the user
+    }
   };
 
   const handleChange = (e) => {
-    setEditedTask({ ...editedTask, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setEditedTask({ ...editedTask, [name]: value });
   };
 
-  const handleStatusChange = (newStatus) => {
-    const updatedTask = { ...task, status: newStatus };
-    updateTask(updatedTask);
-    setTask(updatedTask);
+  const handleStatusChange = (e) => {
+    const newStatus = e.target.value;
+    setEditedTask({ ...editedTask, status: newStatus });
   };
 
   const handleCommentSubmit = () => {
@@ -113,8 +148,14 @@ const TaskDetailsPage = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString();
+  };
+
   return (
     <div className="container mx-auto p-4">
+      {/* Back to Tasks Link */}
       <Link
         to="/tasks"
         className="text-blue-500 hover:underline mb-4 inline-block"
@@ -150,7 +191,9 @@ const TaskDetailsPage = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Left Column */}
             <div className="space-y-4">
+              {/* Description */}
               <div className="flex items-start">
                 <FileText className="mr-2 text-gray-500 mt-1" />
                 <div>
@@ -169,6 +212,7 @@ const TaskDetailsPage = () => {
                   )}
                 </div>
               </div>
+              {/* Start Date */}
               <div className="flex items-center">
                 <Calendar className="mr-2 text-gray-500" />
                 <span className="font-semibold">Start Date:</span>
@@ -176,14 +220,15 @@ const TaskDetailsPage = () => {
                   <Input
                     type="date"
                     name="start_date"
-                    value={editedTask.start_date}
+                    value={editedTask.start_date ? editedTask.start_date.split('T')[0] : ""}
                     onChange={handleChange}
                     className="ml-2"
                   />
                 ) : (
-                  <span className="ml-2">{task.start_date || "N/A"}</span>
+                  <span className="ml-2">{formatDate(task.start_date)}</span>
                 )}
               </div>
+              {/* Due Date */}
               <div className="flex items-center">
                 <Calendar className="mr-2 text-gray-500" />
                 <span className="font-semibold">Due Date:</span>
@@ -191,31 +236,26 @@ const TaskDetailsPage = () => {
                   <Input
                     type="date"
                     name="due_date"
-                    value={editedTask.due_date}
-                    onChange={handleChange}
+                    value={editedTask.due_date ? editedTask.due_date.split('T')[0] : ""}
+                    onChange={(e) =>
+                      setEditedTask({ ...editedTask, due_date: e.target.value })
+                    }
                     className="ml-2"
                   />
                 ) : (
-                  <span className="ml-2">
-                    {task.due_date
-                      ? new Date(task.due_date).toLocaleDateString()
-                      : "N/A"}
-                  </span>
+                  <span className="ml-2">{formatDate(task.due_date)}</span>
                 )}
               </div>
               {daysUntilDue !== null && (
                 <div className="text-sm italic">
                   {daysUntilDue > 0
-                    ? `${daysUntilDue} day${
-                        daysUntilDue !== 1 ? "s" : ""
-                      } left until due date`
+                    ? `${daysUntilDue} day${daysUntilDue !== 1 ? "s" : ""} left until due date`
                     : daysUntilDue === 0
                     ? "Due today!"
-                    : `Overdue by ${Math.abs(daysUntilDue)} day${
-                        Math.abs(daysUntilDue) !== 1 ? "s" : ""
-                      }`}
+                    : `Overdue by ${Math.abs(daysUntilDue)} day${Math.abs(daysUntilDue) !== 1 ? "s" : ""}`}
                 </div>
               )}
+              {/* Hours Allocated */}
               <div className="flex items-center">
                 <Clock className="mr-2 text-gray-500" />
                 <span className="font-semibold">Hours Allocated:</span>
@@ -231,6 +271,7 @@ const TaskDetailsPage = () => {
                   <span className="ml-2">{task.hours || "N/A"}</span>
                 )}
               </div>
+              {/* Actual Hours Spent */}
               <div className="flex items-center">
                 <Clock className="mr-2 text-gray-500" />
                 <span className="font-semibold">Actual Hours Spent:</span>
@@ -252,19 +293,44 @@ const TaskDetailsPage = () => {
                 </div>
               )}
             </div>
+            {/* Right Column */}
             <div className="space-y-4">
+              {/* Assigned To */}
               <div className="flex items-center">
                 <UserCircle className="mr-2 text-gray-500" />
                 <span className="font-semibold">Assigned To:</span>
-                <span className="ml-2">
-                  {assignedUser ? assignedUser.userName : "Loading..."}
-                </span>
+                {isEditing ? (
+                  <select
+                    name="assigned_to_user_id"
+                    value={editedTask.assigned_to_user_id || ""}
+                    onChange={(e) =>
+                      setEditedTask({
+                        ...editedTask,
+                        assigned_to_user_id: e.target.value,
+                      })
+                    }
+                    className="ml-2 border rounded px-2 py-1"
+                  >
+                    <option value="">Unassigned</option>
+                    {consultants.map((consultant) => (
+                      <option key={consultant.id} value={consultant.id}>
+                        {consultant.username}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span className="ml-2">
+                    {assignedUser ? assignedUser.username : "Unassigned"}
+                  </span>
+                )}
               </div>
+              {/* WBS Element */}
               <div className="flex items-center">
                 <Briefcase className="mr-2 text-gray-500" />
-                <span className="font-semibold">Project ID:</span>
-                <span className="ml-2">{task.project_id || "Unassigned"}</span>
+                <span className="font-semibold">WBS Element:</span>
+                <span className="ml-2">{project ? project.wbsElement : "Unassigned"}</span>
               </div>
+              {/* Progress */}
               <div className="mt-4">
                 <span className="font-semibold">Progress:</span>
                 <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
@@ -287,32 +353,42 @@ const TaskDetailsPage = () => {
                   Task completed! Great job!
                 </div>
               )}
-              {!isEditing && (
+              {/* Status Editing */}
+              {isEditing && (
                 <div className="mt-4">
-                  <span className="font-semibold">Change Status:</span>
-                  <div className="flex mt-2 space-x-2">
-                    {Object.keys(statusColors).map((status) => (
-                      <Button
-                        key={status}
-                        onClick={() => handleStatusChange(status)}
-                        className={`${statusColors[status]} text-white`}
-                        size="sm"
-                      >
-                        {status}
-                      </Button>
-                    ))}
-                  </div>
+                  <span className="font-semibold">Status:</span>
+                  <select
+                    name="status"
+                    value={editedTask.status || ""}
+                    onChange={handleStatusChange}
+                    className="ml-2 border rounded px-2 py-1"
+                  >
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                  </select>
                 </div>
               )}
             </div>
           </div>
+          {/* Save and Cancel Buttons */}
           {isEditing && (
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex justify-end space-x-2">
+              <Button
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditedTask(task); // Reset edits
+                }}
+                variant="outline"
+              >
+                Cancel
+              </Button>
               <Button onClick={handleSave} className="bg-green-500 text-white">
                 Save Changes
               </Button>
             </div>
           )}
+          {/* Comments Section */}
           <div className="mt-8">
             <h3 className="text-xl font-semibold mb-4">Comments</h3>
             <div className="space-y-4">
