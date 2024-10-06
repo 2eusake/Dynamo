@@ -149,7 +149,7 @@ const logoutUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'username', 'role'],
+      attributes: ['id', 'username', 'email', 'role','groupName'],
       order: [['username', 'ASC']]
     });
 
@@ -175,6 +175,123 @@ const getAllUsers = async (req, res) => {
 //     res.status(500).json({ message: 'Error fetching users', error: error.message });
 //   }
 // };
+
+const filterUsers = async (req, res) => {
+  const { role, projectId, taskId, page = 1, limit = 50, search } = req.query;
+
+  const offset = (page - 1) * limit;
+
+  try {
+    // Build the where clause for User
+    const userWhere = {};
+    if (role) {
+      userWhere.role = role;
+    }
+
+    // Add search condition
+    if (search) {
+      userWhere[Op.or] = [
+        { username: { [Op.like]: `%${search}%` } },
+        { email: { [Op.like]: `%${search}%` } },
+      ];
+    }
+
+    // Build the include array for associations
+    const include = [];
+
+    // If filtering by project, include associations where the user is a Project Manager, Director, or assigned to tasks in the project
+    if (projectId) {
+      include.push(
+        {
+          model: Project,
+          as: 'managedProjects', // For Project Managers
+          where: { id: projectId },
+          attributes: [],
+          required: false,
+        },
+        {
+          model: Project,
+          as: 'directedProjects', // For Directors
+          where: { id: projectId },
+          attributes: [],
+          required: false,
+        },
+        {
+          model: Task,
+          as: 'assignedTasks',
+          include: [
+            {
+              model: Project,
+              as: 'project',
+              where: { id: projectId },
+              attributes: [],
+              required: true,
+            },
+          ],
+          attributes: [],
+          required: false,
+        }
+      );
+    }
+
+    // If filtering by task, include only users assigned to that task
+    if (taskId) {
+      include.push({
+        model: Task,
+        as: 'assignedTasks',
+        where: { id: taskId },
+        attributes: ['id', 'title', 'type'], // Include task details
+        required: true,
+      });
+    }
+
+    // Execute the query with pagination and include tasks and projects
+    const users = await User.findAndCountAll({
+      where: userWhere,
+      include: [
+        ...include,
+        {
+          model: Task,
+          as: 'assignedTasks',
+          attributes: ['id', 'title', 'type'],
+          include: [
+            {
+              model: Project,
+              as: 'project',
+              attributes: ['id', 'name'],
+            },
+          ],
+        },
+        {
+          model: Project,
+          as: 'managedProjects',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: Project,
+          as: 'directedProjects',
+          attributes: ['id', 'name'],
+        },
+      ],
+      distinct: true, // To avoid duplicates
+      order: [['username', 'ASC']],
+      attributes: ['id', 'username', 'email', 'role', 'groupName'],
+      offset: parseInt(offset),
+      limit: parseInt(limit),
+    });
+
+    res.json({
+      count: users.count,
+      totalPages: Math.ceil(users.count / limit),
+      currentPage: parseInt(page),
+      users: users.rows,
+    });
+  } catch (error) {
+    console.error('Error filtering users:', error);
+    res.status(500).json({ message: 'Error filtering users', error: error.message });
+  }
+};
+
 
 const getUsersByRole = async (req, res) => {
   const { role } = req.params;
@@ -254,6 +371,7 @@ module.exports = {
   loginUser,
   refreshToken,
   logoutUser,
+  filterUsers,
   getAllUsers,
   getUsersByRole,
   getUserProfile,

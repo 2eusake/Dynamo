@@ -9,6 +9,7 @@ const {
   getUserProfile,
   refreshToken,
   logoutUser,
+  filterUsers,
   resetPassword,
   updateUserProfile,
 } = require('../controllers/userController');
@@ -22,6 +23,7 @@ router.get('/profile', authMiddleware, getUserProfile);
 router.put('/profile', authMiddleware, updateUserProfile);
 router.get('/', authMiddleware, roleMiddleware(['Project Manager', 'Director']), getAllUsers);
 router.get('/role/:role', authMiddleware, roleMiddleware(['Project Manager', 'Director']), getUsersByRole);
+router.get('/filter', authMiddleware, filterUsers);
 router.put('/password', authMiddleware, resetPassword);
 router.put(
   '/password',
