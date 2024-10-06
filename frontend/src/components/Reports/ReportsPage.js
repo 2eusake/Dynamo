@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
+
 import {
   BarChart,
   Bar,
@@ -159,6 +161,7 @@ const mockProjectManagers = [
 ];
 
 const ProjectReportDashboard = () => {
+  const { isDarkMode } = useTheme(); // Access dark mode state
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedConsultant, setSelectedConsultant] = useState(null);
   const [selectedProjectManager, setSelectedProjectManager] = useState(null);
@@ -226,8 +229,10 @@ const ProjectReportDashboard = () => {
   };
 
   return (
-    <div className="p-4 bg-gray-100">
-      <h1 className="text-3xl font-bold mb-4 text-black">
+    
+       <div className={` p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+       
+      <h1 className="text-3xl font-bold mb-4 text-black underline-green">
         Project Report Dashboard
       </h1>
 
@@ -241,7 +246,7 @@ const ProjectReportDashboard = () => {
 
         <TabsContent value="overview">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <Card>
+          <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
               <CardHeader>
                 <CardTitle>Overall Performance</CardTitle>
               </CardHeader>
@@ -266,7 +271,7 @@ const ProjectReportDashboard = () => {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-            <Card>
+            <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
               <CardHeader>
                 <CardTitle>Project Status</CardTitle>
               </CardHeader>
@@ -300,7 +305,7 @@ const ProjectReportDashboard = () => {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-            <Card>
+            <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
               <CardHeader>
                 <CardTitle>Key Metrics</CardTitle>
               </CardHeader>
@@ -316,7 +321,8 @@ const ProjectReportDashboard = () => {
         </TabsContent>
 
         <TabsContent value="projects">
-          <Card>
+          
+          <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
             <CardHeader>
               <CardTitle>Project Details</CardTitle>
             </CardHeader>
@@ -411,7 +417,7 @@ const ProjectReportDashboard = () => {
         </TabsContent>
 
         <TabsContent value="consultants">
-          <Card>
+        <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
             <CardHeader>
               <CardTitle>Consultant Performance</CardTitle>
             </CardHeader>
@@ -601,7 +607,7 @@ const ProjectReportDashboard = () => {
       </Tabs>
 
       {/* Overall Summary */}
-      <Card className="mt-8">
+      <Card className={`mt-8 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
         <CardHeader>
           <CardTitle>Overall Dashboard Summary</CardTitle>
         </CardHeader>

@@ -136,7 +136,7 @@ const ResetPasswordPage = () => {
       <button onClick={() => navigate('/settings')} className="mb-4 flex items-center text-deloitte-dark-green hover:text-blue-600">
         <ArrowLeft size={20} className="mr-1" /> Back to Settings
       </button>
-      <h1 className="text-2xl font-bold mb-6">Reset Password</h1>
+      <h1 className="text-2xl font-bold mb-6 underline-green">Reset Password</h1>
       <form onSubmit={handleSubmit}>
         {['currentPassword', 'newPassword', 'confirmPassword'].map((field) => (
           <div key={field} className="mb-4">

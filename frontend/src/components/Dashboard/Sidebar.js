@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
+import { useTheme } from '../../contexts/ThemeContext';
 import {
   FaTachometerAlt,
   FaProjectDiagram,
@@ -18,6 +19,7 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { user } = useContext(AuthContext);
   const location = useLocation();
+  const { isDarkMode } = useTheme();
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -66,12 +68,7 @@ const Sidebar = () => {
       path: "/teams",
       allowedRoles: ["Consultant", "Project Manager", "Director"], // Set allowed roles as per your requirement
     },
-    {
-      name: "Notification",
-      icon: FaBell,
-      path: "/notification",
-      allowedRoles: ["Consultant", "Project Manager", "Director"],
-    },
+  
     {
       name: "Settings",
       icon: FaCog,
@@ -84,12 +81,12 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`fixed top-0 left-0 h-full bg-gray-100 border-r border-gray-200 shadow-sm transition-all duration-300 ease-in-out z-50 ${
+      className={`fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-50 ${
         isCollapsed ? "w-20" : "w-64"
-      }`}
+      } ${isDarkMode ? "bg-black text-white" : "bg-gray-100 text-gray-900"}`}
     >
       {/* Sidebar Header */}
-      <div className="flex items-center justify-between p-4 h-16 border-b border-gray-200">
+      <div className={`flex items-center justify-between p-4 h-16 ${isDarkMode ? 'border-b border-gray-700' : 'border-b border-gray-200'}`}>
         {!isCollapsed && (
           <div className="flex items-center">
             <img
@@ -101,7 +98,7 @@ const Sidebar = () => {
         )}
         <button
           onClick={toggleSidebar}
-          className="text-gray-800 focus:outline-none"
+          className={`focus:outline-none ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
         >
           <FaBars size={20} />
         </button>
@@ -122,12 +119,14 @@ const Sidebar = () => {
                     className={`flex items-center p-2 text-base font-medium rounded-md mx-2 ${
                       isActive
                         ? "bg-deloitte-green text-white"
+                        : isDarkMode
+                        ? "text-gray-400 hover:bg-gray-800"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >
                     <Icon
                       className={`flex-shrink-0 ${
-                        isActive ? "text-white" : "text-gray-500"
+                        isActive ? "text-white" : isDarkMode ? "text-gray-400" : "text-gray-500"
                       }`}
                       size={20}
                     />

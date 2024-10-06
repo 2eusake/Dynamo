@@ -158,7 +158,7 @@ const PMDashboard = () => {
     { name: "Current", value: currentProjects.length },
     { name: "Upcoming", value: upcomingProjects.length },
     { name: "Overdue", value: overdueProjects.length },
-    { name: "Agent", value: agentProjects.length },
+    { name: "Urgent", value: agentProjects.length },
   ];
 
   const getSelectedDateInfo = () => {
@@ -193,7 +193,8 @@ const PMDashboard = () => {
           isDarkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-800"
         }`}
       >
-        <h2 className="text-3xl font-bold text-gray-600">
+       
+        <h2 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-600'}`}>
           Welcome back, {user?.username}!
         </h2>
       </header>
@@ -221,7 +222,7 @@ const PMDashboard = () => {
               color: colors.tertiary,
             },
             {
-              title: "Agent Projects",
+              title: "Urgent Projects",
               value: agentProjects.length,
               icon: TrendingUp,
               color: colors.quaternary,
@@ -233,10 +234,10 @@ const PMDashboard = () => {
               onClick={() => handleCategoryClick(item.title)}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                 <CardTitle className={` text-sm font-medium ${isDarkMode ? 'text-white' : 'text-darkGray'}`}>
                   {item.title}
                 </CardTitle>
-                <item.icon className="h-4 w-4 text-muted-foreground" />
+                <item.icon className= {`  h-4 w-4 text-muted-foreground ${isDarkMode ? 'text-white' : 'text-darkGray'}`} />
               </CardHeader>
               <CardContent>
                 <div
@@ -253,12 +254,11 @@ const PMDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="md:col-span-2">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <CalendarIcon className="mr-2" /> Project and Task Calendar
+                  <CardTitle className={`flex items-center ${isDarkMode ? 'text-white' : 'text-darkGray'}`}>Project and Task Calendar <CalendarIcon className={`  mr-2 ${isDarkMode ? 'text-white' : 'text-darkGray'}`}/>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Calendar
+              <Calendar className= {` ${isDarkMode ? 'text-white' : 'text-darkGray'}`}
                 localizer={localizer}
                 events={events}
                 startAccessor="start"
@@ -278,7 +278,7 @@ const PMDashboard = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Selected Date Info</CardTitle>
+            <CardTitle className={`${isDarkMode ? 'text-white' : 'text-darkGray'}`}>Selected Date Info</CardTitle>
             </CardHeader>
             <CardContent>
               <h3 className="font-bold mb-2">
@@ -286,7 +286,7 @@ const PMDashboard = () => {
               </h3>
               <ul>
                 {getSelectedDateInfo().map((event, index) => (
-                  <li key={index} className="mb-2">
+                  <li key={index} className={`mb-2 ${isDarkMode ? 'text-white' : 'text-black'}`}>
                     <span
                       className="inline-block w-3 h-3 rounded-full mr-2"
                       style={{
@@ -307,9 +307,10 @@ const PMDashboard = () => {
         </div>
 
         {/* Performance Chart */}
-        <Card className="col-span-1 bg-white">
+        <Card className={`col-span-1 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
+
           <CardHeader>
-            <CardTitle className="text-darkGray">Project Performance</CardTitle>
+          <CardTitle className={`${isDarkMode ? 'text-white' : 'text-darkGray'}`}>Project Performance</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -332,7 +333,7 @@ const PMDashboard = () => {
         {/* Project Status Chart */}
         <Card className="col-span-1 bg-white">
           <CardHeader>
-            <CardTitle className="text-darkGray">Project Status</CardTitle>
+          <CardTitle className={`${isDarkMode ? 'text-white' : 'text-darkGray'}`}>Project Status</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>

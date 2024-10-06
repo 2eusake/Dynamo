@@ -53,7 +53,7 @@ const ExcelImport = () => {
     <div className="page-container">
       <div className="timesheet-container">
         <div className="timesheet-content">
-          <h1 className="timesheet-title">Excel Import</h1>
+          <h1 className="timesheet-title  underline-green">Excel Import</h1>
 
           {alert && (
             <div className={`timesheet-alert ${alert.type}`}>

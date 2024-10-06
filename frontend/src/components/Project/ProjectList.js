@@ -68,7 +68,7 @@ const ProjectList = () => {
   return (
     <div className={` mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
     <div className={` mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
-      <h3 className="text-2xl font-bold mb-4">
+      <h3 className= {` text-2xl font-bold mb-4 underline-green ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`} >
         {user.role === "Director" ? "All Projects" : "Your Projects"}
       </h3>
       {projects.length === 0 ? (

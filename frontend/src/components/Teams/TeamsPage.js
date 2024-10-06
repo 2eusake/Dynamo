@@ -27,7 +27,7 @@ const TeamsPage = () => {
 
     return (
         <div className="teams-page">
-            <h1>Teams</h1>
+            <h1 className="text-3xl font-bold mb-6 underline-green">Teams</h1>
             <div className="controls">
                 <label htmlFor="role-filter">Filter by Role: </label>
                 <select id="role-filter" value={filteredRole} onChange={handleFilterChange}>

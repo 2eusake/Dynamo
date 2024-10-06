@@ -155,9 +155,11 @@ const CreateProject = () => {
   };
 
   return (
-    <div className={`create-project-page ${isDarkMode ? 'dark-mode' : ''}`}>
+   
+      <div  className= {`  p-6 rounded-md mb-6 shadow-sm 4 ${isDarkMode ? 'bg-black-600 text-white' : 'bg-gray-50 text-black'}`}>
+      <div className= "grid grid-cols-1 md:grid-cols-2 gap-6 mb"> 
       <div className="create-project-container">
-        <h2>Create New Project</h2>
+        <h2 className={`  text-3xl font-bold mb-6 underline-green ${isDarkMode ? 'text-white' : 'text-darkGray'}`}>Create New Project</h2>
         {notification && <div className="notification">{notification}</div>}
         <form onSubmit={handleSubmit}>
           <div className="input-grid">
@@ -254,11 +256,12 @@ const CreateProject = () => {
             </div>
           </div>
 
-          <div className="task-section">
+          <div className={`task-section p-6 rounded-md mb-6 shadow-sm 4 ${isDarkMode ? 'bg-black-600 text-white' : 'bg-gray-50 text-gray-700'}`}>
             
             {formData.tasks.map((task, index) => (
-              <div key={index} className="task-card">
-                <div className="input-grid">
+                <div key={index} className={`task-card ${isDarkMode ? 'bg-black ' : 'bg-gray-50 '}`}>
+                
+                <div className="input-grid" >
                   <div>
                     <label htmlFor={`taskId-${index}`}>Task ID</label>
                     <input
@@ -350,6 +353,7 @@ const CreateProject = () => {
             ))}
             
           </div>
+          
 
           <div className="form-footer">
           <button type="button" className="add-task-button" onClick={addTask}>
@@ -359,6 +363,8 @@ const CreateProject = () => {
           </div>
         </form>
       </div>
+      
+    </div>
     </div>
   );
 };

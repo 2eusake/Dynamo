@@ -71,7 +71,7 @@ const TasksPage = () => {
 
         {/* Main Content */}
         <div className={`mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
-          <h1 className="text-3xl font-bold mb-6">Tasks</h1>
+          <h1 className="text-3xl font-bold mb-6 underline-green">Tasks</h1>
           <ToastContainer />
           
           {Object.keys(groupedTasks).length > 0 ? (

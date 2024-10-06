@@ -195,7 +195,7 @@ const EditProfilePage = () => {
       <button onClick={() => navigate('/settings')} className="mb-4 flex items-center text-deloitte-dark-green hover:text-blue-600">
         <ArrowLeft size={20} className="mr-1" /> Back to Settings
       </button>
-      <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
+      <h1 className="text-2xl font-bold mb-6 underline-green">Edit Profile</h1>
 
       {/* Error message for the entire form */}
       {errors.form && <p className="mb-4 text-sm text-red-500">{errors.form}</p>}
