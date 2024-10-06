@@ -136,36 +136,6 @@ const createProject = async (req, res) => {
 
 const getProjectById = async (req, res) => {
   try {
-    const project = await Project.findOne({
-      where: { id: req.params.id, userId: req.user.id },
-      include: [
-        {
-          model: Task,
-          as: 'tasks',
-        },
-        {
-          model: User,
-          as: 'projectManager',  // Alias for project manager
-          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
-        },
-        {
-          model: User,
-          as: 'projectDirector',  // Alias for director
-          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
-        }
-      ],
-    });
-    if (!project) return res.status(404).json({ message: "Project not found" });
-    res.json(project);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching project", error: error.message });
-  }
-};
-
-exports.getProjectById = async (req, res) => {
-  try {
     const project = await Project.findByPk(req.params.id, {
       include: [
         {
@@ -202,6 +172,45 @@ exports.getProjectById = async (req, res) => {
     res.status(500).json({ message: 'Error fetching project.' });
   }
 };
+
+// exports.getProjectById = async (req, res) => {
+//   try {
+//     const project = await Project.findByPk(req.params.id, {
+//       include: [
+//         {
+//           model: Task,
+//           as: 'tasks',
+//           include: [
+//             {
+//               model: User,
+//               as: 'assignedToUser',
+//               attributes: ['id', 'username'],
+//             },
+//           ],
+//         },
+//         {
+//           model: User,
+//           as: 'projectManager',
+//           attributes: ['id', 'username'],
+//         },
+//         {
+//           model: User,
+//           as: 'projectDirector',
+//           attributes: ['id', 'username'],
+//         },
+//       ],
+//     });
+
+//     if (!project) {
+//       return res.status(404).json({ message: 'Project not found.' });
+//     }
+
+//     res.json(project);
+//   } catch (error) {
+//     console.error('Error fetching project:', error);
+//     res.status(500).json({ message: 'Error fetching project.' });
+//   }
+// };
 
 const updateProject = async (req, res) => {
   const {
