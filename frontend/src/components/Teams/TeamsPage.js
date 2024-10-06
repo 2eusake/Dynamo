@@ -228,7 +228,7 @@ const TeamsPage = () => {
                     )}
                 </CardContent>
             </Card>
-        <div className="teams-page">
+        {/* <div className="teams-page">
             <h1 className="text-3xl font-bold mb-6 underline-green">Teams</h1>
             <div className="controls">
                 <label htmlFor="role-filter">Filter by Role: </label>
@@ -241,7 +241,7 @@ const TeamsPage = () => {
             </div>
 
             <div className="employee-count">
-                <strong>Total Employees: {employees.length}</strong>
+                <strong>Total Employees: {employee.length}</strong>
             </div>
 
             <table className="team-table">
@@ -253,7 +253,7 @@ const TeamsPage = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {employees.map((employee) => (
+                    {employee.map((employee) => (
                         <tr key={employee.id}>
                             <td>{employee.name}</td>
                             <td>{employee.email}</td>
@@ -263,8 +263,11 @@ const TeamsPage = () => {
                 </tbody>
             </table>
         </div>
+        </div> */}
+        </div>
     );
 
 };
+
 
 export default TeamsPage;
