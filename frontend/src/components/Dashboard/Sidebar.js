@@ -61,6 +61,12 @@ const Sidebar = () => {
       allowedRoles: ["Project Manager", "Director"],
     },
     {
+      name: "Teams",  // New Teams page
+      icon: FaUsers,
+      path: "/teams",
+      allowedRoles: ["Consultant", "Project Manager", "Director"], // Set allowed roles as per your requirement
+    },
+    {
       name: "Notification",
       icon: FaBell,
       path: "/notification",
@@ -78,11 +84,10 @@ const Sidebar = () => {
 
   return (
     <div
-  className={`fixed top-0 left-0 h-full bg-gray-100 border-r border-gray-200 shadow-sm transition-all duration-300 ease-in-out z-50 ${
-    isCollapsed ? "w-20" : "w-64"
-  }`}
->
-
+      className={`fixed top-0 left-0 h-full bg-gray-100 border-r border-gray-200 shadow-sm transition-all duration-300 ease-in-out z-50 ${
+        isCollapsed ? "w-20" : "w-64"
+      }`}
+    >
       {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 h-16 border-b border-gray-200">
         {!isCollapsed && (

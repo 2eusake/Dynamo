@@ -32,7 +32,7 @@ h1 {
     font-size: 28px;
     color: #000000; /* Deloitte black */
     margin-bottom: 30px;
-    border-bottom: 3px solid #007a33; /* Slightly thicker border */
+    /* Removed the bottom border */
     padding-bottom: 15px;
     margin-top: 50px;
 }
@@ -154,3 +154,4 @@ h1 {
         margin-bottom: 10px;
     }
 }
+
