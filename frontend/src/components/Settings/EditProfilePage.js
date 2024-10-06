@@ -85,7 +85,7 @@ const EditProfilePage = () => {
       >
         <ArrowLeft size={20} className="mr-1" /> Back to Settings
       </button>
-      <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
+      <h1 className="text-2xl font-bold mb-6 underline-green">Edit Profile</h1>
 
       {/* Success message */}
       {successMessage && <p className="mb-4 text-sm text-green-500">{successMessage}</p>}

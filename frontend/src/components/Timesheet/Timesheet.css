@@ -37,6 +37,12 @@ h1 {
     margin-top: 50px;
 }
 
+.underline-green {
+    border-bottom: 3px solid #007A33; /* Green underline */
+    padding-bottom: 5px;
+    display: inline-block; /* Ensure underline only affects the text */
+  }
+
 .assignment-info {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
@@ -129,6 +135,23 @@ h1 {
 .hide-info.collapsed::before {
     transform: rotate(-90deg);
 }
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+  }
+  
+  .dark-mode .bg-white {
+    background-color: #1e1e1e;
+  }
+  
+  .dark-mode .text-gray-500 {
+    color: #b0b0b0;
+  }
+  
+  .container.dark-mode {
+    background-color: #1e1e1e;
+  } 
+  
 
 /* Responsive Design */
 @media (max-width: 768px) {

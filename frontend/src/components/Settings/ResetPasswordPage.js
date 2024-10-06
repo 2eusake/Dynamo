@@ -82,7 +82,8 @@ const ResetPasswordPage = () => {
       >
         <ArrowLeft size={20} className="mr-1" /> Back to Settings
       </button>
-      <h1 className="text-2xl font-bold mb-6">Reset Password</h1>
+      
+      <h1 className="text-2xl font-bold mb-6 underline-green">Reset Password</h1>
 
       {/* Success message */}
       {successMessage && <p className="mb-4 text-sm text-green-500">{successMessage}</p>}
@@ -90,6 +91,7 @@ const ResetPasswordPage = () => {
       {/* Error message for the entire form */}
       {errors.form && <p className="mb-4 text-sm text-red-500">{errors.form}</p>}
 
+     
       <form onSubmit={handleSubmit}>
         {/* Current Password */}
         <div className="mb-4 relative">

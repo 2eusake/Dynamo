@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { useTheme } from "../../contexts/ThemeContext"; // Import the theme context
+
 import {
   BarChart,
   Bar,
@@ -56,6 +60,7 @@ const ProjectReportDashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [consultants, setConsultants] = useState([]);
   const [projectManagers, setProjectManagers] = useState([]);
+  const { isDarkMode } = useTheme(); // Access dark mode state
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedConsultant, setSelectedConsultant] = useState(null);
   const [selectedProjectManager, setSelectedProjectManager] = useState(null);
@@ -480,7 +485,11 @@ const ProjectReportDashboard = () => {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-            <Card>
+            <Card
+              className={
+                isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+              }
+            >
               <CardHeader>
                 <CardTitle>Key Metrics</CardTitle>
               </CardHeader>
@@ -511,7 +520,11 @@ const ProjectReportDashboard = () => {
         </TabsContent>
 
         <TabsContent value="projects">
-          <Card>
+          <Card
+            className={
+              isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+            }
+          >
             <CardHeader>
               <CardTitle>Project Details</CardTitle>
             </CardHeader>
@@ -626,7 +639,11 @@ const ProjectReportDashboard = () => {
         </TabsContent>
 
         <TabsContent value="consultants">
-          <Card>
+          <Card
+            className={
+              isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+            }
+          >
             <CardHeader>
               <CardTitle>Consultant Performance</CardTitle>
             </CardHeader>
@@ -757,7 +774,11 @@ const ProjectReportDashboard = () => {
       </Tabs>
 
       {/* Overall Summary */}
-      <Card className="mt-8">
+      <Card
+        className={`mt-8 ${
+          isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+        }`}
+      >
         <CardHeader>
           <CardTitle>Overall Dashboard Summary</CardTitle>
         </CardHeader>

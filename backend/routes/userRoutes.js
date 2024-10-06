@@ -12,10 +12,6 @@ const {
   filterUsers,
   resetPassword,
   updateUserProfile,
-  getAllProjectManagers,
-  getAllConsultants,
-  getProjectManager,
-  getConsultant,
 } = require("../controllers/userController");
 const { authMiddleware } = require("../middlewares/authMiddleware");
 const { roleMiddleware } = require("../middlewares/roleMiddleware");

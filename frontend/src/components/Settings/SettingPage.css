@@ -1,98 +1,66 @@
-:root {
-  --bg-color: #ffffff;
-  --text-color: #333333;
-  --toggle-bg: #d1d5db;
-  --toggle-bg-checked: #3b82f6;
-  --toggle-dot: #ffffff;
-}
 
-/* Dark mode styles */
-.dark {
-  --bg-color: #1f2937;
-  --text-color: #f3f4f6;
-  --toggle-bg: #4b5563;
-  --toggle-bg-checked: #60a5fa;
-  --toggle-dot: #e5e7eb;
-}
 
-body {
+body { 
   background-color: var(--bg-color);
   color: var(--text-color);
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.settings-container {
+   transition: background-color 0.3s, color 0.3s;
+   } 
+.settings-container { 
   max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: var(--bg-color);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* No border-bottom */
-}
+  margin: 0 auto; 
+  padding: 20px; 
+  background-color: var(--bg-color); 
+  border-radius: 8px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ }
 
-h1 {
-  color: var(--text-color);
-}
+ h1 {
 
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
+   color: var(--text-color);
 
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--toggle-bg);
+   } 
+ .toggle-switch {
+   position: relative; 
+   display: inline-block; 
+   width: 60px; 
+   height: 34px;
+   } 
+ .toggle-switch input {
+   opacity: 0;
+    width: 0;
+     height: 0;
+     } 
+ .slider {
+   position: absolute; 
+   cursor: pointer; 
+   top: 0; 
+   left: 0; 
+   right: 0; 
+   bottom: 0; 
+   background-color: var(--toggle-bg);
   transition: .4s;
-  border-radius: 34px; /* No border-bottom */
+  border-radius: 34px; 
 }
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: var(--toggle-dot);
-  transition: .4s;
-  border-radius: 50%; /* No border-bottom */
-}
-
-input:checked + .slider {
-  background-color: var(--toggle-bg-checked);
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-.setting-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px; /* No border-bottom */
-}
-
+  .slider:before {
+     position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: var(--toggle-dot); transition: .4s; border-radius: 50%; 
+    }
+  input:checked + .slider {
+     background-color: var(--toggle-bg-checked); 
+    }
+  input:checked + .slider:before {
+     transform: translateX(26px); 
+    } 
+  .setting-item {
+     display: flex; 
+     justify-content: space-between; 
+     align-items: center; 
+     margin-bottom: 20px; 
+    } 
 .setting-label {
-  font-size: 18px;
-  font-weight: 500;
-}
-
-/* Add this to your CSS file */
+   font-size: 18px; 
+   font-weight: 500; 
+  } /* Add this to your CSS file */ 
 body.dark-mode {
-  background-color: #1a202c; /* Dark background */
-  color: #f7fafc; /* Light text */
-}
+   background-color: #1a202c; /* Dark background */
+    color: #f7fafc; /* Light text */
+   }

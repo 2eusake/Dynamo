@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { Upload } from "lucide-react";
 import apiClient from "../../utils/apiClient";
 import './Timesheet.css';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const ExcelImport = () => {
   const [file, setFile] = useState(null);
   const [alert, setAlert] = useState(null);
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -53,7 +55,7 @@ const ExcelImport = () => {
     <div className="page-container">
       <div className="timesheet-container">
         <div className="timesheet-content">
-          <h1 className="timesheet-title">Excel Import</h1>
+          <h1 className={`timesheet-title  underline-green ${isDarkMode ? ' text-white' : ' text-black'}`}>Excel Import</h1>
 
           {alert && (
             <div className={`timesheet-alert ${alert.type}`}>
