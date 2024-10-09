@@ -1,11 +1,32 @@
 const { Project, Task, User } = require("../models");
+const { Op } = require('sequelize');
 const sequelize = require("../config/database");
 
 const getProjects = async (req, res) => {
   try {
-    const condition = req.user.role === 'Director' 
-      ? {} 
-      : { [sequelize.Op.or]: [{ projectManagerId: req.user.id }, { userId: req.user.id }] };
+    let condition = {};
+
+    // Define conditions based on the user role
+    if (req.user.role === 'Director') {
+      condition = {};
+    } else if (req.user.role === 'Project Manager') {
+      condition = {
+        [Op.or]: [
+          { projectManagerId: req.user.id }
+        ]
+      };
+    } else if (req.user.role === 'Consultant') {
+      // Consultants should see only tasks assigned to them and the associated projects
+      condition = {
+        id: {
+          [Op.in]: sequelize.literal(`(
+            SELECT DISTINCT project_id
+            FROM Tasks
+            WHERE assigned_to_user_id = ${req.user.id}
+          )`)
+        }
+      };
+    }
 
     const projects = await Project.findAll({
       where: condition,
@@ -16,16 +37,17 @@ const getProjects = async (req, res) => {
         },
         {
           model: User,
-          as: 'projectManager',  // Alias for project manager
-          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
+          as: 'projectManager', // Alias for project manager
+          attributes: ['id', 'username'],
         },
         {
           model: User,
-          as: 'projectDirector',  // Alias for director
-          attributes: ['id', 'username'], // Assuming 'username' is the attribute for displaying user names
+          as: 'projectDirector', // Alias for director
+          attributes: ['id', 'username'],
         }
       ],
     });
+
     res.json(projects);
   } catch (error) {
     res.status(500).json({ message: "Error fetching projects", error: error.message });
@@ -59,6 +81,7 @@ const getProjectsByUser = async (req, res) => {
     res.status(500).json({ error: "Server Error" });
   }
 };
+
 
 const createProject = async (req, res) => {
   const {
