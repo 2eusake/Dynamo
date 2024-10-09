@@ -77,9 +77,9 @@ const Register = () => {
             className="w-full p-2 rounded border border-deloitte-dark-green focus:outline-none focus:ring-2 focus:ring-deloitte-dark-green"
             required
           >
-            <option value="consultant">Consultant</option>
-            <option value="projectManager">Project Manager</option>
-            <option value="director">Director</option>
+            <option value="Consultant">Consultant</option>
+            <option value="Project Manager">Project Manager</option>
+            <option value="Director">Director</option>
           </select>
           <button
             type="submit"

@@ -28,9 +28,12 @@ const registerUser = async (req, res) => {
     // Check if the user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "User already exists with this email" });
+      return res.status(400).json({ message: "User already exists with this email" });
+    }
+
+    // Ensure role is provided and valid
+    if (!role || !["Consultant", "Project Manager", "Director"].includes(role)) {
+      return res.status(400).json({ message: "Invalid or missing role" });
     }
 
     // Hash the password and create the new user
@@ -42,15 +45,13 @@ const registerUser = async (req, res) => {
       role,
     });
 
-    res
-      .status(201)
-      .json({ message: "User created successfully", user: newUser });
+    res.status(201).json({ message: "User created successfully", user: newUser });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error registering user", error: error.message });
+    console.error("Error registering user:", error);
+    return res.status(500).json({ message: "Error registering user", error: error.message });
   }
 };
+
 
 // Login a user
 const loginUser = async (req, res) => {
@@ -171,6 +172,7 @@ const logoutUser = async (req, res) => {
       .json({ message: "Error logging out", error: error.message });
   }
 };
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({

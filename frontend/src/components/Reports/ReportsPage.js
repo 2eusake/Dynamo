@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useTheme } from "../../contexts/ThemeContext"; // Import the theme context
+import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
 
 import {
   BarChart,
@@ -23,20 +23,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Button,
-  Badge,
 } from "./UIComponents";
-import {
-  ArrowLeft,
-  Calendar,
-  Clock,
-  User,
-  Edit,
-  AlertTriangle,
-} from "lucide-react";
 import { Progress } from "./UIComponents";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 import apiClient from "../../utils/apiClient";
 
 // Deloitte colors
@@ -47,12 +35,6 @@ const colors = {
   quaternary: "#00A3E0",
   black: "#000000",
   white: "#FFFFFF",
-};
-const statusColors = {
-  completed: "bg-green-500",
-  "in progress": "bg-blue-500",
-  overdue: "bg-red-500",
-  pending: "bg-yellow-500",
 };
 
 const ProjectReportDashboard = () => {
@@ -66,6 +48,7 @@ const ProjectReportDashboard = () => {
   const [selectedProjectManager, setSelectedProjectManager] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,68 +67,20 @@ const ProjectReportDashboard = () => {
             "Projects or Tasks data is not in the expected format"
           );
         }
+
         const projectsWithHours = projectsRes.data.map((project) => {
           const projectTasks = tasksRes.data.filter(
             (task) => task.projectId === project.id
           );
           const allocatedHours = projectTasks.reduce(
-            (sum, task) => sum + (parseFloat(task.hours) || 0),
+            (sum, task) => sum + (task.hours || 0),
             0
           );
           const actualHours = projectTasks.reduce(
-            (sum, task) => sum + (parseFloat(task.actualHours) || 0),
+            (sum, task) => sum + (task.actualHours || 0),
             0
           );
-
-          return {
-            ...project,
-            allocatedHours: parseFloat(allocatedHours.toFixed(2)),
-            actualHours: parseFloat(actualHours.toFixed(2)),
-          };
-        });
-        const processedTasks = tasksRes.data.map((task) => {
-          const progress = (task.actualHours / task.hours) * 100;
-          const isOverbudget = task.actualHours > task.hours;
-          return {
-            ...task,
-            progress: parseFloat(progress.toFixed(2)),
-            isOverbudget,
-            comment: isOverbudget
-              ? `Exceeding allocated time by ${(
-                  task.actualHours - task.hours
-                ).toFixed(2)} hours`
-              : "",
-          };
-        });
-
-        // Process projects with enhanced budget tracking
-        const projectsWithBudget = projectsRes.data.map((project) => {
-          const projectTasks = processedTasks.filter(
-            (task) => task.projectId === project.id
-          );
-          const allocatedHours = projectTasks.reduce(
-            (sum, task) => sum + (parseFloat(task.hours) || 0),
-            0
-          );
-          const actualHours = projectTasks.reduce(
-            (sum, task) => sum + (parseFloat(task.actualHours) || 0),
-            0
-          );
-          const overbudgetTasks = projectTasks.filter(
-            (task) => task.isOverbudget
-          );
-          const progress =
-            projectTasks.reduce((avg, task) => avg + task.progress, 0) /
-            projectTasks.length;
-
-          return {
-            ...project,
-            allocatedHours: parseFloat(allocatedHours.toFixed(2)),
-            actualHours: parseFloat(actualHours.toFixed(2)),
-            isOverbudget: actualHours > allocatedHours,
-            overbudgetTasks,
-            progress: isNaN(progress) ? 0 : parseFloat(progress.toFixed(2)),
-          };
+          return { ...project, allocatedHours, actualHours };
         });
 
         let consultants = [];
@@ -165,24 +100,8 @@ const ProjectReportDashboard = () => {
         } else {
           console.error("Unexpected users data format:", usersRes.data);
         }
-        const projectsWithProgress = projectsWithHours.map((project) => {
-          const startDate = new Date(project.startDate);
-          const endDate = new Date(project.endDate);
-          const currentDate = new Date();
-          const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
-          const daysIn = (currentDate - startDate) / (1000 * 60 * 60 * 24);
-          const daysLeft = (endDate - currentDate) / (1000 * 60 * 60 * 24);
-          return {
-            ...project,
-            daysIn: Math.max(0, Math.min(daysIn, totalDays)),
-            daysLeft: Math.max(0, daysLeft),
-          };
-        });
 
         setProjects(projectsWithHours);
-        setProjects(projectsWithProgress);
-        setProjects(projectsWithBudget);
-        setTasks(processedTasks);
         setTasks(tasksRes.data);
         setConsultants(consultants);
         setProjectManagers(projectManagers);
@@ -260,119 +179,6 @@ const ProjectReportDashboard = () => {
     }, {});
   };
 
-  const exportDashboardData = () => {
-    const doc = new jsPDF();
-
-    // Title
-    doc.setFontSize(18);
-    doc.text("Project Dashboard Report", 14, 22);
-
-    // Overview section
-    doc.setFontSize(14);
-    doc.text("Overview", 14, 32);
-
-    const overviewData = [
-      ["Total Projects", projects.length],
-      ["Completed Projects", completedProjects],
-      ["Overdue Projects", overdueProjects],
-      ["Over-budget Projects", overbudgetProjects],
-      ["Total Consultants", consultants.length],
-      ["Total Project Managers", projectManagers.length],
-    ];
-
-    doc.autoTable({
-      startY: 36,
-      head: [["Metric", "Value"]],
-      body: overviewData,
-    });
-
-    // Projects section
-    doc.addPage();
-    doc.setFontSize(14);
-    doc.text("Project Details", 14, 22);
-
-    const projectsData = projects.map((project) => [
-      project.name,
-      project.status,
-      project.allocatedHours,
-      project.actualHours,
-      project.startDate,
-      project.endDate,
-    ]);
-
-    doc.autoTable({
-      startY: 26,
-      head: [
-        [
-          "Name",
-          "Status",
-          "Allocated Hours",
-          "Actual Hours",
-          "Start Date",
-          "End Date",
-        ],
-      ],
-      body: projectsData,
-    });
-    doc.addPage();
-    doc.setFontSize(14);
-    doc.text("Task Details", 14, 22);
-
-    const taskData = tasks.map((task) => [
-      task.taskName,
-      projects.find((p) => p.id === task.projectId)?.name || "N/A",
-      task.hours || 0,
-      task.actualHours || 0,
-      `${task.progress}%`,
-      task.isOverbudget ? "Yes" : "No",
-    ]);
-
-    doc.autoTable({
-      startY: 26,
-      head: [
-        [
-          "Task Name",
-          "Project",
-          "Allocated Hours",
-          "Actual Hours",
-          "Progress",
-          "Overbudget",
-        ],
-      ],
-      body: taskData,
-    });
-
-    // Save the PDF
-    doc.save("project_dashboard_report.pdf");
-  };
-  const renderTaskList = (tasks) => {
-    return tasks.map((task) => (
-      <div key={task.id} className="mb-4 p-4 bg-gray-50 rounded-lg shadow">
-        <div className="flex justify-between items-center mb-2">
-          <h4 className="text-lg font-semibold">{task.name}</h4>
-          <Badge className={task.isOverbudget ? "bg-red-500" : "bg-green-500"}>
-            {task.isOverbudget ? "Overbudget" : "On Budget"}
-          </Badge>
-        </div>
-        <div className="grid grid-cols-2 gap-4 mb-2">
-          <div>
-            <p className="text-sm text-gray-600">
-              Allocated Hours: {task.hours}
-            </p>
-            <p className="text-sm text-gray-600">
-              Actual Hours: {task.actualHours}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-600">Progress</p>
-            <Progress value={task.progress} className="mt-1" />
-            <p className="text-sm text-gray-600 mt-1">{task.progress}%</p>
-          </div>
-        </div>
-      </div>
-    ));
-  };
-
   if (loading) {
     return <div>Loading dashboard data...</div>;
   }
@@ -382,13 +188,15 @@ const ProjectReportDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Project Report Dashboard</h1>
-      <Button onClick={exportDashboardData} className="mb-4">
-        Export Dashboard PDF
-      </Button>
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="mb-4">
+    
+       <div className={` p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+       
+      <h1 className="text-3xl font-bold mb-4 text-black underline-green">
+        Project Report Dashboard
+      </h1>
+
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="projects">Projects</TabsTrigger>
           <TabsTrigger value="consultants">Consultants</TabsTrigger>
@@ -396,14 +204,14 @@ const ProjectReportDashboard = () => {
         </TabsList>
 
         <TabsContent value="overview">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
               <CardHeader>
-                <CardTitle>Performance Per Project</CardTitle>
+                <CardTitle>Overall Performance</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={projects}>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={[overallPerformance]}>
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
@@ -422,36 +230,7 @@ const ProjectReportDashboard = () => {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Project Timeline Progress</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={projects} layout="vertical">
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" />
-                    <Tooltip />
-                    <Legend />
-                    <Bar
-                      dataKey="daysIn"
-                      stackId="a"
-                      fill={colors.primary}
-                      name="Days In"
-                    />
-                    <Bar
-                      dataKey="daysLeft"
-                      stackId="a"
-                      fill={colors.secondary}
-                      name="Days Left"
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <Card>
+            <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
               <CardHeader>
                 <CardTitle>Project Status</CardTitle>
               </CardHeader>
@@ -485,34 +264,15 @@ const ProjectReportDashboard = () => {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-            <Card
-              className={
-                isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
-              }
-            >
+            <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
               <CardHeader>
                 <CardTitle>Key Metrics</CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  <li className="flex items-center">
-                    <span className="w-1/2">Completed Projects:</span>
-                    <span className="w-1/2 font-semibold">
-                      {completedProjects}
-                    </span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-1/2">Overdue Projects:</span>
-                    <span className="w-1/2 font-semibold">
-                      {overdueProjects}
-                    </span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="w-1/2">Over-budget Projects:</span>
-                    <span className="w-1/2 font-semibold">
-                      {overbudgetProjects}
-                    </span>
-                  </li>
+                  <li>Completed Projects: {completedProjects}</li>
+                  <li>Overdue Projects: {overdueProjects}</li>
+                  <li>Over-budget Projects: {overbudgetProjects}</li>
                 </ul>
               </CardContent>
             </Card>
@@ -520,11 +280,8 @@ const ProjectReportDashboard = () => {
         </TabsContent>
 
         <TabsContent value="projects">
-          <Card
-            className={
-              isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
-            }
-          >
+          
+          <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
             <CardHeader>
               <CardTitle>Project Details</CardTitle>
             </CardHeader>
@@ -536,7 +293,7 @@ const ProjectReportDashboard = () => {
                   )
                 }
               >
-                <SelectTrigger className="w-full mb-4">
+                <SelectTrigger>
                   <SelectValue placeholder="Select a project" />
                 </SelectTrigger>
                 <SelectContent>
@@ -548,90 +305,70 @@ const ProjectReportDashboard = () => {
                 </SelectContent>
               </Select>
               {selectedProject && (
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-xl font-semibold">
-                      {selectedProject.name}
-                    </h3>
-                    <Badge className={statusColors[selectedProject.status]}>
-                      {selectedProject.status}
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="font-semibold">Status:</p>
-                      <p>{selectedProject.status}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Allocated Hours:</p>
-                      <p>{selectedProject.allocatedHours}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Actual Hours:</p>
-                      <p>{selectedProject.actualHours}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Due Date:</p>
-                      <p>{selectedProject.endDate}</p>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="font-semibold">Project Manager:</p>
-                    <p>
-                      {projectManagers.find(
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold">
+                    {selectedProject.name}
+                  </h3>
+                  <p>Status: {selectedProject.status}</p>
+                  <p>Allocated Hours: {selectedProject.allocatedHours}</p>
+                  <p>Actual Hours: {selectedProject.actualHours}</p>
+                  <p>Due Date: {selectedProject.dueDate}</p>
+                  <p>
+                    Project Manager:{projectManagers.username}
+                    {
+                      projectManagers.find(
                         (pm) => pm.id === selectedProject.projectManagerId
-                      )?.username || "Not assigned"}
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="font-semibold">Progress:</p>
-                      <Progress
-                        value={selectedProject.progress}
-                        className="mt-2"
-                      />
-                      <p className="text-sm text-gray-600 mt-1">
-                        {selectedProject.progress}%
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Budget Status:</p>
-                      <p
-                        className={
-                          selectedProject.isOverbudget
-                            ? "text-red-500"
-                            : "text-green-500"
-                        }
-                      >
-                        {selectedProject.isOverbudget
-                          ? "Over Budget"
-                          : "On Budget"}
-                      </p>
-                    </div>
-                  </div>
+                      )?.name
+                    }
+                  </p>
 
-                  <div className="mt-6">
-                    <h4 className="text-lg font-semibold mb-4">
-                      Tasks and Consultants
-                    </h4>
-                    {getProjectConsultants(selectedProject.id).map(
-                      (consultant) => (
-                        <div key={consultant.id} className="mb-6">
-                          <div className="flex items-center mb-2">
-                            <User className="w-5 h-5 mr-2" />
-                            <h5 className="text-md font-semibold">
-                              {consultant.username}
-                            </h5>
-                          </div>
-                          {renderTaskList(
-                            getConsultantTasks(consultant.id).filter(
-                              (task) => task.projectId === selectedProject.id
-                            )
-                          )}
+                  <h4 className="text-md font-semibold mt-4">
+                    Consultants and Tasks:
+                  </h4>
+                  {getProjectConsultants(selectedProject.id).map(
+                    (consultant) => {
+                      const consultantTasks = getConsultantTasks(
+                        consultant.id
+                      ).filter((task) => task.projectId === selectedProject.id);
+                      return (
+                        <div key={consultant.id} className="mt-2">
+                          <p>{consultant.name}</p>
+                          <ul>
+                            {consultantTasks.map((task) => (
+                              <li key={task.id}>
+                                {task.name} - Allocated: {task.allocatedHours}h,
+                                Actual: {task.actualHours}h, Status:{" "}
+                                {task.status}
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                      )
-                    )}
-                  </div>
+                      );
+                    }
+                  )}
+
+                  <h4 className="text-md font-semibold mt-4">Task Summary:</h4>
+                  {Object.entries(
+                    getTaskStatusSummary(getProjectTasks(selectedProject.id))
+                  ).map(([status, count]) => (
+                    <p key={status}>
+                      {status}: {count}
+                    </p>
+                  ))}
+
+                  <h4 className="text-md font-semibold mt-4">Conclusion:</h4>
+                  <p>
+                    Project {selectedProject.name} is currently{" "}
+                    {selectedProject.status}.
+                    {selectedProject.actualHours >
+                    selectedProject.allocatedHours
+                      ? " It has exceeded the allocated hours, which may indicate challenges in estimation or scope creep."
+                      : " It is currently within the allocated hours, suggesting good planning and execution."}
+                    {new Date(selectedProject.dueDate) < new Date() &&
+                    selectedProject.status !== "completed"
+                      ? " The project has passed its due date and requires immediate attention."
+                      : " The project is on track regarding its timeline."}
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -639,11 +376,7 @@ const ProjectReportDashboard = () => {
         </TabsContent>
 
         <TabsContent value="consultants">
-          <Card
-            className={
-              isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
-            }
-          >
+        <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
             <CardHeader>
               <CardTitle>Consultant Performance</CardTitle>
             </CardHeader>
@@ -655,7 +388,7 @@ const ProjectReportDashboard = () => {
                   )
                 }
               >
-                <SelectTrigger className="w-full mb-4">
+                <SelectTrigger>
                   <SelectValue placeholder="Select a consultant" />
                 </SelectTrigger>
                 <SelectContent>
@@ -670,19 +403,18 @@ const ProjectReportDashboard = () => {
                 </SelectContent>
               </Select>
               {selectedConsultant && (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold">
-                    {selectedConsultant.username}'s Tasks
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold">
+                    {selectedConsultant.name}'s Tasks
                   </h3>
                   {getConsultantTasks(selectedConsultant.id).map((task) => (
-                    <div key={task.id} className="bg-gray-100 p-4 rounded-lg">
-                      <p className="font-semibold">{task.taskName}</p>
+                    <div key={task.id} className="mt-2">
                       <p>
-                        Project:{" "}
-                        {projects.find((p) => p.id === task.projectId)?.name}
+                        {task.taskName} (Project:{projectStatusData.name}
+                        {projects.find((p) => p.id === task.projectId).name})
                       </p>
                       <p>
-                        Allocated Hours: {task.hours}, Actual Hours:{" "}
+                        Allocated Hours: {task.hours}, Actual Hours:
                         {task.actualHours}
                       </p>
                       <Progress
@@ -710,7 +442,7 @@ const ProjectReportDashboard = () => {
                   )
                 }
               >
-                <SelectTrigger className="w-full mb-4">
+                <SelectTrigger>
                   <SelectValue placeholder="Select a project manager" />
                 </SelectTrigger>
                 <SelectContent>
@@ -722,9 +454,9 @@ const ProjectReportDashboard = () => {
                 </SelectContent>
               </Select>
               {selectedProjectManager && (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold">
-                    {selectedProjectManager.username}'s Projects
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold">
+                    {selectedProjectManager.name}'s Projects
                   </h3>
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart
@@ -750,11 +482,8 @@ const ProjectReportDashboard = () => {
                   </ResponsiveContainer>
                   {getProjectManagerProjects(selectedProjectManager.id).map(
                     (project) => (
-                      <div
-                        key={project.id}
-                        className="bg-gray-100 p-4 rounded-lg"
-                      >
-                        <h4 className="text-lg font-semibold">
+                      <div key={project.id} className="mt-4">
+                        <h4 className="text-md font-semibold">
                           {project.name}
                         </h4>
                         <p>Status: {project.status}</p>
@@ -762,10 +491,84 @@ const ProjectReportDashboard = () => {
                           Allocated Hours: {project.allocatedHours}, Actual
                           Hours: {project.actualHours}
                         </p>
-                        <p>Due Date: {project.endDate}</p>
+                        <p>Due Date: {project.dueDate}</p>
                       </div>
                     )
                   )}
+                  <div className="mt-6">
+                    <h4 className="text-md font-semibold">Project Summary</h4>
+                    <p>
+                      Total Projects:{" "}
+                      {
+                        getProjectManagerProjects(selectedProjectManager.id)
+                          .length
+                      }
+                    </p>
+                    <p>
+                      Current Projects:{" "}
+                      {
+                        getProjectManagerProjects(
+                          selectedProjectManager.id
+                        ).filter((p) => p.status === "in progress").length
+                      }
+                    </p>
+                    <p>
+                      Completed Projects (On Time):{" "}
+                      {
+                        getProjectManagerProjects(
+                          selectedProjectManager.id
+                        ).filter(
+                          (p) =>
+                            p.status === "completed" &&
+                            p.actualHours <= p.allocatedHours
+                        ).length
+                      }
+                    </p>
+                    <p>
+                      Completed Projects (Overtime):{" "}
+                      {
+                        getProjectManagerProjects(
+                          selectedProjectManager.id
+                        ).filter(
+                          (p) =>
+                            p.status === "completed" &&
+                            p.actualHours > p.allocatedHours
+                        ).length
+                      }
+                    </p>
+                    <p>
+                      Completed Projects (Overtime):{" "}
+                      {
+                        getProjectManagerProjects(
+                          selectedProjectManager.id
+                        ).filter(
+                          (p) =>
+                            p.status === "completed" &&
+                            p.actualHours > p.allocatedHours
+                        ).length
+                      }
+                    </p>
+                    <p>
+                      Overdue Projects:{" "}
+                      {
+                        getProjectManagerProjects(
+                          selectedProjectManager.id
+                        ).filter(
+                          (p) =>
+                            new Date(p.dueDate) < new Date() &&
+                            p.status !== "completed"
+                        ).length
+                      }
+                    </p>
+                    <p>
+                      At Risk Projects:{" "}
+                      {
+                        getProjectManagerProjects(
+                          selectedProjectManager.id
+                        ).filter((p) => p.status === "at risk").length
+                      }
+                    </p>
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -774,20 +577,16 @@ const ProjectReportDashboard = () => {
       </Tabs>
 
       {/* Overall Summary */}
-      <Card
-        className={`mt-8 ${
-          isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
-        }`}
-      >
+      <Card className={`mt-8 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
         <CardHeader>
           <CardTitle>Overall Dashboard Summary</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="mb-4">
+          <p>
             This dashboard provides a comprehensive overview of project
             performance across the organization:
           </p>
-          <ul className="list-disc list-inside space-y-2 mb-4">
+          <ul className="list-disc list-inside mt-2">
             <li>Total Projects: {projects.length}</li>
             <li>Completed Projects: {completedProjects}</li>
             <li>Overdue Projects: {overdueProjects}</li>
@@ -795,8 +594,8 @@ const ProjectReportDashboard = () => {
             <li>Total Consultants: {consultants.length}</li>
             <li>Total Project Managers: {projectManagers.length}</li>
           </ul>
-          <p className="font-semibold mb-2">Key Observations:</p>
-          <ul className="list-disc list-inside space-y-2 mb-4">
+          <p className="mt-4">Key Observations:</p>
+          <ul className="list-disc list-inside mt-2">
             <li>
               Overall project completion rate:{" "}
               {((completedProjects / projects.length) * 100).toFixed(2)}%
@@ -821,6 +620,13 @@ const ProjectReportDashboard = () => {
               %
             </li>
           </ul>
+          <p className="mt-4">
+            This dashboard allows for detailed analysis of project performance,
+            consultant productivity, and project manager effectiveness. Use the
+            tabs to dive deeper into specific areas and identify trends,
+            challenges, and opportunities for improvement in project management
+            practices.
+          </p>
         </CardContent>
       </Card>
     </div>

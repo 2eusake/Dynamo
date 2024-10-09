@@ -1,5 +1,5 @@
 const express = require("express");
-const { resetPasswordLimiter } = require("../middlewares/rateLimiter");
+const { resetPasswordLimiter } = require("../middlewares/rateLimiter.js");
 const { body } = require("express-validator");
 const {
   registerUser,
