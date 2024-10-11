@@ -24,7 +24,7 @@ const ProjectList = () => {
       try {
         setLoading(true);
         let response;
-        if (user.role === "Director") {
+        if (user.role === "Director" || user.role === "Project Manager") {
           response = await apiClient.get("/projects");
         } else if (user.role === "Project Manager") {
           response = await apiClient.get(`/projects/manager/${user.id}`);
