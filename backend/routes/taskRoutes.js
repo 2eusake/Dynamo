@@ -16,7 +16,7 @@ const {
 // Task routes
 router.route('/')
     .get(authMiddleware, roleMiddleware(['Project Manager', 'Director', 'Consultant']), getTasks)    // Only Project Managers or Directors can get all tasks
-    .post(authMiddleware, roleMiddleware(['Project Manager']), createTask); // Only Project Managers can create a task
+    .post(authMiddleware, roleMiddleware(['Project Manager', 'Director']), createTask); // Only Project Managers can create a task
 
 // router.route('/user')
 //     .get(authMiddleware, roleMiddleware(['Consultant']), getUserTasks); // Only Consultants can get their own tasks
@@ -27,6 +27,6 @@ router.route('/:id')
     .delete(authMiddleware, roleMiddleware(['Director']), deleteTask); // Only Directors can delete tasks
 
 router.route('/project/:projectId')
-    .get(authMiddleware, roleMiddleware(['Project Manager', 'Director']), getTasksByProject); // Only Project Managers or Directors can get tasks by project
+    .get(authMiddleware, roleMiddleware(['Project Manager', 'Director', 'Consultant']), getTasksByProject); // Only Project Managers or Directors can get tasks by project
 
 module.exports = router;

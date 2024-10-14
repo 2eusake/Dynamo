@@ -9,7 +9,7 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("consultant");
+  const [role, setRole] = useState("Consultant");
   const navigate = useNavigate();
   const { refreshToken } = useContext(AuthContext);
 

@@ -4,22 +4,35 @@ const { Task, User } = require('../models');
 // Get all tasks assigned to the user (or all tasks if director)
 const getTasks = async (req, res) => {
   try {
-    const condition = req.user.role === 'Director' ? {} : { assigned_to_user_id: req.user.id };
+    let condition = {};
+
+    if (req.user.role === 'Consultant') {
+      condition = { assigned_to_user_id: req.user.id };
+    } else if (req.user.role === 'Project Manager') {
+      if (req.query.filter === 'assigned') {
+        condition = { assigned_to_user_id: req.user.id };
+      }
+    } else if (req.user.role !== 'Director') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
     const tasks = await Task.findAll({
       where: condition,
       include: [
         {
           model: User,
           as: 'assignedToUser',
-          attributes: ['id', 'username'], // Adjust attributes as needed
+          attributes: ['id', 'username'],
         },
       ],
     });
+
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching tasks', error: error.message });
   }
 };
+
 
 // Get all tasks for a specific project (restricted based on role)
 const getTasksByProject = async (req, res) => {

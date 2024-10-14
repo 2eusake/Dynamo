@@ -6,17 +6,16 @@ const getProjects = async (req, res) => {
   try {
     let condition = {};
 
-    // Define conditions based on the user role
     if (req.user.role === 'Director') {
-      condition = {};
+      if (req.query.filter === 'assigned') {
+        condition = { directorId: req.user.id };
+      }
     } else if (req.user.role === 'Project Manager') {
-      condition = {
-        [Op.or]: [
-          { projectManagerId: req.user.id }
-        ]
-      };
+      if (req.query.filter === 'assigned') {
+        condition = { projectManagerId: req.user.id };
+      }
     } else if (req.user.role === 'Consultant') {
-      // Consultants should see only tasks assigned to them and the associated projects
+      // Consultants can see projects related to their assigned tasks
       condition = {
         id: {
           [Op.in]: sequelize.literal(`(
@@ -26,6 +25,8 @@ const getProjects = async (req, res) => {
           )`)
         }
       };
+    } else {
+      return res.status(403).json({ message: 'Access denied' });
     }
 
     const projects = await Project.findAll({
@@ -37,12 +38,12 @@ const getProjects = async (req, res) => {
         },
         {
           model: User,
-          as: 'projectManager', // Alias for project manager
+          as: 'projectManager',
           attributes: ['id', 'username'],
         },
         {
           model: User,
-          as: 'projectDirector', // Alias for director
+          as: 'projectDirector',
           attributes: ['id', 'username'],
         }
       ],
@@ -53,6 +54,7 @@ const getProjects = async (req, res) => {
     res.status(500).json({ message: "Error fetching projects", error: error.message });
   }
 };
+
 
 const getProjectsByUser = async (req, res) => {
   try {
