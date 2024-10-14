@@ -4,7 +4,6 @@ import apiClient from "../../utils/apiClient";
 import { AuthContext } from "../../contexts/AuthContext";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "../UIComp";
-import { ProjectContext } from "../../contexts/ProjectContext";
 import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
 import './Projects.css';
 
@@ -122,9 +121,18 @@ const ProjectList = () => {
                   <p className="text-sm text-gray-500">
                     WBS Element: {project.wbsElement}
                   </p>
+                  <p className="text-sm text-gray-500">
+                    Director: {project.projectDirector ? project.projectDirector.username : "Not Assigned"}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Project Manager: {project.projectManager ? project.projectManager.username : "Not Assigned"}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Task Count: {project.tasks ? project.tasks.length : 0}
+                  </p>
                 </div>
 
-                {/* Status and Due Date */}
+                {/* Status, Progress, and Due Date */}
                 <div className="text-right">
                   <p className="text-sm">
                     Status:{" "}
@@ -146,6 +154,18 @@ const ProjectList = () => {
                       ? new Date(project.endDate).toLocaleDateString()
                       : "N/A"}
                   </p>
+                  {/* Progress Bar */}
+                  <div className="mt-2">
+                    <div className="w-full bg-gray-300 rounded-full h-2.5">
+                      <div
+                        className="bg-green-600 h-2.5 rounded-full"
+                        style={{ width: `${project.progress}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Progress: {project.progress}%
+                    </p>
+                  </div>
                 </div>
 
                 {/* Chevron Icon */}
