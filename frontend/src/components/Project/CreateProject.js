@@ -287,11 +287,13 @@ const CreateProject = () => {
 
           {/* Tasks Section */}
           <div className="task-section">
-            <h3 className="text-2xl font-semibold mb-4">Tasks</h3>
+            <h3 className= {`text-2xl font-semibold mb-4  underline-green ${isDarkMode ? ' text-white' : ' text-black'}`} >Tasks</h3>
+
+         
             {formData.tasks.map((task, index) => (
-              <Card key={index} className="mb-6">
+              <Card key={index} className="mb-6 ">
                 <CardHeader>
-                  <CardTitle className="flex justify-between items-center">
+                  <CardTitle className= {` flex justify-between items-center ${isDarkMode ? ' text-white' : ' text-black'}`}>
                     <span>Task {index + 1}</span>
                     <Button
                       type="button"

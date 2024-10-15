@@ -65,34 +65,40 @@ const PMDashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
+  
+        // Fetch projects and tasks
         const [projectsResponse, tasksResponse] = await Promise.all([
           apiClient.get("/projects"),
           apiClient.get("/tasks"),
         ]);
-
-        setProjects(projectsResponse.data);
-        setTasks(tasksResponse.data);
-
-        const projectEvents = projectsResponse.data.map((project) => ({
-          id: `project-${project.id}`,
-          title: `Project: ${project.name}`,
-          start: new Date(project.startDate),
-          end: new Date(project.endDate),
-          allDay: true,
-          color: colors.primary,
-        }));
-
-        const taskEvents = tasksResponse.data.map((task) => ({
-          id: `task-${task.id}`,
-          title: `Task: ${task.taskName}`,
-          start: new Date(task.start_date),
-          end: new Date(task.due_date),
-          allDay: true,
-          color: colors.secondary,
-        }));
-
-        setEvents([...projectEvents, ...taskEvents]);
+  
+        if (projectsResponse.status === 200 && tasksResponse.status === 200) {
+          setProjects(projectsResponse.data);
+          setTasks(tasksResponse.data);
+  
+          // Create events from projects and tasks for the calendar view
+          const projectEvents = projectsResponse.data.map((project) => ({
+            id: `project-${project.id}`,
+            title: `Project: ${project.name}`,
+            start: new Date(project.startDate),
+            end: new Date(project.endDate),
+            allDay: true,
+            color: project.status === 'completed' ? colors.tertiary : colors.primary,
+          }));
+  
+          const taskEvents = tasksResponse.data.map((task) => ({
+            id: `task-${task.id}`,
+            title: `Task: ${task.taskName}`,
+            start: new Date(task.start_date),
+            end: new Date(task.due_date),
+            allDay: true,
+            color: task.status === 'completed' ? colors.secondary : colors.quaternary,
+          }));
+  
+          setEvents([...projectEvents, ...taskEvents]);
+        } else {
+          setError("Failed to fetch projects or tasks data.");
+        }
       } catch (err) {
         setError("Failed to fetch data. Please try again later.");
         console.error("Error fetching data:", err);
@@ -100,9 +106,10 @@ const PMDashboard = () => {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   const currentProjects = projects.filter(
     (project) =>

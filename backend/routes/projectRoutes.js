@@ -21,14 +21,14 @@ router
   .route("/")
   .get(
     authMiddleware,
-    roleMiddleware(["Project Manager", "Director"]),
+    roleMiddleware(["Project Manager", "Director", "Consultant"]),
     getProjects
   ) // Only PMs and Directors can view all projects
   .post(authMiddleware, roleMiddleware(["Director","Project Manager"]), createProject); // Only PMs can create a project
 
 router
   .route("/:id")
-  .get(authMiddleware, getProjectById) // All users can view project details
+  .get(authMiddleware, roleMiddleware(["Consultant", "Project Manager", "Director"]), getProjectById) // All users can view project details
   .put(
     authMiddleware,
     roleMiddleware(["Project Manager", "Director"]),

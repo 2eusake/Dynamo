@@ -1,22 +1,20 @@
-// src/components/ProjectList.js
-
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import apiClient from "../../utils/apiClient";
 import { AuthContext } from "../../contexts/AuthContext";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "../UIComp";
-import { ProjectContext } from "../../contexts/ProjectContext";
 import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
 import './Projects.css';
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const { user } = useContext(AuthContext);
-  const { isDarkMode, toggleDarkMode } = useTheme(); // Use the context
+  const { isDarkMode } = useTheme(); // Use the theme context
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedProjects, setExpandedProjects] = useState({});
+  const [filter, setFilter] = useState("all"); // State for filtering projects
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,13 +22,17 @@ const ProjectList = () => {
       try {
         setLoading(true);
         let response;
-        if (user.role === "Director") {
-          response = await apiClient.get("/projects");
-        } else if (user.role === "Project Manager") {
-          response = await apiClient.get(`/projects/manager/${user.id}`);
+
+        if (user.role === "Director" || user.role === "Project Manager") {
+          if (filter === "assigned") {
+            response = await apiClient.get("/projects?filter=assigned");
+          } else {
+            response = await apiClient.get("/projects");
+          }
         } else {
           response = await apiClient.get(`/projects/user/${user.id}`);
         }
+
         setProjects(response.data);
         setError(null);
       } catch (error) {
@@ -42,7 +44,11 @@ const ProjectList = () => {
     };
 
     loadProjects();
-  }, [user]);
+  }, [user, filter]);
+
+  const handleFilterChange = (e) => {
+    setFilter(e.target.value);
+  };
 
   const toggleProjectExpansion = (projectId) => {
     setExpandedProjects((prev) => ({
@@ -63,16 +69,33 @@ const ProjectList = () => {
     );
 
   return (
-    
     <div
       className={`mx-auto p-4 ${
         isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"
       } min-h-screen`}
     >
-      <h3 className= {` text-2xl font-bold mb-4 underline-green ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`} >
-   
+      <h3 className={`text-2xl font-bold mb-4 underline-green ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
         {user.role === "Director" ? "All Projects" : "Your Projects"}
       </h3>
+
+      {/* Filter Component */}
+      {(user.role === "Director" || user.role === "Project Manager") && (
+        <div className="mb-4">
+          <label htmlFor="filter" className="mr-2">
+            Filter Projects:
+          </label>
+          <select
+            id="filter"
+            value={filter}
+            onChange={handleFilterChange}
+            className={`p-2 rounded border ${isDarkMode ? "bg-gray-700 border-gray-500 text-white" : "bg-white border-gray-300 text-black"}`}
+          >
+            <option value="all">All Projects</option>
+            <option value="assigned">Assigned Projects</option>
+          </select>
+        </div>
+      )}
+
       {projects.length === 0 ? (
         <p className="text-gray-500">No projects found.</p>
       ) : (
@@ -98,9 +121,18 @@ const ProjectList = () => {
                   <p className="text-sm text-gray-500">
                     WBS Element: {project.wbsElement}
                   </p>
+                  <p className="text-sm text-gray-500">
+                    Director: {project.projectDirector ? project.projectDirector.username : "Not Assigned"}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Project Manager: {project.projectManager ? project.projectManager.username : "Not Assigned"}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Task Count: {project.tasks ? project.tasks.length : 0}
+                  </p>
                 </div>
 
-                {/* Status and Due Date */}
+                {/* Status, Progress, and Due Date */}
                 <div className="text-right">
                   <p className="text-sm">
                     Status:{" "}
@@ -122,6 +154,18 @@ const ProjectList = () => {
                       ? new Date(project.endDate).toLocaleDateString()
                       : "N/A"}
                   </p>
+                  {/* Progress Bar */}
+                  <div className="mt-2">
+                    <div className="w-full bg-gray-300 rounded-full h-2.5">
+                      <div
+                        className="bg-green-600 h-2.5 rounded-full"
+                        style={{ width: `${project.progress}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Progress: {project.progress}%
+                    </p>
+                  </div>
                 </div>
 
                 {/* Chevron Icon */}

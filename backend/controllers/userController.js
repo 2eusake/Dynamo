@@ -28,9 +28,12 @@ const registerUser = async (req, res) => {
     // Check if the user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "User already exists with this email" });
+      return res.status(400).json({ message: "User already exists with this email" });
+    }
+
+    // Ensure role is provided and valid
+    if (!role || !["Consultant", "Project Manager", "Director"].includes(role)) {
+      return res.status(400).json({ message: "Invalid or missing role" });
     }
 
     // Hash the password and create the new user
@@ -42,15 +45,13 @@ const registerUser = async (req, res) => {
       role,
     });
 
-    res
-      .status(201)
-      .json({ message: "User created successfully", user: newUser });
+    res.status(201).json({ message: "User created successfully", user: newUser });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error registering user", error: error.message });
+    console.error("Error registering user:", error);
+    return res.status(500).json({ message: "Error registering user", error: error.message });
   }
 };
+
 
 // Login a user
 const loginUser = async (req, res) => {
@@ -171,6 +172,7 @@ const logoutUser = async (req, res) => {
       .json({ message: "Error logging out", error: error.message });
   }
 };
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
@@ -262,18 +264,25 @@ const getUserProfile = async (req, res) => {
 };
 
 // Update user profile (open to the logged-in user)
-const updateUserProfile = async (newUserData) => {
+const updateUserProfile = async (req, res) => {
+  const { username, email } = req.body;
+
   try {
-    const token = localStorage.getItem("authToken");
-    const response = await apiClient.put("/users/profile", newUserData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setUser(response.data.user); // Update the user state with the new data
-    return response.data.user;
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update user profile
+    user.username = username || user.username;
+    user.email = email || user.email;
+
+    await user.save();
+
+    res.status(200).json({ message: "Profile updated successfully", user });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error updating profile", error: error.message });
+    console.error("Error updating profile:", error);
+    res.status(500).json({ message: "Error updating profile", error: error.message });
   }
 };
 
@@ -287,7 +296,10 @@ const resetPassword = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
   try {
-    const user = req.user;
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     // Verify Current Password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
@@ -296,8 +308,7 @@ const resetPassword = async (req, res) => {
     }
 
     // Hash New Password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update Password in Database
     user.password = hashedPassword;
@@ -306,7 +317,7 @@ const resetPassword = async (req, res) => {
     res.json({ message: "Password updated successfully" });
   } catch (error) {
     console.error("Error resetting password:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 

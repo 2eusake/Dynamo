@@ -78,7 +78,7 @@ const SettingsPage = () => {
   return (
     <div className={`max-w-2xl mx-auto p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <header className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold mb-6 underline-green">Settings</h1>
+        <h1 className={`text-2xl font-bold mb-6 underline-green ${isDarkMode ? ' text-white' : ' text-black'}`}>Settings</h1>
       </header>
 
       {/* Display loading spinner if preferences are being updated */}
