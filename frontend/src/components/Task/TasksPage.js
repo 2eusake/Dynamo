@@ -88,42 +88,102 @@ const TasksPage = () => {
                 </CardHeader>
                 <CardContent>
                   {wbsGroup.tasks.length > 0 ? (
-                    wbsGroup.tasks.map((task) => (
-                      <div key={task.id} className="mb-4 p-4 bg-white rounded-lg shadow">
-                        <div className="flex justify-between items-center">
-                          <h3 className={`text-lg font-semibold ${isDarkMode ? ' text-white' : ' text-black'}`}>{task.taskName || 'Unnamed Task'}</h3>
-                          <span
-                            className={`px-2 py-1 rounded text-sm ${
-                              task.status === 'Completed'
-                                ? 'bg-green-200 text-green-800'
-                                : task.status === 'In Progress'
+                    wbsGroup.tasks.map((task) => {
+                      // Calculate progress percentage
+                      const progress = task.actualHours && task.hours
+                        ? Math.min(100, Math.round((task.actualHours / task.hours) * 100))
+                        : 0;
+
+                      // Calculate days until due date
+                      const daysUntilDue = task.due_date
+                        ? Math.ceil((new Date(task.due_date) - new Date()) / (1000 * 60 * 60 * 24))
+                        : null;
+
+                      return (
+                        <div
+                          key={task.id}
+                          className={`mb-4 p-4 rounded-lg shadow ${
+                            daysUntilDue < 0 ? 'bg-red-100' : 'bg-white'
+                          }`}
+                        >
+                          <div className="flex justify-between items-center">
+                            <h3 className={`text-lg font-semibold ${isDarkMode ? ' text-white' : ' text-black'}`}>
+                              {task.taskName || 'Unnamed Task'}
+                            </h3>
+                            <span
+                              className={`px-2 py-1 rounded text-sm ${
+                                task.status === 'Completed'
+                                  ? 'bg-green-200 text-green-800'
+                                  : task.status === 'In Progress'
                                   ? 'bg-yellow-200 text-yellow-800'
                                   : 'bg-gray-200 text-gray-800'
-                            }`}
-                          >
-                            {task.status || 'Unknown'}
-                          </span>
-                        </div>
-                        <p className="text-gray-600 mt-2">
-                          <UserCircle className="inline-block mr-1" size={16} />
-                          Assigned to: {task.assignedToUser ? task.assignedToUser.username : 'Unassigned'}
-                        </p>
-                        <p className="text-gray-600 mt-2">
-                          Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'N/A'}
-                        </p>
-                        {task.id ? (
-                          <Link to={`/tasks/${task.id}`}>
-                            <Button variant="outline" className="mt-2">
-                              View Details
+                              }`}
+                            >
+                              {task.status || 'Unknown'}
+                            </span>
+                          </div>
+                          <p className="text-gray-600 mt-2">
+                            <UserCircle className="inline-block mr-1" size={16} />
+                            Assigned to: {task.assignedToUser ? task.assignedToUser.username : 'Unassigned'}
+                          </p>
+                          <p className="text-gray-600 mt-2">
+                            Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'N/A'}
+                          </p>
+
+                          {/* Progress Bar */}
+                          {progress > 0 && (
+                            <div className="mt-2">
+                              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                <div
+                                  className="bg-blue-600 h-2.5 rounded-full"
+                                  style={{ width: `${progress}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm text-gray-600">
+                                {progress}% Complete
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Days Until Due Date */}
+                          {daysUntilDue !== null && (
+                            <div className="text-sm text-gray-600 mt-1">
+                              {daysUntilDue > 0
+                                ? `${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''} left until due date`
+                                : daysUntilDue === 0
+                                ? 'Due today!'
+                                : `Overdue by ${Math.abs(daysUntilDue)} day${Math.abs(daysUntilDue) !== 1 ? 's' : ''}`}
+                            </div>
+                          )}
+
+                          {/* Warning for Overdue Tasks */}
+                          {daysUntilDue < 0 && (
+                            <div className="text-red-500 text-sm italic">
+                              This task is overdue!
+                            </div>
+                          )}
+
+                          {/* Warning if Actual Hours Exceed Allocated Hours */}
+                          {task.actualHours > task.hours && (
+                            <div className="text-red-500 text-sm italic">
+                              Warning: Actual hours exceed allocated hours!
+                            </div>
+                          )}
+
+                          {task.id ? (
+                            <Link to={`/tasks/${task.id}`}>
+                              <Button variant="outline" className="mt-2">
+                                View Details
+                              </Button>
+                            </Link>
+                          ) : (
+                            <Button variant="outline" className="mt-2" disabled>
+                              Details Unavailable
                             </Button>
-                          </Link>
-                        ) : (
-                          <Button variant="outline" className="mt-2" disabled>
-                            Details Unavailable
-                          </Button>
-                        )}
-                      </div>
-                    ))
+                          )}
+                        </div>
+                      );
+                    })
                   ) : (
                     <p>No tasks available for this WBS Element.</p>
                   )}
