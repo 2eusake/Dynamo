@@ -104,3 +104,31 @@ h3 {
   text-align: center;
   padding: 10px;
 }
+
+
+.project-list-item, .project-header, .project-tasks, .task-list-item {
+  background-color: var(--tile-background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.project-header:hover, .task-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.button, .view-details-button, .edit-button {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.edit-project-page, .task-details-page {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+input, textarea, select {
+  background-color: var(--tile-background-color);
+  color: var(--input-text-color); /* Ensure text is visible in both light and dark modes */
+  transition: background-color 0.3s, color 0.3s;
+}

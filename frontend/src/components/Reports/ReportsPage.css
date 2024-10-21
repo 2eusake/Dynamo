@@ -159,3 +159,24 @@
   text-align: right;
   font-family: 'Deloitte', sans-serif; /* Font from login page */
 }
+
+/* ReportsPage.css */
+.reports-page {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.summary-tile, .tile, .notification, .chart-container {
+  background-color: var(--tile-background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.chart-container {
+  background-color: var(--chart-background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+

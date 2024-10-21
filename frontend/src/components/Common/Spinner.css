@@ -20,4 +20,18 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  .spinner-container {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+  
+  .spinner {
+    border-top: 8px solid var(--text-color);
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
   

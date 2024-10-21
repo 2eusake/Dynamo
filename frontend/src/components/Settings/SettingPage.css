@@ -64,3 +64,25 @@ body.dark-mode {
    background-color: #1a202c; /* Dark background */
     color: #f7fafc; /* Light text */
    }
+
+   /* SettingsPage.css */
+.settings-container {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dark-mode-toggle {
+  background-color: var(--tile-background-color);
+  color: var(--text-color);
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.button {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  transition: background-color 0.3s, color 0.3s;
+}

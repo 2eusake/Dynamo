@@ -174,3 +174,18 @@
 .login-button:disabled:hover {
   background-color: #cccccc;
 }
+
+
+
+
+.login-container, .login-box {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.button {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  transition: background-color 0.3s, color 0.3s;
+}

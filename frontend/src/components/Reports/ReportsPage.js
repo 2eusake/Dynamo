@@ -38,11 +38,12 @@ const colors = {
 };
 
 const ProjectReportDashboard = () => {
+  const { isDarkMode } = useTheme();
+
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [consultants, setConsultants] = useState([]);
   const [projectManagers, setProjectManagers] = useState([]);
-  const { isDarkMode } = useTheme(); // Access dark mode state
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedConsultant, setSelectedConsultant] = useState(null);
   const [selectedProjectManager, setSelectedProjectManager] = useState(null);
@@ -191,7 +192,7 @@ const ProjectReportDashboard = () => {
     
        <div className={` p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
        
-      <h1 className="text-3xl font-bold mb-4 text-black underline-green">
+       <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'} underline-green`}>
         Project Report Dashboard
       </h1>
 
@@ -205,7 +206,7 @@ const ProjectReportDashboard = () => {
 
         <TabsContent value="overview">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
+          <Card className={`shadow-md p-6 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
               <CardHeader>
                 <CardTitle>Overall Performance</CardTitle>
               </CardHeader>
@@ -230,7 +231,7 @@ const ProjectReportDashboard = () => {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-            <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
+            <Card className={`shadow-md p-6 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
               <CardHeader>
                 <CardTitle>Project Status</CardTitle>
               </CardHeader>
@@ -264,7 +265,7 @@ const ProjectReportDashboard = () => {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-            <Card className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
+            <Card className={`shadow-md p-6 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
               <CardHeader>
                 <CardTitle>Key Metrics</CardTitle>
               </CardHeader>

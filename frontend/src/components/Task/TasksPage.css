@@ -97,3 +97,16 @@ h1 {
 .task-details-button:hover {
   background-color: #005a24; 
 }
+
+
+.task-tile, .progress-bar {
+  background-color: var(--tile-background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.view-details-button {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  transition: background-color 0.3s, color 0.3s;
+}

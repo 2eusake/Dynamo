@@ -89,3 +89,32 @@ label {
 }
 
 
+.teams-page, .team-member-card {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  table, th, td {
+    background-color: var(--tile-background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .team-table th, .team-table td {
+    border: 1px solid var(--tile-border-color);
+  }
+  
+  .dark-mode {
+    --background-color: #1a202c; /* Dark background */
+    --text-color: #f7fafc; /* Light text */
+    --tile-background-color: #2d3748; /* Slightly lighter for tiles */
+    --tile-border-color: #4a5568; /* Darker border for contrast */
+  }
+  
+  .light-mode {
+    --background-color: #ffffff; /* Light background */
+    --text-color: #1a202c; /* Dark text */
+    --tile-background-color: #f9f9f9; /* Light tile background */
+    --tile-border-color: #e2e8f0; /* Light border color */
+  }

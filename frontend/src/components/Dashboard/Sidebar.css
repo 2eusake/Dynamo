@@ -35,3 +35,28 @@
 }
 
 /* Rest of the existing styles */
+
+.sidebar {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Adjust for dark mode */
+}
+
+/* Sidebar.css */
+.sidebar {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-icon-button {
+  color: var(--text-color);
+}

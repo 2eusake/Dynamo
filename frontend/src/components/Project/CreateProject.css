@@ -118,3 +118,20 @@
     background-color: #005a24;
   }
   
+  
+.create-project-page {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+input, textarea, select {
+  background-color: var(--tile-background-color);
+  color: var(--input-text-color); /* Ensure text is visible in both light and dark modes */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.button {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  transition: background-color 0.3s, color 0.3s;
+}

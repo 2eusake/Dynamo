@@ -1,17 +1,83 @@
-/* src/components/DarkMode.css */
 :root {
-    --background-color: white;
-    --text-color: black;
-  }
-  
-  [data-theme='dark'] {
-    --background-color: black;
-    --text-color: white;
-  }
-  
-  body {
-    background-color: var(--background-color);
-    color: var(--text-color);
-  }
-  
-  
+  --background-color: #ffffff;
+  --text-color: #000000; 
+  --tile-background-color: #ffffff; 
+}
+
+[data-theme='dark'] {
+  --background-color: #1a202c; 
+  --text-color: #f7fafc; 
+  --tile-background-color: #2d3748; 
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+button {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode button {
+  background-color: #444444;
+  color: #ffffff;
+}
+
+button:hover {
+  background-color: #555555;
+}
+
+/* Dark Mode Styling for Specific Components */
+body.dark-mode .bg-white {
+  background-color: #1d1c1c;
+}
+
+body.dark-mode .text-white-500 {
+  color: #ffffff;
+}
+
+.container.dark-mode {
+  background-color: #1e1e1e;
+}
+
+/* DarkMode.css */
+:root {
+  --background-color: #ffffff; /* Light mode background */
+  --text-color: #000000; /* Light mode text */
+  --tile-background-color: #ffffff; /* Tile background for light mode */
+  --button-background-color: #0076A8; /* Button background color for light mode */
+  --button-text-color: #ffffff; /* Button text color */
+}
+
+[data-theme='dark'] {
+  --background-color: #1a202c; /* Dark mode background */
+  --text-color: #f7fafc; /* Dark mode text */
+  --tile-background-color: #2d3748; /* Tile background for dark mode */
+  --button-background-color: #4a5568; /* Button background for dark mode */
+  --button-text-color: #f7fafc; /* Button text color for dark mode */
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* DarkMode.css */
+:root {
+  --input-text-color: #000000; /* Input text color for light mode */
+}
+
+[data-theme='dark'] {
+  --input-text-color: #f7fafc; /* Input text color for dark mode */
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+

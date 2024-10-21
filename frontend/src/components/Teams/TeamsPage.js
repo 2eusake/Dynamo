@@ -3,9 +3,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiClient from '../../utils/apiClient'; 
 import { Card, CardHeader, CardTitle, CardContent } from '../UIComp'; // Importing UIComp components
-import { User, Filter } from 'lucide-react'; 
+import { User, Filter } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext'; // Import the theme context
 
 const TeamsPage = () => {
+    const { isDarkMode } = useTheme(); // Access dark mode state
+
     // State variable for role filter
     const [filteredRole, setFilteredRole] = useState('');
     
@@ -52,7 +55,7 @@ const TeamsPage = () => {
     return (
         <div className="container mx-auto p-4">
             <ToastContainer />
-            <Card className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+            <Card className={`shadow-md rounded-lg p-6 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
                 <CardHeader className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
                     <CardTitle className="text-2xl font-bold flex items-center mb-2 md:mb-0">
                         <User className="mr-2" size={24} />
@@ -89,7 +92,7 @@ const TeamsPage = () => {
                                 <strong>Total Employees: {users.length}</strong>
                             </div>
                             <div className="overflow-x-auto">
-                                <table className="min-w-full bg-white dark:bg-gray-700">
+                                <table className={`min-w-full ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
                                     <thead>
                                         <tr>
                                             <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
@@ -108,11 +111,11 @@ const TeamsPage = () => {
                                             users.map((member, index) => (
                                                 <tr
                                                     key={member.id}
-                                                    className={
+                                                    className={`${
                                                         index % 2 === 0
-                                                            ? 'bg-gray-50 dark:bg-gray-600'
-                                                            : 'bg-white dark:bg-gray-700'
-                                                    }
+                                                            ? isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
+                                                            : isDarkMode ? 'bg-gray-800' : 'bg-white'
+                                                    }`}
                                                 >
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                                         {member.username}
@@ -139,45 +142,8 @@ const TeamsPage = () => {
                     )}
                 </CardContent>
             </Card>
-        {/* <div className="teams-page">
-            <h1 className="text-3xl font-bold mb-6 underline-green">Teams</h1>
-            <div className="controls">
-                <label htmlFor="role-filter">Filter by Role: </label>
-                <select id="role-filter" value={filteredRole} onChange={handleFilterChange}>
-                    <option value="">All</option>
-                    <option value="Project Manager">Project Manager</option>
-                    <option value="Consultant">Consultant</option>
-                    <option value="Director">Director</option>
-                </select>
-            </div>
-
-            <div className="employee-count">
-                <strong>Total Employees: {employee.length}</strong>
-            </div>
-
-            <table className="team-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {employee.map((employee) => (
-                        <tr key={employee.id}>
-                            <td>{employee.name}</td>
-                            <td>{employee.email}</td>
-                            <td>{employee.role}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-        </div> */}
         </div>
     );
 };
-
 
 export default TeamsPage;

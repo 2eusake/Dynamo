@@ -71,9 +71,74 @@
   }
 }
 
-/* Add this to your CSS file */
-body.dark-mode {
-  background-color: #1a202c; /* Dark background */
-  color: #f7fafc; /* Light text */
+.reports-page,
+.settings-container {
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
+
+body.dark-mode .reports-page,
+body.dark-mode .settings-container {
+    background-color: #1a202c;
+    color: #f7fafc;
+}
+
+.summary-tile,
+.task-tile,
+.tile,
+.project-list-item {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode .summary-tile,
+body.dark-mode .task-tile,
+body.dark-mode .tile,
+body.dark-mode .project-list-item {
+    background-color: #2d3748;
+    color: #e2e8f0;
+}
+
+body.dark-mode {
+  background-color: #1a202c;
+  color: #f7fafc;
+}
+
+.dark-mode .bg-white {
+  background-color: #1e1e1e;
+}
+
+.dark-mode .text-gray-500 {
+  color: #b0b0b0;
+}
+
+.container.dark-mode {
+  background-color: #1e1e1e;
+}
+
+/* Tailwind CSS overrides for dark mode */
+body.dark-mode {
+  background-color: #1a202c;
+  color: #f7fafc;
+}
+
+.dark-mode .bg-white {
+  background-color: #1e1e1e;
+}
+
+.dark-mode .text-gray-500 {
+  color: #b0b0b0;
+}
+
+.container.dark-mode {
+  background-color: #1e1e1e;
+}
+
+.button {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
 
