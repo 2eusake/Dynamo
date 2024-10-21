@@ -60,3 +60,16 @@
 .menu-icon-button {
   color: var(--text-color);
 }
+
+.sidebar-item {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(0, 0, 0, 0.1); 
+  color: var(--text-color); 
+}
+
+.sidebar-item:hover .icon {
+  color: var(--hover-icon-color); 
+}

@@ -2,22 +2,20 @@
 html,
 body {
   height: 100%;
-  margin: 10;
-  margin-left:60px;
-  margin-top: 30px;
+  margin: 0;
+  padding: 0;
 }
 
 /* Main container that wraps the content and footer */
 .container {
-  margin-left:60px;
+  margin-left: 60px;
   margin-top: 60px; /* Adjust based on navbar height */
   display: flex;
   padding: 20px;
   flex-direction: column;
   flex-grow: 1;
-  height: 64px;
-  min-height: calc(100vh - 64px); /* Assuming header height is 64px */
-    overflow-y: auto;
+  min-height: calc(100vh - 64px); /* Flexible height to fill viewport */
+  overflow-y: auto;
 }
 
 /* Content should expand to fill the available space */
@@ -25,27 +23,24 @@ body {
   flex: 1;
 }
 
-
-
 /* Footer styling */
 footer {
-  position: relative;
   background-color: #0a643b; /* Deloitte dark green */
   color: white;
   padding: 10px 0;
   text-align: center;
-  position: relative; /* Or leave as static */
   bottom: 0;
   width: 100%;
 }
 
+/* Dark Mode Styling */
 body.dark-mode {
   background-color: #121212;
-  --text-color: #ffffff;
+  color: #ffffff;
 }
 
 .dark-mode .bg-white {
-  background-color:#1d1c1c;
+  background-color: #1d1c1c;
 }
 
 .dark-mode .text-white-500 {
@@ -54,4 +49,14 @@ body.dark-mode {
 
 .container.dark-mode {
   background-color: #1e1e1e;
-} 
+}
+
+/* Light Mode */
+body.light-mode {
+  background-color: #ffffff;
+  color: #1a202c;
+}
+
+.container.light-mode {
+  background-color: #ffffff;
+}

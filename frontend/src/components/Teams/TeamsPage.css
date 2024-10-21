@@ -1,120 +1,68 @@
+/* General Page Styling */
 .teams-page {
     padding: 20px;
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    color: #333;
-    background-color: #f9f9f9;
     min-height: 100vh;
-}
-
-h1 {
+  }
+  
+  h1 {
     font-size: 28px;
-    color: #1A1A1A;
-    border-bottom: #007A33;
     font-weight: 700;
-    border-bottom: #007A33;
     padding-bottom: 10px;
     margin-bottom: 20px;
-    
-}
-.underline-green {
-    border-bottom: 3px solid #007A33; /* Green underline */
-    padding-bottom: 5px;
-    display: inline-block; /* Ensure underline only affects the text */
+    border-bottom: 3px solid #007A33;
   }
   
-
-.controls {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-}
-
-label {
-    font-weight: bold;
-    color: #007A33;
-}
-
-#role-filter {
-    margin-left: 10px;
-    padding: 5px 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.3s ease;
-}
-
-
-.employee-count {
-    margin-bottom: 20px;
-    font-size: 18px;
-    font-weight: 500;
-    color: #555;
-}
-#role-filter:focus {
-    border-color: #ddd !important; 
-    box-shadow: none; 
-}
-.team-table {
+  /* Table Styling */
+  table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.team-table th, .team-table td {
-    border: 1px solid #e0e0e0;
+  }
+  
+  th, td {
     padding: 12px;
     text-align: left;
-}
-
-.team-table th {
-    background-color: #007A33;
-    color: white;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.team-table td {
-    color: #333;
-}
-
-.team-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.team-table tr:hover {
-    background-color: #f1f1f1;
-}
-
-
-.teams-page, .team-member-card {
-    background-color: var(--background-color);
+    border: 1px solid var(--tile-border-color);
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
   }
   
-  table, th, td {
+  thead {
     background-color: var(--tile-background-color);
     color: var(--text-color);
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: var(--tile-background-color);
+  }
+  
+  tbody tr:hover {
+    background-color: var(--tile-background-color-hover);
+  }
+  
+  /* Light Mode */
+  body.light-mode {
+    --background-color: #ffffff;
+    --text-color: #1a202c;
+    --tile-background-color: #f9f9f9;
+    --tile-border-color: #e2e8f0;
+    --tile-background-color-hover: #e6e6e6;
+  }
+  
+  /* Dark Mode */
+  body.dark-mode {
+    --background-color: #1a202c;
+    --text-color: #f7fafc;
+    --tile-background-color: #2d3748;
+    --tile-border-color: #4a5568;
+    --tile-background-color-hover: #374151;
+  }
+  
+  /* Dynamic Button Colors */
+  .button {
+    background-color: var(--button-background-color);
+    color: var(--button-text-color);
     transition: background-color 0.3s, color 0.3s;
   }
   
-  .team-table th, .team-table td {
-    border: 1px solid var(--tile-border-color);
-  }
   
-  .dark-mode {
-    --background-color: #1a202c; /* Dark background */
-    --text-color: #f7fafc; /* Light text */
-    --tile-background-color: #2d3748; /* Slightly lighter for tiles */
-    --tile-border-color: #4a5568; /* Darker border for contrast */
-  }
-  
-  .light-mode {
-    --background-color: #ffffff; /* Light background */
-    --text-color: #1a202c; /* Dark text */
-    --tile-background-color: #f9f9f9; /* Light tile background */
-    --tile-border-color: #e2e8f0; /* Light border color */
-  }

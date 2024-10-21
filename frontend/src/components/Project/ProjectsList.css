@@ -1,0 +1,142 @@
+/* src/components/ProjectsPage/ProjectsList.css */
+
+.projects-page {
+  padding: 20px;
+  height: 100%;
+  margin: 10;
+  margin-left:60px;
+  margin-top: 30px;
+  font-family: 'Deloitte', sans-serif;
+}
+
+.tiles-container {
+  height: 100%;
+  margin: 10;
+  margin-left:60px;
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.tile {
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  width: 300px;
+}
+
+.tile:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tile h2 {
+  font-size: 1.5rem;
+  color: #002776;
+}
+
+.tile p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.progress-bar {
+  background-color: #e6e6e6;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 20px;
+  margin-top: 10px;
+}
+
+.progress {
+  background-color: #007a33; /* Deloitte green */
+  height: 100%;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  transition: width 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.tasks-container {
+  margin-top: 10px;
+  background-color: #e6e6e6;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.task-tile {
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 5px;
+  transition: transform 0.3s;
+}
+
+.task-tile:hover {
+  transform: translateY(-5px);
+}
+
+.task-tile h3 {
+  font-size: 1.2rem;
+  color: #007a33;
+}
+
+.task-tile p {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.projects-page, .project-detail {
+  padding: 20px;
+}
+
+.notification {
+  color: red;
+  margin-bottom: 20px;
+}
+
+.tiles-container, .tasks-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tile, .task-tile {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px;
+  width: calc(33.333% - 20px);
+  box-sizing: border-box;
+}
+
+.task-tile {
+  width: calc(50% - 20px);
+}
+
+.progress-bar {
+  background-color: #f3f3f3;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 20px;
+}
+
+.progress {
+  background-color: #4caf50;
+  height: 100%;
+  color: white;
+  text-align: center;
+  line-height: 20px;
+}
+
+.upload-form {
+  margin-top: 20px;
+}
+

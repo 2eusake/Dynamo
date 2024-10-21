@@ -1,191 +1,33 @@
-/* Login.css */
-
+/* Login Page Styling */
 .login-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f7f9fc; /* Light background similar to the dashboard */
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-
-.deloitte-logo {
-  height: 50px; /* Adjust the height to your preference */
-  margin-right: 0.5rem;
-}
-
-.app-name {
-  color: #000000; /* Deloitte black */
-  font-size: 24px;
-  font-weight: 600;
+  background-color: #f7f9fc;
 }
 
 .login-box {
   background-color: #ffffff;
   padding: 32px;
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Softer shadow for consistency */
-  width: 100%;
-  max-width: 400px;
-  border: 1px solid #e1e1e1; /* Light gray border for subtle structure */
-}
-
-.login-title {
-  color: #006747; /* Deloitte green for a highlight */
-  font-size: 20px;
-  margin-bottom: 24px;
-  text-align: center;
-}
-
-.error-message {
-  background-color: #ff4d4d; /* Softer red for error messages */
-  color: #ffffff;
-  padding: 8px;
-  border-radius: 4px;
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-label {
-  color: #000000;
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-
-.input-field {
-  padding: 12px;
-  border-radius: 4px;
-  border: 1px solid #d9d9d9; /* Deloitte gray */
-  background-color: #f7f9fc; /* Light background */
-  transition: border-color 0.3s, background-color 0.3s;
-}
-
-.input-field:focus {
-  border-color: #006747; /* Deloitte green */
-  background-color: #ffffff;
-}
-
-.button-group {
-  margin-top: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .login-button {
-  width: 100%;
-  background-color: #006747; /* Deloitte green */
+  background-color: #006747;
   color: #ffffff;
   padding: 12px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
   transition: background-color 0.3s, box-shadow 0.3s;
-  font-size: 16px;
-  font-weight: 600;
 }
 
 .login-button:hover {
-  background-color: #004b8d; /* Deloitte dark blue */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Slight shadow on hover */
+  background-color: #004b8d;
 }
 
-.link-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 16px;
-}
-
-.link {
-  color: #006747; /* Deloitte green */
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.link:hover {
-  text-decoration: underline;
-  color: #004b8d; /* Dark blue hover color */
-}
-
-.separator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 24px 0;
-}
-
-.line {
-  flex: 1;
-  border: none;
-  height: 1px;
-  background-color: #d9d9d9; /* Deloitte gray */
-}
-
-.separator-text {
-  margin: 0 12px;
-  color: #000000; /* Deloitte black */
-}
-
-.google-login {
-  display: flex;
-  justify-content: center;
-}
-
-.google-button {
-  background-color: #ffffff;
-  border: 1px solid #d9d9d9; /* Deloitte gray */
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-.google-button:hover {
-  background-color: #f0f0f0; /* Light hover effect */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.google-logo {
-  margin-right: 8px;
-}
-
-.login-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.login-button:disabled:hover {
-  background-color: #cccccc;
-}
-
-
-
-
-.login-container, .login-box {
+.login-container,
+.login-box {
   background-color: var(--background-color);
   color: var(--text-color);
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.button {
-  background-color: var(--button-background-color);
-  color: var(--button-text-color);
   transition: background-color 0.3s, color 0.3s;
 }

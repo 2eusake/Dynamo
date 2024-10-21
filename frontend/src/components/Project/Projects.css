@@ -6,129 +6,25 @@
   min-height: 100vh;
 }
 
-h3 {
-  font-size: 28px;
-  color: #1A1A1A;
-  font-weight: 700;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-}
-
-.project-count {
-  margin-bottom: 20px;
-  font-size: 18px;
-  font-weight: 500;
-  color: #555;
-}
-
-.project-list {
-  margin-top: 20px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .project-list-item {
+  background-color: #fff;
   border: 1px solid #e0e0e0;
-  border-radius: 4px;
   padding: 15px;
   margin-bottom: 10px;
-  background-color: #fff;
 }
 
 .project-list-item:hover {
   background-color: #f1f1f1;
 }
 
+/* Dark Mode */
+.project-list-item,
 .project-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-
-.project-header h4 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.project-header p {
-  font-size: 14px;
-  color: #666;
-}
-
-.project-status {
-  font-weight: bold;
-  color: #007A33; /* Deloitte green */
-}
-
-.project-tasks {
-  margin-top: 20px;
-}
-
-.task-list {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-.task-list-item {
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.task-list-item:hover {
-  background-color: #f1f1f1;
-}
-
-.task-list-item p {
-  font-size: 14px;
-  color: #333;
-}
-
-.task-status {
-  font-weight: bold;
-  color: #007A33; /* Deloitte green */
-}
-
-
-.error-message {
-  color: #dc3545;
-  text-align: center;
-  padding: 10px;
-}
-
-.loading-message {
-  text-align: center;
-  padding: 10px;
-}
-
-
-.project-list-item, .project-header, .project-tasks, .task-list-item {
   background-color: var(--tile-background-color);
   color: var(--text-color);
   transition: background-color 0.3s, color 0.3s;
 }
 
-.project-header:hover, .task-list-item:hover {
+.project-header:hover {
   background-color: rgba(255, 255, 255, 0.1);
-}
-
-.button, .view-details-button, .edit-button {
-  background-color: var(--button-background-color);
-  color: var(--button-text-color);
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.edit-project-page, .task-details-page {
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-
-input, textarea, select {
-  background-color: var(--tile-background-color);
-  color: var(--input-text-color); /* Ensure text is visible in both light and dark modes */
-  transition: background-color 0.3s, color 0.3s;
 }
