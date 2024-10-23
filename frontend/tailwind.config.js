@@ -1,6 +1,6 @@
 module.exports = {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}", // Adjust the paths as necessary
+    "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {
@@ -13,5 +13,6 @@ module.exports = {
       },
     },
   },
+  darkMode: 'class', // Add this line to enable class-based dark mode
   plugins: [],
 };

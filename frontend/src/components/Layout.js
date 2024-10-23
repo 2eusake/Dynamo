@@ -16,7 +16,7 @@ const Layout = ({ children }) => {
         <Sidebar />
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 ml-64">
           {children} {/* This is where the content of each route will go */}
         </main>
       </div>

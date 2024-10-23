@@ -1,43 +1,29 @@
-/* src/styles/tailwind.css */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Deloitte Colors */
-/* Blue */
 .bg-deloitte-blue {
   background-color: #002776;
 }
-
 .text-deloitte-blue {
   color: #002776;
 }
-
-/* Green */
 .bg-deloitte-green {
   background-color: #92d400;
 }
-
 .text-deloitte-green {
   color: #92d400;
 }
-
-/* Cyan */
 .bg-deloitte-cyan {
   background-color: #00a1de;
 }
-
 .text-deloitte-cyan {
   color: #00a1de;
 }
-
-/* Black */
 .text-deloitte-black {
   color: #000000;
 }
-
-/* White */
 .text-deloitte-white {
   color: #ffffff;
 }
@@ -53,11 +39,9 @@
 .sidebar {
   width: 12rem;
 }
-
 .sidebar-collapsed {
   width: 4rem;
 }
-
 .content-wrapper {
   margin-left: 12rem;
 }
@@ -71,47 +55,38 @@
   }
 }
 
-/* Dark Mode Styling */
-body.dark-mode {
-  background-color: #1a202c;
-  color: #f7fafc;
-}
-
-.dark-mode .bg-white {
-  background-color: #1e1e1e;
-}
-
-.dark-mode .text-gray-500 {
-  color: #b0b0b0;
-}
-
-.container.dark-mode {
-  background-color: #1e1e1e;
-}
-
-/* Additional tiles and components in dark mode */
-body.dark-mode .summary-tile,
-body.dark-mode .task-tile,
-body.dark-mode .tile,
-body.dark-mode .project-list-item {
-  background-color: #2d3748;
-  color: #e2e8f0;
-}
-
 /* Light Mode */
 body.light-mode {
-  background-color: #ffffff;
-  color: #1a202c;
+  --input-text-color: #000000;
+  --background-color: #ffffff;
+  --text-color: #1a202c;
+  --tile-background-color: #ffffff; 
+  --tile-border-color: #ddd; 
+  --button-background-color: #007A33;
+  --button-background-color-hover: #005a24;
 }
 
-.light-mode .bg-white {
-  background-color: #ffffff;
+body.light-mode input, 
+body.light-mode select, 
+body.light-mode textarea {
+  background-color: var(--tile-background-color);
+  color: var(--input-text-color);
 }
 
-.light-mode .text-gray-500 {
-  color: #1a202c;
+/* Dark Mode */
+body.dark-mode {
+  --input-text-color: #000000; /* Black text for inputs in dark mode */
+  --background-color: #1a202c;
+  --text-color: #f7fafc;
+  --tile-background-color: #2d3748;
+  --tile-border-color: #4a5568;
+  --button-background-color: #007A33;
+  --button-background-color-hover: #005a24;
 }
 
-.container.light-mode {
-  background-color: #ffffff;
+body.dark-mode input, 
+body.dark-mode select, 
+body.dark-mode textarea {
+  background-color: var(--tile-background-color);
+  color: var(--input-text-color); /* Black text in dark mode */
 }

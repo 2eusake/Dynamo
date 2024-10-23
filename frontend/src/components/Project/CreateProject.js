@@ -181,7 +181,7 @@ const CreateProject = () => {
   };
 
   return (
-    <div className={`p-6 rounded-md mb-6 shadow-sm ${isDarkMode ? 'bg-black-600 text-white' : 'bg-gray-50 text-black'}`}>
+    <div className={`p-6 rounded-md mb-6 shadow-sm ${isDarkMode ? 'dark' : ''}`}>
       <div className="create-project-container">
         <h2 className={`text-3xl font-bold mb-6 underline-green ${isDarkMode ? 'text-white' : 'text-darkGray'}`}>
           Create New Project
