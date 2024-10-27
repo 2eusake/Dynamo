@@ -1018,7 +1018,7 @@ const ProjectReportDashboard = () => {
                           Allocated Hours: {project.allocatedHours}, Actual
                           Hours: {project.actualHours}
                         </p>
-                        <p>Due Date: {project.dueDate}</p>
+                        <p>Due Date: {project.endDate}</p>
                       </div>
                     )
                   )}
