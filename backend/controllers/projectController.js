@@ -67,6 +67,13 @@ const getProjects = async (req, res) => {
         {
           model: Task,
           as: 'tasks',
+          include: [
+            {
+              model: User,
+              as: 'assignedToUser',
+              attributes: ['id', 'username'],
+            },
+          ],
         },
         {
           model: User,
