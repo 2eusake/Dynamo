@@ -2,6 +2,7 @@
 import React, { useContext, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider, AuthContext } from "./contexts/AuthContext";
+import { ToastContainer } from "react-toastify";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 import Dashboard from "./components/Dashboard/RoleBasedDashboard";
@@ -15,7 +16,6 @@ import ProtectedRoute from "./protectedRoute";
 import ProjectProvider from "./contexts/ProjectContext";
 import ReportsPage from "./components/Reports/ReportsPage";
 import TaskProvider from "./contexts/TaskContext";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./tailwind.css";
 import Settings from "./components/Settings/SettingsPage";
