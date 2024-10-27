@@ -25,7 +25,7 @@ const CategoryModal = ({
     if (projectTasks.length === 0) return 0;
 
     const totalAllocatedHours = projectTasks.reduce(
-      (sum, task) => sum + task.allocatedHours,
+      (sum, task) => sum + task.hours,
       0
     );
     const totalActualHours = projectTasks.reduce(
@@ -145,16 +145,16 @@ const CategoryModal = ({
     taskList.forEach((task) => {
       console.log(`Task ${task.id}: ${task.name}`, {
         actualHours: task.actualHours,
-        allocatedHours: task.allocatedHours,
-        dueDate: task.dueDate,
+        allocatedHours: task.hoursours,
+        dueDate: task.due_date,
         status: task.status,
       });
     });
   };
 
   const isTaskAgent = (task) => {
-    const isOverAllocated = task.actualHours > task.allocatedHours;
-    const isOverdue = new Date(task.dueDate) < new Date();
+    const isOverAllocated = task.actualHours > task.hours;
+    const isOverdue = new Date(task.due_date) < new Date();
     const isNotCompleted = task.status !== "completed";
 
     return isNotCompleted && (isOverAllocated || isOverdue);
@@ -205,11 +205,11 @@ const CategoryModal = ({
               <AccordionContent>
                 <div className="pl-4 space-y-2">
                   {agentTasks.map((task) => {
-                    const isOverdue = new Date(task.dueDate) < new Date();
-                    const overTime = task.actualHours - task.allocatedHours;
+                    const isOverdue = new Date(task.due_date) < new Date();
+                    const overTime = task.actualHours - task.hours;
                     const overDueDays = isOverdue
                       ? Math.ceil(
-                          (new Date() - new Date(task.dueDate)) /
+                          (new Date() - new Date(task.due_date)) /
                             (1000 * 60 * 60 * 24)
                         )
                       : 0;
