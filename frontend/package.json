@@ -50,8 +50,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build:css": "tailwindcss build src/tailwind.css -o src/output.css",
-    "build": "npm run build:css && react-scripts build",
+    "build:css": "tailwindcss -i ./src/tailwind.css -o ./src/output.css",
+    "build": "npm run build:css && node --max_old_space_size=4096 ./node_modules/react-scripts/scripts/build.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -74,9 +74,14 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.39",
     "react-app-rewired": "^2.2.1",
     "tailwindcss": "^3.4.4"
+  },
+  "engines": {
+    "node": "18.x"
   }
+
 }
