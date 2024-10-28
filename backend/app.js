@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const sequelize = require("./config/database");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
@@ -23,6 +24,8 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+app.use(express.static(path.join(__dirname, "../frontend/build")));
+
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
@@ -31,6 +34,10 @@ app.use("/api", uploadRoutes);
 app.use("/api/reports", reportRoutes); // Reports routes
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/excel", importRoute);
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
+});
 
 
 const PORT = process.env.PORT || 5000;
