@@ -1,22 +1,20 @@
+
 module.exports = {
     development: {
-        username: 'zeusake',
-        password: 'KPiu7qTJnGs51CGDX7ab',
-        database: 'dpms_serv',
-        host: 'dynamo.c324ec2065m6.eu-north-1.rds.amazonaws.com',
-        dialect: 'mysql',
-        port: 5000
+      username: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      database: process.env.DB_NAME,
+      host: process.env.DB_HOST,
+      dialect: process.env.DB_DIALECT || "mysql",
+      port: process.env.DB_PORT || 3306,
     },
     production: {
-        username: 'zeusake',
-        password: 'KPiu7qTJnGs51CGDX7ab',
-        database: 'dpms_serv',
-        host: 'dynamo.c324ec2065m6.eu-north-1.rds.amazonaws.com',
-        dialect: 'mysql',
-        port: 5000
-    }
+      username: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      database: process.env.DB_NAME,
+      host: process.env.DB_HOST,
+      dialect: process.env.DB_DIALECT || "mysql",
+      port: process.env.DB_PORT || 3306,
+    },
   };
-  
-
-
   
